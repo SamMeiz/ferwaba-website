@@ -1,0 +1,71 @@
+/* FERWABA v1.5 Base Styles */
+:root{
+  --blue:#0047AB;
+  --gold:#FFB81C;
+  --text:#111111;
+  --bg:#ffffff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;color:var(--text);background:var(--bg)}
+body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
+.container{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* Header */
+.site-header{background:var(--blue);color:#fff;position:sticky;top:0;z-index:1000}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.logo{color:#fff;text-decoration:none;font-weight:800;letter-spacing:1px}
+.nav-toggle{display:none;background:none;border:none;color:#fff;font-size:24px}
+.main-nav ul{display:flex;gap:16px;align-items:center;list-style:none;margin:0;padding:0}
+.main-nav a{color:#fff;text-decoration:none;padding:8px 10px;border-radius:6px}
+.main-nav a:hover{background:rgba(255,255,255,0.12)}
+.has-sub{position:relative}
+.has-sub .sub{display:none;position:absolute;top:100%;left:0;background:#0f327a;border:1px solid rgba(255,255,255,0.15);border-radius:8px;min-width:200px;padding:8px 0}
+.has-sub:hover .sub{display:block}
+.has-sub .sub li{display:block}
+.has-sub .sub a{display:block}
+
+/* Footer */
+.site-footer{background:#0f327a;color:#fff;margin-top:40px}
+.footer-inner{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:20px 0}
+.footer-links a,.social a{color:#fff;text-decoration:none;margin-right:12px}
+.footer-links a:hover,.social a:hover{color:var(--gold)}
+
+/* Hero */
+.hero{background:linear-gradient(135deg, var(--blue), #022e6d);color:#fff;border-radius:16px;padding:32px;margin:24px 0}
+.hero h1{font-family:'Roboto Condensed',sans-serif;font-size:40px;margin:0 0 8px}
+.hero p{opacity:0.95;margin:0}
+
+/* Cards and grids */
+.grid{display:grid;gap:16px}
+.grid.col-3{grid-template-columns:repeat(3,1fr)}
+.grid.col-2{grid-template-columns:repeat(2,1fr)}
+.card{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#fff}
+.card .card-body{padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:18px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+th,td{padding:10px 12px;border-bottom:1px solid #e5e7eb}
+th{background:#f3f4f6;text-align:left}
+tbody tr:hover{background:#fafafa}
+
+/* Utility */
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px}
+.btn{display:inline-block;background:var(--gold);color:#111;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600}
+.btn:hover{filter:brightness(0.95)}
+.muted{color:#6b7280;font-size:14px}
+
+/* Responsive */
+@media (max-width: 900px){
+  .grid.col-3{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 640px){
+  .nav-toggle{display:block}
+  .main-nav{display:none;position:absolute;top:56px;left:0;right:0;background:#0f327a;padding:8px}
+  .main-nav.open{display:block}
+  .main-nav ul{flex-direction:column;gap:4px}
+  .has-sub .sub{position:static;border:none;background:transparent;padding:0}
+  .grid.col-3,.grid.col-2{grid-template-columns:1fr}
+}
+
+
