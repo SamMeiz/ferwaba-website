@@ -15,7 +15,7 @@ $imgs = $mysqli->query("SELECT g.id,g.image,g.caption,t.name AS team_name FROM g
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Gallery</h2>
-    <a class="btn" href="<?php echo asset_url('/gallery-form.php'); ?>">Upload Photo</a>
+    <a class="btn" href="<?php echo asset_url('gallery-form.php'); ?>">Upload Photo</a>
   </div>
   <div class="grid col-3">
     <?php while($g=$imgs->fetch_assoc()): ?>
@@ -25,7 +25,7 @@ $imgs = $mysqli->query("SELECT g.id,g.image,g.caption,t.name AS team_name FROM g
         <div><strong><?php echo sanitize($g['team_name'] ?? ''); ?></strong></div>
         <div class="muted"><?php echo sanitize($g['caption']); ?></div>
         <div style="margin-top:8px">
-          <a href="/admin/delete-gallery.php?id=<?php echo (int)$g['id']; ?>" onclick="return confirm('Delete image?')">Delete</a>
+          <a href="delete-gallery.php?id=<?php echo (int)$g['id']; ?>" onclick="return confirm('Delete image?')">Delete</a>
         </div>
       </div>
     </div>

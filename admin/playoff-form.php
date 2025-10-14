@@ -55,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($editing) {
       $stmt = $mysqli->prepare("UPDATE playoffs SET stage=?,start_date=?,end_date=?,home_team_id=?,away_team_id=?,home_score=?,away_score=?,winner_team_id=?,status=? WHERE id=? LIMIT 1");
       $stmt->bind_param('sssiiiiisi', $stage,$start_date,$end_date,$home_team_id,$away_team_id,$home_score,$away_score,$winner_team_id,$status,$id);
-      if ($stmt->execute()) { redirect('/admin/playoffs.php'); } else { $error='Save failed.'; }
+      if ($stmt->execute()) { redirect('playoffs.php'); } else { $error='Save failed.'; }
     } else {
       $stmt = $mysqli->prepare("INSERT INTO playoffs(stage,start_date,end_date,home_team_id,away_team_id,home_score,away_score,winner_team_id,status) VALUES(?,?,?,?,?,?,?,?,?)");
       $stmt->bind_param('sssiiiiis', $stage,$start_date,$end_date,$home_team_id,$away_team_id,$home_score,$away_score,$winner_team_id,$status);
-      if ($stmt->execute()) { redirect('/admin/playoffs.php'); } else { $error='Create failed.'; }
+      if ($stmt->execute()) { redirect('playoffs.php'); } else { $error='Create failed.'; }
     }
   }
 }

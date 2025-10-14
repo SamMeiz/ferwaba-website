@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->bind_param('iissiiisssi', $home_team_id,$away_team_id,$game_date,$location,$home_score,$away_score,$division,$gender,$status,$highlight_url,$id);
       if ($stmt->execute()) {
         recalc_standings_for_game_change($mysqli, $id);
-        redirect('/admin/games.php');
+        redirect('games.php');
       } else { $error='Failed to save game.'; }
     } else {
       $stmt = $mysqli->prepare("INSERT INTO games(home_team_id,away_team_id,game_date,location,home_score,away_score,division,gender,status,highlight_url) VALUES(?,?,?,?,?,?,?,?,?,?)");
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if ($stmt->execute()) {
         $newId = $stmt->insert_id;
         recalc_standings_for_game_change($mysqli, $newId);
-        redirect('/admin/games.php');
+        redirect('games.php');
       } else { $error='Failed to create game.'; }
     }
   }
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <button class="btn" type="submit">Save</button>
-        <a class="btn" href="/admin/games.php" style="margin-left:8px">Cancel</a>
+        <a class="btn" href="games.php" style="margin-left:8px">Cancel</a>
       </div>
     </form>
   </div></div>

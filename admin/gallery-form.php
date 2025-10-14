@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!$error) {
     $stmt = $mysqli->prepare("INSERT INTO gallery(team_id,image,caption) VALUES(?,?,?)");
     $stmt->bind_param('iss', $team_id, $fileName, $caption);
-    if ($stmt->execute()) { redirect('/admin/gallery.php'); } else { $error = 'Failed to save gallery item.'; }
+    if ($stmt->execute()) { redirect('gallery.php'); } else { $error = 'Failed to save gallery item.'; }
   }
 }
 ?>
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <button class=\"btn\" type=\"submit\">Upload</button>
-        <a class=\"btn\" href=\"/admin/gallery.php\" style=\"margin-left:8px\">Cancel</a>
+        <a class=\"btn\" href=\"gallery.php\" style=\"margin-left:8px\">Cancel</a>
       </div>
     </form>
   </div></div>

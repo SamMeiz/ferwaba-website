@@ -48,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($editing) {
       $stmt = $mysqli->prepare("UPDATE coaches SET team_id=?, name=?, role=?, nationality=?, photo=? WHERE id=? LIMIT 1");
       $stmt->bind_param('issssi', $team_id, $name, $role, $nationality, $uploadFileName, $id);
-      if ($stmt->execute()) { redirect('/admin/coaches.php'); } else { $error = 'Failed to save coach.'; }
+      if ($stmt->execute()) { redirect('coaches.php'); } else { $error = 'Failed to save coach.'; }
     } else {
       $stmt = $mysqli->prepare("INSERT INTO coaches(team_id,name,role,nationality,photo) VALUES(?,?,?,?,?)");
       $stmt->bind_param('issss', $team_id, $name, $role, $nationality, $uploadFileName);
-      if ($stmt->execute()) { redirect('/admin/coaches.php'); } else { $error = 'Failed to create coach.'; }
+      if ($stmt->execute()) { redirect('coaches.php'); } else { $error = 'Failed to create coach.'; }
     }
   }
 }
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <button class="btn" type="submit">Save</button>
-        <a class="btn" style="margin-left:8px" href="/admin/coaches.php">Cancel</a>
+        <a class="btn" style="margin-left:8px" href="coaches.php">Cancel</a>
       </div>
     </form>
   </div></div>

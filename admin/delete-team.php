@@ -17,6 +17,6 @@ $stmt->execute();
 $stmt = $mysqli->prepare("DELETE FROM teams WHERE id=? LIMIT 1");
 $stmt->bind_param('i',$id);
 $stmt->execute();
-redirect('/admin/teams.php');
+redirect('teams.php');
 
 

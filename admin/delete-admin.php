@@ -12,6 +12,6 @@ if ($id === (int)$_SESSION['admin_id']) {
 $stmt = $mysqli->prepare("DELETE FROM admins WHERE id=? LIMIT 1");
 $stmt->bind_param('i', $id);
 $stmt->execute();
-redirect('/admin/admins.php');
+redirect('admins.php');
 
 

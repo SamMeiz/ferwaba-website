@@ -57,11 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($editing) {
       $stmt = $mysqli->prepare("UPDATE players SET team_id=?, name=?, position=?, height=?, nationality=?, jersey_number=?, photo=? WHERE id=? LIMIT 1");
       $stmt->bind_param('issssisi', $team_id, $name, $position, $height, $nationality, $jersey_number, $uploadFileName, $id);
-      if ($stmt->execute()) { redirect('/admin/players.php'); } else { $error = 'Failed to save player.'; }
+      if ($stmt->execute()) { redirect('players.php'); } else { $error = 'Failed to save player.'; }
     } else {
       $stmt = $mysqli->prepare("INSERT INTO players(team_id,name,position,height,nationality,jersey_number,photo) VALUES(?,?,?,?,?,?,?)");
       $stmt->bind_param('issssis', $team_id, $name, $position, $height, $nationality, $jersey_number, $uploadFileName);
-      if ($stmt->execute()) { redirect('/admin/players.php'); } else { $error = 'Failed to create player.'; }
+      if ($stmt->execute()) { redirect('players.php'); } else { $error = 'Failed to create player.'; }
     }
   }
 }
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div>
         <button class="btn" type="submit">Save</button>
-        <a class="btn" style="margin-left:8px" href="/admin/players.php">Cancel</a>
+        <a class="btn" style="margin-left:8px" href="players.php">Cancel</a>
       </div>
     </form>
   </div></div>

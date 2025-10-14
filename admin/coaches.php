@@ -15,7 +15,7 @@ $coaches = $mysqli->query("SELECT c.id,c.name,c.role,c.nationality,c.photo,t.nam
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Coaches</h2>
-    <a class="btn" href="/admin/coach-form.php">Add Coach</a>
+    <a class="btn" href="coach-form.php">Add Coach</a>
   </div>
   <div class="card">
     <table>
@@ -31,8 +31,8 @@ $coaches = $mysqli->query("SELECT c.id,c.name,c.role,c.nationality,c.photo,t.nam
           <td><?php echo sanitize($c['team_name'] ?? ''); ?></td>
           <td><?php echo sanitize($c['nationality']); ?></td>
           <td>
-            <a href="/admin/coach-form.php?id=<?php echo (int)$c['id']; ?>">Edit</a>
-            <a href="/admin/delete-coach.php?id=<?php echo (int)$c['id']; ?>" onclick="return confirm('Delete coach?')">Delete</a>
+            <a href="coach-form.php?id=<?php echo (int)$c['id']; ?>">Edit</a>
+            <a href="delete-coach.php?id=<?php echo (int)$c['id']; ?>" onclick="return confirm('Delete coach?')">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>

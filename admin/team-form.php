@@ -55,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($editing) {
       $stmt = $mysqli->prepare("UPDATE teams SET name=?, gender=?, division=?, location=?, logo=?, description=? WHERE id=? LIMIT 1");
       $stmt->bind_param('ssssssi', $name, $gender, $division, $location, $uploadFileName, $description, $id);
-      if ($stmt->execute()) { redirect('/admin/teams.php'); } else { $error = 'Failed to save team.'; }
+      if ($stmt->execute()) { redirect('teams.php'); } else { $error = 'Failed to save team.'; }
     } else {
       $stmt = $mysqli->prepare("INSERT INTO teams(name,gender,division,location,logo,description) VALUES(?,?,?,?,?,?)");
       $stmt->bind_param('ssssss', $name, $gender, $division, $location, $uploadFileName, $description);
-      if ($stmt->execute()) { redirect('/admin/teams.php'); } else { $error = 'Failed to create team.'; }
+      if ($stmt->execute()) { redirect('teams.php'); } else { $error = 'Failed to create team.'; }
     }
   }
 }
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div>
           <button class="btn" type="submit">Save</button>
-          <a class="btn" href="/admin/teams.php" style="margin-left:8px">Cancel</a>
+          <a class="btn" href="teams.php" style="margin-left:8px">Cancel</a>
         </div>
       </form>
     </div>

@@ -15,7 +15,7 @@ $rows = $mysqli->query("SELECT id,title,category,image,created_at FROM news ORDE
 <div class=\"container\" style=\"margin:20px auto\">
   <div class=\"section-title\">
     <h2>News</h2>
-    <a class=\"btn\" href=\"/admin/news-form.php\">Add Article</a>
+    <a class=\"btn\" href=\"news-form.php\">Add Article</a>
   </div>
   <div class=\"card\">
     <table>
@@ -28,8 +28,8 @@ $rows = $mysqli->query("SELECT id,title,category,image,created_at FROM news ORDE
           <td><?php echo sanitize($n['category']); ?></td>
           <td><?php echo sanitize($n['created_at']); ?></td>
           <td>
-            <a href=\"/admin/news-form.php?id=<?php echo (int)$n['id']; ?>\">Edit</a>
-            <a href=\"/admin/delete-news.php?id=<?php echo (int)$n['id']; ?>\" onclick=\"return confirm('Delete article?')\">Delete</a>
+            <a href=\"news-form.php?id=<?php echo (int)$n['id']; ?>\">Edit</a>
+            <a href=\"delete-news.php?id=<?php echo (int)$n['id']; ?>\" onclick=\"return confirm('Delete article?')\">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>

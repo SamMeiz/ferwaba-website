@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $stmt->bind_param('sssii', $full_name, $email, $role, $is_active, $id);
         }
         if ($stmt->execute()) {
-          redirect('/admin/admins.php');
+          redirect('admins.php');
         } else {
           $error = 'Failed to save admin (email may be taken).';
         }
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $hashed = hash_password($password);
       $stmt->bind_param('sssii', $full_name, $email, $hashed, $role, $is_active);
       if ($stmt->execute()) {
-        redirect('/admin/admins.php');
+        redirect('admins.php');
       } else {
         $error = 'Failed to create admin (email may be taken).';
       }
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div>
           <button class="btn" type="submit">Save</button>
-          <a class="btn" href="/admin/admins.php" style="margin-left:8px">Cancel</a>
+          <a class="btn" href="admins.php" style="margin-left:8px">Cancel</a>
         </div>
       </form>
     </div>

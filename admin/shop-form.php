@@ -28,11 +28,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     if($editing){
       $stmt=$mysqli->prepare("UPDATE shop_items SET name=?,description=?,category=?,price=?,image=?,is_active=? WHERE id=? LIMIT 1");
       $stmt->bind_param('ssssssi',$name,$description,$category,$price,$uploadFileName,$is_active,$id);
-      if($stmt->execute()){ redirect('/admin/shop.php'); } else { $error='Save failed.'; }
+      if($stmt->execute()){ redirect('shop.php'); } else { $error='Save failed.'; }
     } else {
       $stmt=$mysqli->prepare("INSERT INTO shop_items(name,description,category,price,image,is_active) VALUES(?,?,?,?,?,?)");
       $stmt->bind_param('sssssi',$name,$description,$category,$price,$uploadFileName,$is_active);
-      if($stmt->execute()){ redirect('/admin/shop.php'); } else { $error='Create failed.'; }
+      if($stmt->execute()){ redirect('shop.php'); } else { $error='Create failed.'; }
     }
   }
 }

@@ -22,6 +22,6 @@ if ($ctx && $row = $ctx->fetch_assoc()) {
     $mysqli->query("UPDATE standings SET games_played=0,wins=0,losses=0,points=0 WHERE division='$division' AND gender='$gender'");
   }
 }
-redirect('/admin/games.php');
+redirect('games.php');
 
 

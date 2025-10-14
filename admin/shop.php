@@ -15,7 +15,7 @@ $rows = $mysqli->query("SELECT id,name,category,price,image,is_active,created_at
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Shop</h2>
-    <a class="btn" href="/admin/shop-form.php">Add Item</a>
+    <a class="btn" href="shop-form.php">Add Item</a>
   </div>
   <div class="card">
     <table>
@@ -29,8 +29,8 @@ $rows = $mysqli->query("SELECT id,name,category,price,image,is_active,created_at
           <td>RWF <?php echo number_format((float)$i['price'],2); ?></td>
           <td><?php echo $i['is_active']? 'Active':'Inactive'; ?></td>
           <td>
-            <a href="/admin/shop-form.php?id=<?php echo (int)$i['id']; ?>">Edit</a>
-            <a href="/admin/delete-shop.php?id=<?php echo (int)$i['id']; ?>" onclick="return confirm('Delete item?')">Delete</a>
+            <a href="shop-form.php?id=<?php echo (int)$i['id']; ?>">Edit</a>
+            <a href="delete-shop.php?id=<?php echo (int)$i['id']; ?>" onclick="return confirm('Delete item?')">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>

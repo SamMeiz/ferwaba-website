@@ -6,6 +6,6 @@ $id=(int)$_GET['id'];
 $stmt=$mysqli->prepare("DELETE FROM shop_items WHERE id=? LIMIT 1");
 $stmt->bind_param('i',$id);
 $stmt->execute();
-redirect('/admin/shop.php');
+redirect('shop.php');
 
 

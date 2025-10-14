@@ -9,7 +9,7 @@ if (isset($_GET['toggle']) && ctype_digit($_GET['toggle'])) {
         die('Cannot deactivate self');
     }
     $mysqli->query("UPDATE admins SET is_active = IF(is_active=1,0,1) WHERE id=$id");
-    redirect('/admin/admins.php');
+    redirect('admins.php');
 }
 
 // Handle delete (prevent self)
@@ -21,7 +21,7 @@ if (isset($_GET['delete']) && ctype_digit($_GET['delete'])) {
     $stmt = $mysqli->prepare("DELETE FROM admins WHERE id=? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
-    redirect('/admin/admins.php');
+    redirect('admins.php');
 }
 
 $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admins ORDER BY id DESC");
@@ -39,7 +39,7 @@ $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admi
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Admins</h2>
-    <a class="btn" href="/admin/admin-form.php">Add Admin</a>
+    <a class="btn" href="<?php echo asset_url('admin-form.php'); ?>">Add Admin</a>
   </div>
   <div class="card">
     <table>
@@ -54,10 +54,10 @@ $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admi
           <td><?php echo sanitize($a['role']); ?></td>
           <td><?php echo $a['is_active']? 'Active':'Inactive'; ?></td>
           <td class="table-actions">
-            <a href="/admin/admin-form.php?id=<?php echo (int)$a['id']; ?>">Edit</a>
+            <a href="admin-form.php?id=<?php echo (int)$a['id']; ?>">Edit</a>
             <?php if((int)$a['id'] !== (int)$_SESSION['admin_id']): ?>
-            <a href="/admin/admins.php?toggle=<?php echo (int)$a['id']; ?>">Toggle</a>
-            <a href="/admin/delete-admin.php?id=<?php echo (int)$a['id'];  ?>" onclick="return confirm('Delete admin?')">Delete</a>
+            <a href="admins.php?toggle=<?php echo (int)$a['id']; ?>">Toggle</a>
+            <a href="delete-admin.php?id=<?php echo (int)$a['id'];  ?>" onclick="return confirm('Delete admin?')">Delete</a>
             <?php endif; ?>
           </td>
         </tr>

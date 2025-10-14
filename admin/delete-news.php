@@ -6,6 +6,6 @@ $id = (int)$_GET['id'];
 $stmt=$mysqli->prepare("DELETE FROM news WHERE id=? LIMIT 1");
 $stmt->bind_param('i',$id);
 $stmt->execute();
-redirect('/admin/news.php');
+redirect('news.php');
 
 

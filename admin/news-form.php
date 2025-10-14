@@ -30,11 +30,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     if($editing){
       $stmt=$mysqli->prepare("UPDATE news SET title=?,content=?,category=?,image=?,video_url=? WHERE id=? LIMIT 1");
       $stmt->bind_param('sssssi',$title,$content,$category,$uploadFileName,$video_url,$id);
-      if($stmt->execute()){ redirect('/admin/news.php'); } else { $error='Save failed.'; }
+      if($stmt->execute()){ redirect('news.php'); } else { $error='Save failed.'; }
     } else {
       $stmt=$mysqli->prepare("INSERT INTO news(title,content,category,image,video_url) VALUES(?,?,?,?,?)");
       $stmt->bind_param('sssss',$title,$content,$category,$uploadFileName,$video_url);
-      if($stmt->execute()){ redirect('/admin/news.php'); } else { $error='Create failed.'; }
+      if($stmt->execute()){ redirect('news.php'); } else { $error='Create failed.'; }
     }
   }
 }

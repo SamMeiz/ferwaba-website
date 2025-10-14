@@ -15,7 +15,7 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Games</h2>
-    <a class="btn" href="/admin/game-form.php">Add Game</a>
+    <a class="btn" href="game-form.php">Add Game</a>
   </div>
   <div class="card">
     <table>
@@ -32,8 +32,8 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
           <td><?php echo sanitize($g['status']); ?></td>
           <td><?php echo (int)$g['home_score'].' - '.(int)$g['away_score']; ?></td>
           <td>
-            <a href="/admin/game-form.php?id=<?php echo (int)$g['id']; ?>">Edit</a>
-            <a href="/admin/delete-game.php?id=<?php echo (int)$g['id']; ?>" onclick="return confirm('Delete game? This will recalc standings.')">Delete</a>
+            <a href="game-form.php?id=<?php echo (int)$g['id']; ?>">Edit</a>
+            <a href="delete-game.php?id=<?php echo (int)$g['id']; ?>" onclick="return confirm('Delete game? This will recalc standings.')">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>

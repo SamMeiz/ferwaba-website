@@ -15,7 +15,7 @@ $rows = $mysqli->query("SELECT p.*, th.name AS home_name, ta.name AS away_name, 
 <div class=\"container\" style=\"margin:20px auto\">
   <div class=\"section-title\">
     <h2>Playoffs</h2>
-    <a class=\"btn\" href=\"/admin/playoff-form.php\">Add Matchup</a>
+    <a class=\"btn\" href=\"playoff-form.php\">Add Matchup</a>
   </div>
   <div class=\"card\">
     <table>
@@ -32,8 +32,8 @@ $rows = $mysqli->query("SELECT p.*, th.name AS home_name, ta.name AS away_name, 
           <td><?php echo (int)$p['home_score'].' - '.(int)$p['away_score']; ?></td>
           <td><?php echo sanitize($p['winner_name'] ?? ''); ?></td>
           <td>
-            <a href=\"/admin/playoff-form.php?id=<?php echo (int)$p['id']; ?>\">Edit</a>
-            <a href=\"/admin/delete-playoff.php?id=<?php echo (int)$p['id']; ?>\" onclick=\"return confirm('Delete matchup?')\">Delete</a>
+            <a href=\"playoff-form.php?id=<?php echo (int)$p['id']; ?>\">Edit</a>
+            <a href=\"delete-playoff.php?id=<?php echo (int)$p['id']; ?>\" onclick=\"return confirm('Delete matchup?')\">Delete</a>
           </td>
         </tr>
         <?php endwhile; ?>
