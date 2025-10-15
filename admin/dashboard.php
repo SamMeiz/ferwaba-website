@@ -29,6 +29,7 @@ require_login();
     <a class="card" href="<?php echo asset_url('/shop.php'); ?>"><div class="card-body"><h3>Manage Shop</h3></div></a>
     <a class="card" href="<?php echo asset_url('/gallery.php'); ?>"><div class="card-body"><h3>Manage Gallery</h3></div></a>
     <a class="card" href="<?php echo asset_url('/national-teams.php'); ?>"><div class="card-body"><h3>Manage National Teams</h3></div></a>
+    <a class="card" href="<?php echo asset_url('/national-players.php'); ?>"><div class="card-body"><h3>Manage National Players</h3></div></a>
 </div>
 </div>
 </body>
