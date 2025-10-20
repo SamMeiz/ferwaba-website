@@ -23,13 +23,14 @@ require_login();
     <a class="card" href="<?php echo asset_url('/players.php'); ?>"><div class="card-body"><h3>Manage Players</h3></div></a>
     <a class="card" href="<?php echo asset_url('/coaches.php'); ?>"><div class="card-body"><h3>Manage Coaches</h3></div></a>
     <a class="card" href="<?php echo asset_url('/games.php'); ?>"><div class="card-body"><h3>Manage Games</h3></div></a>
-    <a class="card" href="<?php echo asset_url('/standings.php'); ?>"><div class="card-body"><h3>Manage Standings</h3></div></a>
+    <a class="card" href="<?php echo asset_url('/standings-list.php'); ?>"><div class="card-body"><h3>Manage Standings</h3></div></a>
     <a class="card" href="<?php echo asset_url('/playoffs.php'); ?>"><div class="card-body"><h3>Manage Playoffs</h3></div></a>
     <a class="card" href="<?php echo asset_url('/news.php'); ?>"><div class="card-body"><h3>Manage News</h3></div></a>
     <a class="card" href="<?php echo asset_url('/shop.php'); ?>"><div class="card-body"><h3>Manage Shop</h3></div></a>
     <a class="card" href="<?php echo asset_url('/gallery.php'); ?>"><div class="card-body"><h3>Manage Gallery</h3></div></a>
     <a class="card" href="<?php echo asset_url('/national-teams.php'); ?>"><div class="card-body"><h3>Manage National Teams</h3></div></a>
     <a class="card" href="<?php echo asset_url('/national-players.php'); ?>"><div class="card-body"><h3>Manage National Players</h3></div></a>
+    <a class="card" href="<?php echo asset_url('/stats-list.php'); ?>"><div class="card-body"><h3>Manage Player Statistics</h3></div></a>
 </div>
 </div>
 </body>

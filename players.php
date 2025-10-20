@@ -1,4 +1,6 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php 
+require_once __DIR__ . '/includes/header.php'; 
+?>
 
 <section class="section-title">
   <h2>Players</h2>
@@ -13,21 +15,43 @@
 $q = trim($_GET['q'] ?? '');
 if ($q !== '') {
   $term = "%$q%";
-  $stmt = $mysqli->prepare("SELECT p.id,p.name,p.position,p.jersey_number,p.photo,t.name AS team_name FROM players p LEFT JOIN teams t ON t.id=p.team_id WHERE p.name LIKE ? ORDER BY p.name ASC");
-  $stmt->bind_param('s',$term);
+  $stmt = $mysqli->prepare("
+    SELECT p.id, p.name, p.position, p.jersey_number, p.photo, t.name AS team_name 
+    FROM players p 
+    LEFT JOIN teams t ON t.id = p.team_id 
+    WHERE p.name LIKE ? 
+    ORDER BY p.name ASC
+  ");
+  $stmt->bind_param('s', $term);
 } else {
-  $stmt = $mysqli->prepare("SELECT p.id,p.name,p.position,p.jersey_number,p.photo,t.name AS team_name FROM players p LEFT JOIN teams t ON t.id=p.team_id ORDER BY p.name ASC");
+  $stmt = $mysqli->prepare("
+    SELECT p.id, p.name, p.position, p.jersey_number, p.photo, t.name AS team_name 
+    FROM players p 
+    LEFT JOIN teams t ON t.id = p.team_id 
+    ORDER BY p.name ASC
+  ");
 }
 $stmt->execute();
 $res = $stmt->get_result();
-while($p = $res->fetch_assoc()): ?>
-  <div class="card">
-    <img src="<?php echo $p['photo']? '/admin/uploads/'.sanitize($p['photo']):'https://via.placeholder.com/600x300?text=Player'; ?>" alt="photo" style="width:100%;height:200px;object-fit:cover">
+
+while($p = $res->fetch_assoc()):
+  // ✅ Image path fix
+  $photoPath = !empty($p['photo']) 
+    ? 'admin/uploads/' . sanitize($p['photo']) 
+    : 'https://via.placeholder.com/600x300?text=Player';
+?>
+  <!-- ✅ Updated link to player-card.php -->
+  <a class="card" href="player-card.php?id=<?php echo (int)$p['id']; ?>" style="text-decoration:none;color:inherit">
+    <img src="<?php echo $photoPath; ?>" alt="<?php echo sanitize($p['name']); ?>" style="width:100%;height:220px;object-fit:cover">
     <div class="card-body">
       <h3><?php echo sanitize($p['name']); ?></h3>
-      <div class="muted">#<?php echo (int)$p['jersey_number']; ?> • <?php echo sanitize($p['position']); ?> • <?php echo sanitize($p['team_name'] ?? ''); ?></div>
+      <div class="muted">
+        #<?php echo (int)$p['jersey_number']; ?> • 
+        <?php echo sanitize($p['position']); ?> • 
+        <?php echo sanitize($p['team_name'] ?? ''); ?>
+      </div>
     </div>
-  </div>
+  </a>
 <?php endwhile; ?>
 </div>
 
@@ -41,5 +65,3 @@ while($p = $res->fetch_assoc()): ?>
 </section>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
-

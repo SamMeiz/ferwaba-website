@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['admin_id'] = (int)$admin['id'];
                 $_SESSION['admin_name'] = $admin['full_name'];
                 $_SESSION['admin_role'] = $admin['role'];
-                redirect('/admin/dashboard.php');
+                redirect('dashboard.php');
             } else {
                 $error = 'Invalid credentials';
             }

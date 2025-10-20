@@ -19,19 +19,42 @@
 
 <div class="grid col-3">
 <?php
-$where = [];$params=[];$types='';
-if (!empty($_GET['gender'])) { $where[]='gender=?'; $params[]=$_GET['gender']; $types.='s'; }
-if (!empty($_GET['division'])) { $where[]='division=?'; $params[]=$_GET['division']; $types.='s'; }
-$sql = 'SELECT id,name,location,logo,gender,division FROM teams';
-if ($where) { $sql .= ' WHERE '.implode(' AND ',$where); }
+$where = [];
+$params = [];
+$types = '';
+
+if (!empty($_GET['gender'])) { 
+  $where[] = 'gender=?'; 
+  $params[] = $_GET['gender']; 
+  $types .= 's'; 
+}
+if (!empty($_GET['division'])) { 
+  $where[] = 'division=?'; 
+  $params[] = $_GET['division']; 
+  $types .= 's'; 
+}
+
+$sql = 'SELECT id, name, location, logo, gender, division FROM teams';
+if ($where) { $sql .= ' WHERE ' . implode(' AND ', $where); }
 $sql .= ' ORDER BY name ASC';
+
 $stmt = $mysqli->prepare($sql);
 if ($where) { $stmt->bind_param($types, ...$params); }
 $stmt->execute();
 $res = $stmt->get_result();
-while($t = $res->fetch_assoc()): ?>
-  <a class="card" href="/team.php?id=<?php echo (int)$t['id']; ?>">
-    <img src="<?php echo $t['logo']? '/admin/uploads/'.sanitize($t['logo']):'https://via.placeholder.com/600x300?text=Team'; ?>" alt="logo" style="width:100%;height:160px;object-fit:cover">
+
+while($t = $res->fetch_assoc()): 
+  // Correct path for uploaded team logo
+  $teamLogo = !empty($t['logo']) 
+      ? 'admin/uploads/' . sanitize($t['logo']) 
+      : 'https://via.placeholder.com/600x300?text=Team+Logo';
+?>
+  <a class="card" href="team.php?id=<?php echo (int)$t['id']; ?>">
+    <img 
+      src="<?php echo $teamLogo; ?>" 
+      alt="<?php echo sanitize($t['name']); ?> Logo"
+      style="width:100%;height:160px;object-fit:cover;border-bottom:2px solid #eee"
+    >
     <div class="card-body">
       <h3><?php echo sanitize($t['name']); ?></h3>
       <div class="muted"><?php echo sanitize($t['gender'].' • '.$t['division'].' • '.$t['location']); ?></div>
@@ -41,5 +64,3 @@ while($t = $res->fetch_assoc()): ?>
 </div>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
-
-
