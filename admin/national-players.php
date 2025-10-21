@@ -54,6 +54,7 @@ $players = $mysqli->query("SELECT * FROM national_players WHERE team_id=$team_id
     <input type="file" name="photo" accept="image/*">
   </div>
   <button type="submit" class="btn">Add Player</button>
+  <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
 </form>
 
 <div class="card">
@@ -62,21 +63,43 @@ $players = $mysqli->query("SELECT * FROM national_players WHERE team_id=$team_id
       <tr><th>Photo</th><th>Name</th><th>Position</th><th>Jersey</th><th>Club</th><th>Actions</th></tr>
     </thead>
     <tbody>
-      <?php while($p = $players->fetch_assoc()): ?>
-      <tr>
-        <td>
-          <?php if ($p['photo']): ?>
-            <img src="uploads/<?php echo sanitize($p['photo']); ?>" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
+  <?php
+    $totalTeams = $res->num_rows;
+    $rank = 0; // counter to track team position
+  ?>
+  <?php while($row = $res->fetch_assoc()): ?>
+    <?php
+      $rank++;
+      $gp = max(1, (int)$row['games_played']);
+      $win_pct = round(((int)$row['wins'] / $gp) * 100, 2);
+      $gb = round((($leader_wins - (int)$row['wins']) + ((int)$row['losses'] - $leader_losses)) / 2, 2);
+
+      // Determine row highlight class
+      $rowClass = '';
+      if($rank <= 3) {
+        $rowClass = 'top-team'; // top 3
+      } elseif($rank > $totalTeams - 3) {
+        $rowClass = 'bottom-team'; // bottom 3
+      }
+    ?>
+    <tr class="<?= $rowClass ?>">
+      <td>
+        <a href="team.php?id=<?= $row['team_id'] ?>" style="display:flex;align-items:center;gap:8px">
+          <?php if($row['logo']): ?>
+            <img src="admin/uploads/<?= sanitize($row['logo']) ?>" style="width:28px;height:28px;border-radius:6px;object-fit:cover">
           <?php endif; ?>
-        </td>
-        <td><?php echo sanitize($p['name']); ?></td>
-        <td><?php echo sanitize($p['position']); ?></td>
-        <td><?php echo sanitize($p['jersey_number']); ?></td>
-        <td><?php echo sanitize($p['club']); ?></td>
-        <td><a href="delete.php?table=national_players&id=<?php echo $p['id']; ?>&team_id=<?php echo $team_id; ?>" onclick="return confirm('Delete player?')">Delete</a></td>
-      </tr>
-      <?php endwhile; ?>
-    </tbody>
+          <?= sanitize($row['name']) ?>
+        </a>
+      </td>
+      <td><?= (int)$row['games_played'] ?></td>
+      <td><?= (int)$row['wins'] ?></td>
+      <td><?= (int)$row['losses'] ?></td>
+      <td><?= (int)$row['points'] ?></td>
+      <td><?= number_format($win_pct, 2) ?>%</td>
+      <td><?= number_format($gb, 2) ?></td>
+    </tr>
+  <?php endwhile; ?>
+</tbody>
   </table>
 </div>
 

@@ -15,6 +15,7 @@ $res = $mysqli->query("SELECT id,name,gender,division,location,logo FROM teams O
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Teams</h2>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
     <a class="btn" href="team-form.php">Add Team</a>
   </div>
   <div class="card">

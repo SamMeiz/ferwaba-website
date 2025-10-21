@@ -11,6 +11,7 @@ $result = $mysqli->query("SELECT * FROM national_teams ORDER BY created_at DESC"
 <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
 </head>
   <h2>National Teams</h2>
+  <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
   <a class="btn" href="national-team-form.php">+ Add New Team</a>
 </section>
 

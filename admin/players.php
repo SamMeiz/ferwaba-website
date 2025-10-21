@@ -15,6 +15,7 @@ $players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Players</h2>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
     <a class="btn" href="player-form.php">Add Player</a>
   </div>
   <div class="card">

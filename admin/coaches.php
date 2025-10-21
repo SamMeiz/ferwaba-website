@@ -15,6 +15,7 @@ $coaches = $mysqli->query("SELECT c.id,c.name,c.role,c.nationality,c.photo,t.nam
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Coaches</h2>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
     <a class="btn" href="coach-form.php">Add Coach</a>
   </div>
   <div class="card">

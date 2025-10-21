@@ -16,6 +16,7 @@ $imgs = $mysqli->query("SELECT g.id,g.image,g.caption,t.name AS team_name FROM g
   <div class="section-title">
     <h2>Gallery</h2>
     <a class="btn" href="<?php echo asset_url('gallery-form.php'); ?>">Upload Photo</a>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
   </div>
   <div class="grid col-3">
     <?php while($g=$imgs->fetch_assoc()): ?>

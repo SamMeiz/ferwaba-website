@@ -16,6 +16,7 @@ $rows = $mysqli->query("SELECT p.*, th.name AS home_name, ta.name AS away_name, 
   <div class=\"section-title\">
     <h2>Playoffs</h2>
     <a class=\"btn\" href=\"playoff-form.php\">Add Matchup</a>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
   </div>
   <div class=\"card\">
     <table>

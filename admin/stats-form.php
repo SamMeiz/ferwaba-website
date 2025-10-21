@@ -78,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <h2><?php echo $editing ? '✏️ Edit Player Stats' : '➕ Add Player Stats'; ?></h2>
   <p class="muted">Manage detailed game performance statistics for each player.</p>
 </section>
-
 <div class="card" style="max-width:900px;margin:auto;">
   <div class="card-body">
     <form method="post" class="grid col-2" style="gap:16px;">

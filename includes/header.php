@@ -24,10 +24,8 @@
                     <li><a href="<?php echo asset_url('index.php'); ?>">Home</a></li>
                     <li class="has-sub">
                         <a href="<?php echo asset_url('standings.php'); ?>">Standings</a>
-                        <ul class="sub">
-                            <li><a href="<?php echo asset_url('standings.php?division=Division+1'); ?>">Division 1</a></li>
-                            <li><a href="<?php echo asset_url('standings.php?division=Division+2'); ?>">Division 2</a></li>
-                        </ul>
+                        
+                       
                     </li>
                     <li class="has-sub">
                         <a href="<?php echo asset_url('teams.php'); ?>">Teams</a>

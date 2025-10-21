@@ -16,6 +16,7 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
   <div class="section-title">
     <h2>Games</h2>
     <a class="btn" href="game-form.php">Add Game</a>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
   </div>
   <div class="card">
     <table>

@@ -18,7 +18,7 @@ if (!$team) { redirect('teams.php'); }
 
 // Roster
 $players = $mysqli->query("
-  SELECT id, name, position, jersey_number, height, nationality, photo 
+  SELECT id AS player_id, name, position, jersey_number, height, nationality, photo 
   FROM players 
   WHERE team_id = $team_id 
   ORDER BY jersey_number ASC
@@ -40,9 +40,9 @@ $gallery = $mysqli->query("
   ORDER BY uploaded_at DESC LIMIT 12
 ");
 
-// Player stats (auto calculated)
+// Player stats
 $stats = $mysqli->query("
-  SELECT ps.*, p.name 
+  SELECT ps.*, p.name, p.id AS player_id
   FROM player_stats ps
   JOIN players p ON ps.player_id = p.id
   WHERE p.team_id = $team_id
@@ -58,6 +58,27 @@ $games = $mysqli->query("
   WHERE g.home_team_id = $team_id OR g.away_team_id = $team_id
   ORDER BY g.game_date DESC LIMIT 10
 ");
+$fixtures_results = $mysqli->query("
+  (SELECT g.*, th.name AS home_name, ta.name AS away_name
+   FROM games g
+   JOIN teams th ON th.id = g.home_team_id
+   JOIN teams ta ON ta.id = g.away_team_id
+   WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
+     AND g.status IN ('Finished', 'Completed')
+   ORDER BY g.game_date DESC
+   LIMIT 3)
+  UNION ALL
+  (SELECT g.*, th.name AS home_name, ta.name AS away_name
+   FROM games g
+   JOIN teams th ON th.id = g.home_team_id
+   JOIN teams ta ON ta.id = g.away_team_id
+   WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
+     AND g.status IN ('Scheduled', 'Pending')
+   ORDER BY g.game_date ASC
+   LIMIT 2)
+");
+
+
 ?>
 
 <!-- TEAM HEADER -->
@@ -92,12 +113,23 @@ $games = $mysqli->query("
         </thead>
         <tbody>
           <?php while($p = $players->fetch_assoc()): 
-            $photo = !empty($p['photo']) ? 'admin/uploads/'.sanitize($p['photo']) : 'https://via.placeholder.com/80x80?text=Player';
+            $photo = !empty($p['photo']) 
+              ? 'admin/uploads/' . sanitize($p['photo']) 
+              : 'https://via.placeholder.com/80x80?text=Player';
           ?>
           <tr>
-            <td><img src="<?php echo $photo; ?>" alt="Player Photo" style="width:60px;height:60px;object-fit:cover;border-radius:50%;"></td>
+            <td>
+              <img src="<?php echo $photo; ?>" 
+                   alt="Player Photo" 
+                   style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
+            </td>
             <td><?php echo (int)$p['jersey_number']; ?></td>
-            <td><?php echo sanitize($p['name']); ?></td>
+            <td>
+              <a href="player-card.php?id=<?php echo (int)$p['player_id']; ?>" 
+                 style="text-decoration:none;color:#007bff;font-weight:500;">
+                <?php echo sanitize($p['name']); ?>
+              </a>
+            </td>
             <td><?php echo sanitize($p['position']); ?></td>
             <td><?php echo sanitize($p['height']); ?></td>
             <td><?php echo sanitize($p['nationality']); ?></td>
@@ -122,10 +154,16 @@ $games = $mysqli->query("
         </thead>
         <tbody>
           <?php while($c = $coaches->fetch_assoc()): 
-            $cphoto = !empty($c['photo']) ? 'admin/uploads/'.sanitize($c['photo']) : 'https://via.placeholder.com/80x80?text=Coach';
+            $cphoto = !empty($c['photo']) 
+              ? 'admin/uploads/' . sanitize($c['photo']) 
+              : 'https://via.placeholder.com/80x80?text=Coach';
           ?>
           <tr>
-            <td><img src="<?php echo $cphoto; ?>" alt="Coach Photo" style="width:60px;height:60px;object-fit:cover;border-radius:50%;"></td>
+            <td>
+              <img src="<?php echo $cphoto; ?>" 
+                   alt="Coach Photo" 
+                   style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
+            </td>
             <td><?php echo sanitize($c['name']); ?></td>
             <td><?php echo sanitize($c['role']); ?></td>
             <td><?php echo sanitize($c['nationality']); ?></td>
@@ -139,10 +177,10 @@ $games = $mysqli->query("
 
 <br>
 
- <!-- PLAYER STATS -->
+<!-- PLAYER STATS -->
 <div class="card">
   <div class="card-body">
-    <h3>Player Statistics</h3>
+    <h3>Players Statistics</h3>
     <table>
       <thead>
         <tr>
@@ -159,7 +197,7 @@ $games = $mysqli->query("
       </thead>
       <tbody>
         <?php while($s = $stats->fetch_assoc()): 
-          $gp = max(1, $s['games_played']); // avoid divide by zero
+          $gp = max(1, $s['games_played']); 
           $ppg = round($s['total_points'] / $gp, 1);
           $rpg = round($s['total_rebounds'] / $gp, 1);
           $apg = round($s['total_assists'] / $gp, 1);
@@ -170,9 +208,9 @@ $games = $mysqli->query("
           $ftp = $s['ft_attempted'] > 0 ? round(($s['ft_made'] / $s['ft_attempted']) * 100, 1) : 0;
         ?>
         <tr>
-          <!-- Player name links to their profile page -->
           <td>
-            <a href="player.php?id=<?php echo (int)$s['player_id']; ?>">
+            <a href="player-card.php?id=<?php echo (int)$s['player_id']; ?>" 
+               style="text-decoration:none;color:#007bff;font-weight:500;">
               <?php echo sanitize($s['name']); ?>
             </a>
           </td>
@@ -201,37 +239,71 @@ $games = $mysqli->query("
           <th>Date</th>
           <th>Match</th>
           <th>Status</th>
-          <th>Score</th>
         </tr>
       </thead>
       <tbody>
-        <?php while($gm = $games->fetch_assoc()): ?>
-        <tr>
-          <td><?php echo sanitize($gm['game_date']); ?></td>
-          <td><?php echo sanitize($gm['home_name'].' vs '.$gm['away_name']); ?></td>
-          <td><?php echo sanitize($gm['status']); ?></td>
-          <td><?php echo (int)$gm['home_score'].' - '.(int)$gm['away_score']; ?></td>
-        </tr>
-        <?php endwhile; ?>
+        <?php 
+        // Combined recent 3 + upcoming 2 games
+        $fixtures_results = $mysqli->query("
+          (SELECT g.*, th.name AS home_name, ta.name AS away_name
+           FROM games g
+           JOIN teams th ON th.id = g.home_team_id
+           JOIN teams ta ON ta.id = g.away_team_id
+           WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
+             AND g.status IN ('Finished', 'Completed')
+           ORDER BY g.game_date DESC
+           LIMIT 3)
+          UNION ALL
+          (SELECT g.*, th.name AS home_name, ta.name AS away_name
+           FROM games g
+           JOIN teams th ON th.id = g.home_team_id
+           JOIN teams ta ON ta.id = g.away_team_id
+           WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
+             AND g.status IN ('Scheduled', 'Pending')
+           ORDER BY g.game_date ASC
+           LIMIT 2)
+        ");
+        ?>
+
+        <?php if ($fixtures_results && $fixtures_results->num_rows > 0): ?>
+          <?php while($gm = $fixtures_results->fetch_assoc()): ?>
+          <tr>
+            <td><?php echo sanitize($gm['game_date']); ?></td>
+            <td>
+              <?php 
+                // If scores exist, show Home Score - Away Score; otherwise just show "-"
+                $home_score = isset($gm['home_score']) ? (int)$gm['home_score'] : '-';
+                $away_score = isset($gm['away_score']) ? (int)$gm['away_score'] : '-';
+                echo sanitize($gm['home_name']) . " $home_score - $away_score " . sanitize($gm['away_name']);
+              ?>
+            </td>
+            <td><?php echo sanitize($gm['status']); ?></td>
+          </tr>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <tr><td colspan="3" style="text-align:center;">No fixtures or results available.</td></tr>
+        <?php endif; ?>
       </tbody>
     </table>
   </div>
 </section>
+
+
 <!-- GALLERY -->
 <section>
-    <div class="section-title"><h3>Gallery</h3></div>
-    <div class="grid col-3">
-      <?php while($g = $gallery->fetch_assoc()): 
-        $img = 'admin/uploads/'.sanitize($g['image']);
-      ?>
-      <figure class="card" style="cursor:pointer;" onclick="openLightbox('<?php echo $img; ?>')">
-        <img src="<?php echo $img; ?>" alt="Gallery Photo" style="width:100%;height:160px;object-fit:cover;border-bottom:1px solid #ddd;">
-        <figcaption class="card-body muted"><?php echo sanitize($g['caption']); ?></figcaption>
-      </figure>
-      <?php endwhile; ?>
-    </div>
-  </section>
-</div>
+  <div class="section-title"><h3>Gallery</h3></div>
+  <div class="grid col-3">
+    <?php while($g = $gallery->fetch_assoc()): 
+      $img = 'admin/uploads/' . sanitize($g['image']);
+    ?>
+    <figure class="card" style="cursor:pointer;" onclick="openLightbox('<?php echo $img; ?>')">
+      <img src="<?php echo $img; ?>" alt="Gallery Photo" 
+           style="width:100%;height:160px;object-fit:cover;border-bottom:1px solid #ddd;">
+      <figcaption class="card-body muted"><?php echo sanitize($g['caption']); ?></figcaption>
+    </figure>
+    <?php endwhile; ?>
+  </div>
+</section>
 
 <!-- LIGHTBOX JS -->
 <div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;">
@@ -247,6 +319,5 @@ document.getElementById('lightbox').onclick = () => {
   document.getElementById('lightbox').style.display='none';
 };
 </script>
-
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

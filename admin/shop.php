@@ -15,6 +15,7 @@ $rows = $mysqli->query("SELECT id,name,category,price,image,is_active,created_at
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Shop</h2>
+    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
     <a class="btn" href="shop-form.php">Add Item</a>
   </div>
   <div class="card">

@@ -1,4 +1,5 @@
-<?php require_once __DIR__ . '/../includes/config.php';
+<?php 
+require_once __DIR__ . '/../includes/config.php';
 require_login();
 
 $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -8,69 +9,94 @@ $name = $gender = $division = $location = $logo = $description = '';
 $error = '';
 
 if ($editing) {
-  $stmt = $mysqli->prepare("SELECT name,gender,division,location,logo,description FROM teams WHERE id=? LIMIT 1");
-  $stmt->bind_param('i',$id);
-  $stmt->execute();
-  $res = $stmt->get_result();
-  if ($row = $res->fetch_assoc()) {
-    $name = $row['name'];
-    $gender = $row['gender'];
-    $division = $row['division'];
-    $location = $row['location'];
-    $logo = $row['logo'];
-    $description = $row['description'];
-  } else {
-    die('Team not found');
-  }
+    $stmt = $mysqli->prepare("SELECT name,gender,division,location,logo,description FROM teams WHERE id=? LIMIT 1");
+    $stmt->bind_param('i',$id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($row = $res->fetch_assoc()) {
+        $name = $row['name'];
+        $gender = $row['gender'];
+        $division = $row['division'];
+        $location = $row['location'];
+        $logo = $row['logo'];
+        $description = $row['description'];
+    } else {
+        die('Team not found');
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = trim($_POST['name'] ?? '');
-  $gender = ($_POST['gender'] ?? '') === 'Women' ? 'Women' : 'Men';
-  $division = ($_POST['division'] ?? '') === 'Division 2' ? 'Division 2' : 'Division 1';
-  $location = trim($_POST['location'] ?? '');
-  $description = trim($_POST['description'] ?? '');
+    $name = trim($_POST['name'] ?? '');
+    $gender = ($_POST['gender'] ?? '') === 'Women' ? 'Women' : 'Men';
+    $division = ($_POST['division'] ?? '') === 'Division 2' ? 'Division 2' : 'Division 1';
+    $location = trim($_POST['location'] ?? '');
+    $description = trim($_POST['description'] ?? '');
 
-  if (!$name) { $error = 'Name is required.'; }
+    if (!$name) { $error = 'Name is required.'; }
 
-  // Handle logo upload
-  $uploadFileName = $logo; // keep existing if not uploading new
-  if (!$error && isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
-    if ($_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-      $ext = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
-      $safeName = 'team_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
-      $destDir = __DIR__ . '/uploads/';
-      if (!is_dir($destDir)) { mkdir($destDir, 0755, true); }
-      if (move_uploaded_file($_FILES['logo']['tmp_name'], $destDir . $safeName)) {
-        $uploadFileName = $safeName;
-      } else {
-        $error = 'Failed to upload logo.';
-      }
-    } else {
-      $error = 'Upload error.';
+    // Handle logo upload
+    $uploadFileName = $logo; // keep existing if not uploading new
+    if (!$error && isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+            $safeName = 'team_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
+            $destDir = __DIR__ . '/uploads/';
+            if (!is_dir($destDir)) { mkdir($destDir, 0755, true); }
+            if (move_uploaded_file($_FILES['logo']['tmp_name'], $destDir . $safeName)) {
+                $uploadFileName = $safeName;
+            } else {
+                $error = 'Failed to upload logo.';
+            }
+        } else {
+            $error = 'Upload error.';
+        }
     }
-  }
 
-  if (!$error) {
-    if ($editing) {
-      $stmt = $mysqli->prepare("UPDATE teams SET name=?, gender=?, division=?, location=?, logo=?, description=? WHERE id=? LIMIT 1");
-      $stmt->bind_param('ssssssi', $name, $gender, $division, $location, $uploadFileName, $description, $id);
-      if ($stmt->execute()) { redirect('teams.php'); } else { $error = 'Failed to save team.'; }
-    } else {
-      $stmt = $mysqli->prepare("INSERT INTO teams(name,gender,division,location,logo,description) VALUES(?,?,?,?,?,?)");
-      $stmt->bind_param('ssssss', $name, $gender, $division, $location, $uploadFileName, $description);
-      if ($stmt->execute()) { redirect('teams.php'); } else { $error = 'Failed to create team.'; }
+    if (!$error) {
+        if ($editing) {
+            // Update existing team
+            $stmt = $mysqli->prepare("UPDATE teams SET name=?, gender=?, division=?, location=?, logo=?, description=? WHERE id=? LIMIT 1");
+            $stmt->bind_param('ssssssi', $name, $gender, $division, $location, $uploadFileName, $description, $id);
+            if ($stmt->execute()) { 
+                redirect('teams.php'); 
+            } else { 
+                $error = 'Failed to save team.'; 
+            }
+        } else {
+            // Insert new team
+            $stmt = $mysqli->prepare("INSERT INTO teams(name,gender,division,location,logo,description) VALUES(?,?,?,?,?,?)");
+            $stmt->bind_param('ssssss', $name, $gender, $division, $location, $uploadFileName, $description);
+            if ($stmt->execute()) { 
+                // Get the new team ID
+                $new_team_id = $stmt->insert_id;
+
+                // Auto-insert into standings with default values
+                $mysqli->query("
+                    INSERT INTO standings(
+                        team_id, division, gender, games_played, wins, losses, points, win_percentage, games_behind
+                    ) VALUES (
+                        {$new_team_id},
+                        '{$mysqli->real_escape_string($division)}',
+                        '{$mysqli->real_escape_string($gender)}',
+                        0, 0, 0, 0, 0, 0
+                    )
+                ");
+
+                redirect('teams.php'); 
+            } else { 
+                $error = 'Failed to create team.'; 
+            }
+        }
     }
-  }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $editing? 'Edit':'Add'; ?> Team - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?php echo $editing? 'Edit':'Add'; ?> Team - FERWABA</title>
+<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
 </head>
 <body>
 <div class="container" style="max-width:720px;margin:24px auto">
@@ -122,5 +148,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 </body>
 </html>
-
-
