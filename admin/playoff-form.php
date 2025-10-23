@@ -1,4 +1,5 @@
-<?php require_once __DIR__ . '/../includes/config.php';
+<?php 
+require_once __DIR__ . '/../includes/config.php';
 require_login();
 
 $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -65,23 +66,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"UTF-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-  <title><?php echo $editing? 'Edit':'Add'; ?> Playoff - FERWABA</title>
-  <link rel=\"stylesheet\" href=\"<?php echo asset_url('../css/style.css'); ?>\">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?php echo $editing? 'Edit':'Add'; ?> Playoff - FERWABA</title>
+<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<style>
+  body { background:#f9fafb; font-family:Arial,sans-serif; }
+  .container { max-width:840px; margin:24px auto; }
+  .card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); padding:16px; }
+  h2 { margin-bottom:16px; font-size:1.6rem; }
+  .grid { display:grid; gap:12px; }
+  .col-2 { grid-template-columns:1fr 1fr; }
+  .col-3 { grid-template-columns:1fr 1fr 1fr; }
+  label { display:block; margin-bottom:4px; font-weight:600; }
+  input, select, textarea { width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px; }
+  textarea { resize:vertical; }
+  .btn { padding:8px 16px; border-radius:8px; background:#2563eb; color:#fff; text-decoration:none; border:none; cursor:pointer; }
+  .btn:hover { opacity:0.85; }
+</style>
 </head>
 <body>
-<div class=\"container\" style=\"max-width:840px;margin:24px auto\"> 
-  <div class=\"card\"><div class=\"card-body\">
-    <h2 style=\"margin:0 0 12px\"><?php echo $editing? 'Edit':'Add'; ?> Playoff</h2>
-    <?php if($error): ?><div style=\"color:#b91c1c;margin-bottom:8px\"><?php echo sanitize($error); ?></div><?php endif; ?>
-    <form method=\"post\">
-      <div class=\"grid col-3\" style=\"margin-bottom:8px\">
+<div class="container">
+  <div class="card">
+    <h2><?php echo $editing? 'Edit':'Add'; ?> Playoff</h2>
+    <?php if($error): ?><div style="color:#b91c1c;margin-bottom:12px"><?php echo sanitize($error); ?></div><?php endif; ?>
+    <form method="post">
+      <div class="grid col-3" style="margin-bottom:12px;">
         <div>
           <label>Stage</label>
-          <select name=\"stage\">
+          <select name="stage">
             <option <?php echo $stage==='Quarterfinal'?'selected':''; ?>>Quarterfinal</option>
             <option <?php echo $stage==='Semifinal'?'selected':''; ?>>Semifinal</option>
             <option <?php echo $stage==='Final'?'selected':''; ?>>Final</option>
@@ -90,67 +105,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div>
           <label>Start Date</label>
-          <input type=\"date\" name=\"start_date\" value=\"<?php echo sanitize($start_date); ?>\">
+          <input type="date" name="start_date" value="<?php echo sanitize($start_date); ?>">
         </div>
         <div>
           <label>End Date</label>
-          <input type=\"date\" name=\"end_date\" value=\"<?php echo sanitize($end_date); ?>\">
+          <input type="date" name="end_date" value="<?php echo sanitize($end_date); ?>">
         </div>
       </div>
-      <div class=\"grid col-2\" style=\"margin-bottom:8px\">
+
+      <div class="grid col-2" style="margin-bottom:12px;">
         <div>
           <label>Home Team</label>
-          <select name=\"home_team_id\" required>
+          <select name="home_team_id" required>
             <?php $teams->data_seek(0); while($t=$teams->fetch_assoc()): ?>
-            <option value=\"<?php echo (int)$t['id']; ?>\" <?php echo ($home_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
+            <option value="<?php echo (int)$t['id']; ?>" <?php echo ($home_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
             <?php endwhile; ?>
           </select>
         </div>
         <div>
           <label>Away Team</label>
-          <select name=\"away_team_id\" required>
+          <select name="away_team_id" required>
             <?php $teams->data_seek(0); while($t=$teams->fetch_assoc()): ?>
-            <option value=\"<?php echo (int)$t['id']; ?>\" <?php echo ($away_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
+            <option value="<?php echo (int)$t['id']; ?>" <?php echo ($away_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
             <?php endwhile; ?>
           </select>
         </div>
       </div>
-      <div class=\"grid col-3\" style=\"margin-bottom:8px\">
+
+      <div class="grid col-3" style="margin-bottom:12px;">
         <div>
           <label>Home Score</label>
-          <input type=\"number\" name=\"home_score\" value=\"<?php echo (int)$home_score; ?>\" min=\"0\">
+          <input type="number" name="home_score" value="<?php echo (int)$home_score; ?>" min="0">
         </div>
         <div>
           <label>Away Score</label>
-          <input type=\"number\" name=\"away_score\" value=\"<?php echo (int)$away_score; ?>\" min=\"0\">
+          <input type="number" name="away_score" value="<?php echo (int)$away_score; ?>" min="0">
         </div>
         <div>
           <label>Status</label>
-          <select name=\"status\">
+          <select name="status">
             <option <?php echo $status==='Pending'?'selected':''; ?>>Pending</option>
             <option <?php echo $status==='Completed'?'selected':''; ?>>Completed</option>
           </select>
         </div>
       </div>
-      <div class=\"grid col-2\" style=\"margin-bottom:12px\">
+
+      <div class="grid col-2" style="margin-bottom:16px;">
         <div>
           <label>Winner</label>
-          <select name=\"winner_team_id\">
-            <option value=\"\">TBD</option>
+          <select name="winner_team_id">
+            <option value="">TBD</option>
             <?php $teams->data_seek(0); while($t=$teams->fetch_assoc()): ?>
-            <option value=\"<?php echo (int)$t['id']; ?>\" <?php echo ($winner_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
+            <option value="<?php echo (int)$t['id']; ?>" <?php echo ($winner_team_id==(int)$t['id'])?'selected':''; ?>><?php echo sanitize($t['name']); ?></option>
             <?php endwhile; ?>
           </select>
         </div>
       </div>
+
       <div>
-        <button class=\"btn\" type=\"submit\">Save</button>
-        <a class=\"btn\" href=\"/admin/playoffs.php\" style=\"margin-left:8px\">Cancel</a>
+        <button class="btn" type="submit">Save</button>
+        <a class="btn" href="/admin/playoffs.php" style="margin-left:8px;">Cancel</a>
       </div>
     </form>
-  </div></div>
+  </div>
 </div>
 </body>
 </html>
-
-
