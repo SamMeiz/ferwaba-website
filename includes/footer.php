@@ -1,21 +1,55 @@
-    </main>
-    <footer class="site-footer">
-        <div class="container footer-inner">
-            <div class="footer-links">
-                <a href="/about.php">About FERWABA</a>
-                <a href="/about.php#contact">Contact</a>
-                <a href="/about.php#sponsors">Sponsors</a>
-            </div>
-            <div class="social">
-                <a href="#" aria-label="Facebook">Facebook</a>
-                <a href="#" aria-label="Twitter/X">Twitter/X</a>
-                <a href="#" aria-label="Instagram">Instagram</a>
-                <a href="#" aria-label="YouTube">YouTube</a>
-            </div>
-            <div class="copyright">&copy; <?php echo date('Y'); ?> FERWABA. All rights reserved.</div>
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <!-- Left: FERWABA Logo + Partner logos -->
+      <div class="footer-brand">
+        <img src="/ferwaba1/img/ferwaba-logo.png" alt="FERWABA Logo" class="footer-logo">
+        <div class="footer-partners">
+          <img src="/ferwaba1/img/partner1.png" alt="Partner 1">
+          <img src="/ferwaba1/img/partner2.png" alt="Partner 2">
+          <img src="/ferwaba1/img/partner3.png" alt="Partner 3">
         </div>
-    </footer>
-    </body>
-    </html>
+      </div>
 
+      <!-- Middle: Footer navigation -->
+      <div class="footer-links">
+        <div>
+          <a href="/schedule.php">Schedule</a>
+          <a href="/teams.php">Teams</a>
+          <a href="/news.php">News</a>
+          <a href="/videos.php">Videos</a>
+          <a href="/games.php">Games</a>
+        </div>
+        <div>
+          <a href="/about.php">About FERWABA</a>
+          <a href="/programs.php">Programs</a>
+          <a href="/standings.php">Standings</a>
+          <a href="/stats.php">Stats</a>
+          <a href="/events.php">Events</a>
+          <a href="/tickets.php">Tickets</a>
+        </div>
+      </div>
 
+      <!-- Right: Social icons -->
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook" class="icon">📘</a>
+        <a href="#" aria-label="X / Twitter" class="icon">✖️</a>
+        <a href="#" aria-label="Instagram" class="icon">📸</a>
+        <a href="#" aria-label="YouTube" class="icon">▶️</a>
+        <a href="#" aria-label="WhatsApp" class="icon">💬</a>
+      </div>
+    </div>
+
+    <hr class="footer-line">
+
+    <div class="footer-bottom">
+      <p>Copyright © <?php echo date('Y'); ?> FERWABA. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="/privacy.php">Privacy Policy</a> |
+        <a href="/accessibility.php">Accessibility</a> |
+        <a href="/terms.php">Terms of Use</a> |
+        <a href="/adspecs.php">Ad Specs</a>
+      </div>
+    </div>
+  </div>
+</footer>

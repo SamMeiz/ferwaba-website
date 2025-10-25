@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php require_once __DIR__ . '/includes/header.php'; ?><br><br>
 
 <?php
 $teamParam = $_GET['team'] ?? 'Senior Men';

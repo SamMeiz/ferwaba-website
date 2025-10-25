@@ -1,15 +1,32 @@
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
 <section class="hero">
-  <h1>Rwanda Basketball League(RBL)</h1>
-  <p>Official Rwanda Basketball League hub. Fixtures, results, standings, news and more.</p>
-  <h3>Redefining African basketball with the fire, rhythm, and spirit of a continent.</h2>
-  <div style="margin-top:14px">
-    <a class="btn" href="/games.php">View Schedule</a>
-    <a class="btn" href="/standings.php" style="margin-left:8px">Standings</a>
+  <div class="hero-backgrounds">
+    <div class="hero-bg active" style="background-image:url('img/banner1.png');" data-title="Rwanda Basketball League" data-sub="Official RBL hub. Fixtures, results, standings, news."></div>
+    <div class="hero-bg" style="background-image:url('img/banner2.png');" data-title="Redefining African Basketball" data-sub="Experience the fire, rhythm, and spirit of a continent."></div>
+    <div class="hero-bg" style="background-image:url('img/banner3.png');" data-title="Exciting Matchups" data-sub="Stay updated with live scores, schedules, and results."></div>
+    <div class="hero-bg" style="background-image:url('img/banner4.png');" data-title="Future of Rwandan Basketball" data-sub="New talents. New era. Same passion."></div>
+    <div class="hero-bg" style="background-image:url('img/banner5.png');" data-title="Women's League Rising" data-sub="Empowering women through basketball."></div>
+    <div class="hero-bg" style="background-image:url('img/banner6.png');" data-title="National Teams" data-sub="Proudly representing Rwanda."></div>
+    <div class="hero-bg" style="background-image:url('img/banner7.png');" data-title="FERWABA Development" data-sub="Building the next generation of players."></div>
+    <div class="hero-bg" style="background-image:url('img/banner8.png');" data-title="Spirit of the Game" data-sub="Unity, Passion, and Excellence."></div>
   </div>
-  <p class="muted" style="margin-top:8px">Timezone: Africa/Kigali</p>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content active">
+    <h1>Rwanda Basketball League</h1>
+    <p>Official RBL hub. Fixtures, results, standings, news.</p>
+    <h3>Redefining African basketball with the fire, rhythm, and spirit of a continent.</h3>
+    <div style="margin-top:14px">
+      <a class="btn" href="games.php">View Schedule</a>
+      <a class="btn" href="standings.php" style="margin-left:8px">Standings</a>
+    </div>
+  </div>
 </section>
+
+
+
 <!-- Latest News -->
 <section>
   <div class="section-title">
@@ -166,6 +183,30 @@
     <?php endforeach; ?>
   </div>
 </section>
+
+<script>
+// Hero Slideshow
+const heroBGs = document.querySelectorAll('.hero-bg');
+let current = 0;
+
+function showSlide(index){
+  heroBGs.forEach((bg,i)=>bg.classList.remove('active'));
+  const bg = heroBGs[index];
+  const title = bg.getAttribute('data-title');
+  const sub = bg.getAttribute('data-sub');
+  const heroContent = document.querySelector('.hero-content');
+  heroContent.querySelector('h1').textContent = title;
+  heroContent.querySelector('p').textContent = sub;
+  heroBGs[index].classList.add('active');
+  heroContent.classList.add('active');
+}
+
+setInterval(()=>{
+  current = (current+1)%heroBGs.length;
+  showSlide(current);
+},5000);
+</script>
+
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
 

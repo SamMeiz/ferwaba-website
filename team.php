@@ -1,5 +1,5 @@
-<?php 
-require_once __DIR__ . '/includes/header.php';
+<?php require_once __DIR__ . '/includes/header.php'; ?><br><br><br><br>
+<?php
 require_once __DIR__ . '/includes/config.php';
 
 if (!isset($_GET['id']) || !ctype_digit($_GET['id'])) { 

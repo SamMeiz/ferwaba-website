@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php require_once __DIR__ . '/includes/header.php'; ?><br><br>
 
 <section class="section-title">
   <h2>Games</h2>

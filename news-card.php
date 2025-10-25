@@ -1,6 +1,7 @@
+<?php require_once __DIR__ . '/includes/header.php'; ?><br><br><br><br>
 <?php 
 require_once __DIR__ . '/includes/config.php'; 
-require_once __DIR__ . '/includes/header.php'; 
+
 
 // Get the news ID from URL
 $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int)$_GET['id'] : 0;
