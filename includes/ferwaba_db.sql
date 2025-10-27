@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 20, 2025 at 10:19 PM
+-- Generation Time: Oct 27, 2025 at 10:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,6 +72,13 @@ CREATE TABLE `gallery` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `gallery`
+--
+
+INSERT INTO `gallery` (`id`, `team_id`, `image`, `caption`, `uploaded_at`) VALUES
+(1, 5, 'gallery_1761148793_4c2ccbeb.png', '', '2025-10-22 15:59:53');
+
 -- --------------------------------------------------------
 
 --
@@ -91,6 +98,17 @@ CREATE TABLE `games` (
   `status` enum('Scheduled','Completed') DEFAULT 'Scheduled',
   `highlight_url` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `games`
+--
+
+INSERT INTO `games` (`id`, `home_team_id`, `away_team_id`, `game_date`, `location`, `home_score`, `away_score`, `division`, `gender`, `status`, `highlight_url`) VALUES
+(6, 6, 5, '2025-10-20', 'nakka', 89, 78, 'Division 1', 'Men', 'Completed', 'hb'),
+(7, 5, 6, '2025-10-20', 'BK Arena', 123, 89, 'Division 1', 'Men', 'Completed', 'hb'),
+(8, 8, 7, '2025-10-21', 'kigali-Rwanda', 128, 98, 'Division 1', 'Men', 'Completed', ''),
+(9, 5, 8, '2025-10-21', 'BK Arena', 0, 0, 'Division 1', 'Men', 'Scheduled', ''),
+(10, 6, 7, '2025-10-30', 'nakka', 0, 0, 'Division 1', 'Men', 'Scheduled', '');
 
 -- --------------------------------------------------------
 
@@ -168,6 +186,13 @@ CREATE TABLE `news` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `news`
+--
+
+INSERT INTO `news` (`id`, `title`, `content`, `category`, `image`, `video_url`, `created_at`) VALUES
+(1, 'RBL OPENING DAY', 'ajddflvwkfgkwkufguiwghuohou;ghoiwow', 'Latest', 'news_1761077891_2405f863.png', '', '2025-10-21 20:18:11');
+
 -- --------------------------------------------------------
 
 --
@@ -190,7 +215,8 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`id`, `team_id`, `name`, `position`, `height`, `nationality`, `jersey_number`, `photo`) VALUES
-(2, 5, 'Ntore habimana', 'PG', '6\'5', 'Rwandan', 12, 'player_1760629502_bbe8888a.png');
+(2, 5, 'Ntore habimana', 'PG', '6\'5', 'Rwandan', 12, 'player_1760629502_bbe8888a.png'),
+(3, 7, 'sisi rosine', 'SG', '5\'6', 'Rwandan', 3, 'player_1761143300_8585cddd.png');
 
 -- --------------------------------------------------------
 
@@ -243,6 +269,13 @@ CREATE TABLE `playoffs` (
   `status` enum('Pending','Completed') DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `playoffs`
+--
+
+INSERT INTO `playoffs` (`id`, `stage`, `start_date`, `end_date`, `home_team_id`, `away_team_id`, `home_score`, `away_score`, `winner_team_id`, `status`) VALUES
+(1, 'Quarterfinal', '2025-10-22', '2025-10-22', 5, 8, 0, 0, NULL, 'Pending');
+
 -- --------------------------------------------------------
 
 --
@@ -257,8 +290,18 @@ CREATE TABLE `shop_items` (
   `price` decimal(10,2) DEFAULT 0.00,
   `image` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `team_id` int(11) DEFAULT NULL,
+  `gender` enum('Men','Women','Unisex') DEFAULT 'Unisex'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `shop_items`
+--
+
+INSERT INTO `shop_items` (`id`, `name`, `description`, `category`, `price`, `image`, `is_active`, `created_at`, `team_id`, `gender`) VALUES
+(1, 'APR', 'Apr home kit', 'Jerseys', 15000.00, 'shop_1761590977_6075ec06.png', 1, '2025-10-27 18:19:58', 5, 'Men'),
+(2, 'APR away kit', '', 'Jerseys', 15000.00, 'shop_1761590963_fb46867e.png', 1, '2025-10-27 18:49:23', 5, 'Men');
 
 -- --------------------------------------------------------
 
@@ -284,7 +327,10 @@ CREATE TABLE `standings` (
 --
 
 INSERT INTO `standings` (`id`, `team_id`, `games_played`, `wins`, `losses`, `points`, `win_percentage`, `games_behind`, `division`, `gender`) VALUES
-(1, 5, 15, 10, 5, 25, NULL, NULL, 'Division 1', 'Men');
+(11, 5, 2, 1, 1, 3, NULL, NULL, 'Division 1', 'Men'),
+(12, 6, 2, 1, 1, 3, NULL, NULL, 'Division 1', 'Men'),
+(14, 7, 0, 0, 0, 0, NULL, NULL, 'Division 1', 'Women'),
+(15, 8, 1, 1, 0, 2, 0.00, 0.00, 'Division 1', 'Men');
 
 -- --------------------------------------------------------
 
@@ -307,7 +353,10 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`id`, `name`, `gender`, `division`, `location`, `logo`, `description`) VALUES
-(5, 'APR', 'Men', 'Division 1', 'Kigali-Rwanda', 'team_1760610317_d6bc7244.png', '');
+(5, 'APR', 'Men', 'Division 1', 'Kigali-Rwanda', 'team_1760610317_d6bc7244.png', ''),
+(6, 'REG', 'Men', 'Division 1', 'Kigali-Rwanda', 'team_1761052848_5a7dc83c.png', ''),
+(7, 'Patriots', 'Women', 'Division 1', 'kigali-Rwanda', 'team_1761055987_4a102eab.png', ''),
+(8, 'Espoir', 'Men', 'Division 1', 'kigali-Rwanda', 'team_1761068432_07f0f72a.png', '');
 
 --
 -- Indexes for dumped tables
@@ -429,13 +478,13 @@ ALTER TABLE `coaches`
 -- AUTO_INCREMENT for table `gallery`
 --
 ALTER TABLE `gallery`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `games`
 --
 ALTER TABLE `games`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `national_coaches`
@@ -459,13 +508,13 @@ ALTER TABLE `national_teams`
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `players`
 --
 ALTER TABLE `players`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `player_stats`
@@ -477,25 +526,25 @@ ALTER TABLE `player_stats`
 -- AUTO_INCREMENT for table `playoffs`
 --
 ALTER TABLE `playoffs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `shop_items`
 --
 ALTER TABLE `shop_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `standings`
 --
 ALTER TABLE `standings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables

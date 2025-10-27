@@ -58,10 +58,16 @@ body { overflow-x:hidden; }
 .card { border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; background:#fff; }
 .card .card-body { padding:12px 14px; }
 .card h3 { margin:0 0 6px; font-size:18px; }
-table { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; }
+
+table { width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden; display:block; overflow-x:auto; white-space:nowrap; }
 th, td { padding:10px 12px; border-bottom:1px solid #e5e7eb; }
 th { background:#f3f4f6; text-align:left; }
 tbody tr:hover { background:#fafafa; }
+
+@media(max-width:768px){
+  table { display:block; overflow-x:auto; white-space:nowrap; }
+}
+
 
 /* 🔖 Section Titles + Buttons */
 .section-title { display:flex; align-items:center; justify-content:space-between; margin:24px 0 12px; }
