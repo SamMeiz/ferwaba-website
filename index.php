@@ -23,36 +23,34 @@
       <a class="btn" href="standings.php" style="margin-left:8px">Standings</a>
     </div>
   </div>
-</section>
+</section> <br><br><br>
 
 
 
 <!-- Latest News -->
-<section>
-  <div class="section-title">
-    <h2>Latest News</h2>
-    <a class="btn" href="/news.php">View All</a>
-  </div>
-  <div class="grid col-3" id="latestNews">
+<div class="news-slider-wrapper">
+  <div class="news-slider">
     <?php
-    // Fetch latest 3 news articles
-    $res = $mysqli->query("SELECT id, title, image FROM news ORDER BY created_at DESC LIMIT 3");
-    if ($res) {
-      while ($row = $res->fetch_assoc()): ?>
-        <article class="card">
-          <?php if ($row['image']): ?>
-            <img src="<?php echo '/ferwaba1/admin/uploads/'.sanitize($row['image']); ?>" 
-                 alt="<?php echo sanitize($row['title']); ?>" 
-                 style="width:100%;height:160px;object-fit:cover">
-          <?php endif; ?>
-          <div class="card-body">
-            <h3><?php echo sanitize($row['title']); ?></h3>
-            <a class="btn" href="news.php?id=<?php echo (int)$row['id']; ?>">Read More</a>
-          </div>
-        </article>
-    <?php endwhile; } ?>
+    $res = $mysqli->query("SELECT id,title,image,content FROM news ORDER BY created_at DESC LIMIT 10");
+    if($res): while($row = $res->fetch_assoc()):
+    ?>
+      <div class="news-slide">
+        <?php if(!empty($row['image'])): ?>
+          <img src="<?php echo '/ferwaba1/admin/uploads/'.sanitize($row['image']); ?>" alt="<?php echo sanitize($row['title']); ?>">
+        <?php else: ?>
+          <div style="background:#ddd;width:100%;height:500px;"></div>
+        <?php endif; ?>
+        <div class="caption">
+          <h3><?php echo sanitize($row['title']); ?></h3>
+          <p><?php echo substr(strip_tags($row['content']),0,100).'...'; ?></p>
+          <a class="btn" href="news.php?id=<?php echo (int)$row['id']; ?>">Read More</a>
+        </div>
+      </div>
+    <?php endwhile; endif; ?>
   </div>
+</div>
 </section>
+
 
 <!-- Upcoming Games -->
 <section>
@@ -61,6 +59,7 @@
     <a class="btn" href="/games.php">All Games</a>
   </div>
   <div class="card">
+    <div class="table-wrapper">
     <table>
       <thead>
         <tr>
@@ -101,15 +100,16 @@
         <?php endwhile; } ?>
       </tbody>
     </table>
-  </div>
+  
+  </div></div>
 </section>
 
-<style>
+<!-- <style>
   .upcoming-highlight {
     background-color: rgba(34,197,94,0.15); /* light green highlight */
     font-weight: 600;
   }
-</style>
+</style> -->
 
 <!-- Top Standings -->
 <section>
@@ -117,16 +117,14 @@
     <h2>🏀 Top Standings</h2>
   </div>
 
-  <div class="grid col-2" style="gap:16px;"> <!-- 2-column grid -->
+  <div class="grid" style="gap:16px;"> <!-- single-column grid -->
     <?php
     $divisions = ["Division 1", "Division 2"];
     foreach ($divisions as $div):
-      // Determine selected gender for this division (default Men)
       $paramName = 'gender_' . str_replace(' ', '_', $div);
       $selectedGender = $_GET[$paramName] ?? 'Men';
       $genders = ["Men", "Women"];
 
-      // Fetch top 5 teams for this division and selected gender
       $stmt = $mysqli->prepare("
         SELECT s.*, t.name 
         FROM standings s 
@@ -147,7 +145,7 @@
           <a href="standings.php?division=<?php echo urlencode($div); ?>&gender=<?php echo urlencode($selectedGender); ?>" class="btn-small">Full Table</a>
         </div>
 
-        <!-- Gender buttons for this division -->
+        <!-- Gender buttons -->
         <div style="margin-bottom:12px;">
           <?php foreach ($genders as $gender): 
             $activeClass = ($selectedGender === $gender) ? 'btn' : 'btn-small';
@@ -159,30 +157,33 @@
           <?php endforeach; ?>
         </div>
 
-        <table>
-          <thead>
-            <tr><th>Team</th><th>GP</th><th>W</th><th>L</th><th>Pts</th></tr>
-          </thead>
-          <tbody>
-            <?php if ($res->num_rows > 0): while($row = $res->fetch_assoc()): ?>
-            <tr>
-              <td><?php echo sanitize($row['name']); ?></td>
-              <td><?php echo (int)$row['games_played']; ?></td>
-              <td><?php echo (int)$row['wins']; ?></td>
-              <td><?php echo (int)$row['losses']; ?></td>
-              <td><?php echo (int)$row['points']; ?></td>
-            </tr>
-            <?php endwhile; else: ?>
-            <tr><td colspan="5" style="text-align:center;color:#999;">No data available</td></tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>Team</th><th>GP</th><th>W</th><th>L</th><th>Pts</th></tr>
+            </thead>
+            <tbody>
+              <?php if ($res->num_rows > 0): while($row = $res->fetch_assoc()): ?>
+              <tr>
+                <td><?php echo sanitize($row['name']); ?></td>
+                <td><?php echo (int)$row['games_played']; ?></td>
+                <td><?php echo (int)$row['wins']; ?></td>
+                <td><?php echo (int)$row['losses']; ?></td>
+                <td><?php echo (int)$row['points']; ?></td>
+              </tr>
+              <?php endwhile; else: ?>
+              <tr><td colspan="5" style="text-align:center;color:#999;">No data available</td></tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <?php endforeach; ?>
   </div>
 </section>
+
 
 <script>
 // Hero Slideshow

@@ -98,7 +98,7 @@ $fixtures_results = $mysqli->query("
 <!-- ROSTER AND COACHES -->
 <div class="grid col-2" style="margin-top:20px;">
   <div class="card">
-    <div class="card-body">
+    <div class="table-wrapper">
       <h3>Roster</h3>
       <table>
         <thead>
@@ -139,154 +139,144 @@ $fixtures_results = $mysqli->query("
       </table>
     </div>
   </div>
-
+<!-- COACHES -->
   <div class="card">
-    <div class="card-body">
-      <h3>Coaches</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Nationality</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php while($c = $coaches->fetch_assoc()): 
-            $cphoto = !empty($c['photo']) 
-              ? 'admin/uploads/' . sanitize($c['photo']) 
-              : 'https://via.placeholder.com/80x80?text=Coach';
-          ?>
-          <tr>
-            <td>
-              <img src="<?php echo $cphoto; ?>" 
-                   alt="Coach Photo" 
-                   style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
-            </td>
-            <td><?php echo sanitize($c['name']); ?></td>
-            <td><?php echo sanitize($c['role']); ?></td>
-            <td><?php echo sanitize($c['nationality']); ?></td>
-          </tr>
-          <?php endwhile; ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<br>
-
-<!-- PLAYER STATS -->
-<div class="card">
-  <div class="card-body">
-    <h3>Players Statistics</h3>
+  <div class="table-wrapper">
+    <h3>Coaches</h3>
     <table>
       <thead>
         <tr>
-          <th>Player</th>
-          <th>PPG</th>
-          <th>RPG</th>
-          <th>APG</th>
-          <th>SPG</th>
-          <th>BPG</th>
-          <th>FG%</th>
-          <th>3P%</th>
-          <th>FT%</th>
+          <th>Photo</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Nationality</th>
         </tr>
       </thead>
       <tbody>
-        <?php while($s = $stats->fetch_assoc()): 
-          $gp = max(1, $s['games_played']); 
-          $ppg = round($s['total_points'] / $gp, 1);
-          $rpg = round($s['total_rebounds'] / $gp, 1);
-          $apg = round($s['total_assists'] / $gp, 1);
-          $spg = round($s['total_steals'] / $gp, 1);
-          $bpg = round($s['total_blocks'] / $gp, 1);
-          $fgp = $s['fg_attempted'] > 0 ? round(($s['fg_made'] / $s['fg_attempted']) * 100, 1) : 0;
-          $tp = $s['three_attempted'] > 0 ? round(($s['three_made'] / $s['three_attempted']) * 100, 1) : 0;
-          $ftp = $s['ft_attempted'] > 0 ? round(($s['ft_made'] / $s['ft_attempted']) * 100, 1) : 0;
+        <?php while($c = $coaches->fetch_assoc()): 
+          $cphoto = !empty($c['photo']) 
+            ? 'admin/uploads/' . sanitize($c['photo']) 
+            : 'https://via.placeholder.com/80x80?text=Coach';
         ?>
         <tr>
           <td>
-            <a href="player-card.php?id=<?php echo (int)$s['player_id']; ?>" 
-               style="text-decoration:none;color:#007bff;font-weight:500;">
-              <?php echo sanitize($s['name']); ?>
-            </a>
+            <img src="<?php echo $cphoto; ?>" 
+                 alt="Coach Photo" 
+                 style="width:60px;height:60px;object-fit:cover;border-radius:50%;">
           </td>
-          <td><?php echo $ppg; ?></td>
-          <td><?php echo $rpg; ?></td>
-          <td><?php echo $apg; ?></td>
-          <td><?php echo $spg; ?></td>
-          <td><?php echo $bpg; ?></td>
-          <td><?php echo $fgp; ?>%</td>
-          <td><?php echo $tp; ?>%</td>
-          <td><?php echo $ftp; ?>%</td>
+          <td><?php echo sanitize($c['name']); ?></td>
+          <td><?php echo sanitize($c['role']); ?></td>
+          <td><?php echo sanitize($c['nationality']); ?></td>
         </tr>
         <?php endwhile; ?>
       </tbody>
     </table>
   </div>
 </div>
+</div>
 
+<br>
+
+<!-- PLAYER STATS -->
+<div class="card" style="width:100%;">
+  <div class="table-wrapper">
+  <h3>Players Statistics</h3>
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>PPG</th>
+        <th>RPG</th>
+        <th>APG</th>
+        <th>SPG</th>
+        <th>BPG</th>
+        <th>FG%</th>
+        <th>3P%</th>
+        <th>FT%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while($s = $stats->fetch_assoc()): 
+        $gp = max(1, $s['games_played']); 
+        $ppg = round($s['total_points'] / $gp, 1);
+        $rpg = round($s['total_rebounds'] / $gp, 1);
+        $apg = round($s['total_assists'] / $gp, 1);
+        $spg = round($s['total_steals'] / $gp, 1);
+        $bpg = round($s['total_blocks'] / $gp, 1);
+        $fgp = $s['fg_attempted'] > 0 ? round(($s['fg_made'] / $s['fg_attempted']) * 100, 1) : 0;
+        $tp = $s['three_attempted'] > 0 ? round(($s['three_made'] / $s['three_attempted']) * 100, 1) : 0;
+        $ftp = $s['ft_attempted'] > 0 ? round(($s['ft_made'] / $s['ft_attempted']) * 100, 1) : 0;
+      ?>
+      <tr>
+        <td>
+          <a href="player-card.php?id=<?php echo (int)$s['player_id']; ?>" 
+             style="text-decoration:none;color:#007bff;font-weight:500;">
+            <?php echo sanitize($s['name']); ?>
+          </a>
+        </td>
+        <td><?php echo $ppg; ?></td>
+        <td><?php echo $rpg; ?></td>
+        <td><?php echo $apg; ?></td>
+        <td><?php echo $spg; ?></td>
+        <td><?php echo $bpg; ?></td>
+        <td><?php echo $fgp; ?>%</td>
+        <td><?php echo $tp; ?>%</td>
+        <td><?php echo $ftp; ?>%</td>
+      </tr>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+
+
+
+<!-- FIXTURES & RESULTS -->
 <!-- FIXTURES & RESULTS -->
 <section style="margin-top:32px;">
   <div class="section-title"><h3>Fixtures & Results</h3></div>
   <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Match</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php 
-        // Combined recent 3 + upcoming 2 games
-        $fixtures_results = $mysqli->query("
-          (SELECT g.*, th.name AS home_name, ta.name AS away_name
-           FROM games g
-           JOIN teams th ON th.id = g.home_team_id
-           JOIN teams ta ON ta.id = g.away_team_id
-           WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
-             AND g.status IN ('Finished', 'Completed')
-           ORDER BY g.game_date DESC
-           LIMIT 3)
-          UNION ALL
-          (SELECT g.*, th.name AS home_name, ta.name AS away_name
-           FROM games g
-           JOIN teams th ON th.id = g.home_team_id
-           JOIN teams ta ON ta.id = g.away_team_id
-           WHERE (g.home_team_id = $team_id OR g.away_team_id = $team_id)
-             AND g.status IN ('Scheduled', 'Pending')
-           ORDER BY g.game_date ASC
-           LIMIT 2)
-        ");
-        ?>
-
-        <?php if ($fixtures_results && $fixtures_results->num_rows > 0): ?>
-          <?php while($gm = $fixtures_results->fetch_assoc()): ?>
+    <div class="table-wrapper">
+      <table>
+        <thead>
           <tr>
-            <td><?php echo sanitize($gm['game_date']); ?></td>
-            <td>
-              <?php 
-                // If scores exist, show Home Score - Away Score; otherwise just show "-"
-                $home_score = isset($gm['home_score']) ? (int)$gm['home_score'] : '-';
-                $away_score = isset($gm['away_score']) ? (int)$gm['away_score'] : '-';
-                echo sanitize($gm['home_name']) . " $home_score - $away_score " . sanitize($gm['away_name']);
-              ?>
-            </td>
-            <td><?php echo sanitize($gm['status']); ?></td>
+            <th>Date</th>
+            <th>Match</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Ticket</th>
           </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <tr><td colspan="3" style="text-align:center;">No fixtures or results available.</td></tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <?php if ($fixtures_results && $fixtures_results->num_rows > 0): ?>
+            <?php while($gm = $fixtures_results->fetch_assoc()): ?>
+            <tr>
+              <td><?php echo sanitize($gm['game_date']); ?></td>
+              <td>
+                <?php 
+                  $home_score = isset($gm['home_score']) ? (int)$gm['home_score'] : '-';
+                  $away_score = isset($gm['away_score']) ? (int)$gm['away_score'] : '-';
+                  echo sanitize($gm['home_name']) . " $home_score - $away_score " . sanitize($gm['away_name']);
+                ?>
+              </td>
+              <td><?php echo sanitize($gm['location'] ?? 'TBD'); ?></td>
+              <td><?php echo sanitize($gm['status']); ?></td>
+              <td>
+                <a href="https://ticqet.rw" target="_blank" class="btn-small">Get Ticket</a>
+              </td>
+            </tr>
+            <?php endwhile; ?>
+          <?php else: ?>
+            <tr><td colspan="5" style="text-align:center;">No fixtures or results available.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
+
+
 
 
 <!-- GALLERY -->

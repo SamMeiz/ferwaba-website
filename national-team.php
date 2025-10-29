@@ -1,4 +1,5 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?><br><br>
+<?php require_once __DIR__ . '/includes/header.php'; ?>
+<br><br><br><br>
 
 <?php
 $teamParam = $_GET['team'] ?? 'Senior Men';
@@ -32,9 +33,27 @@ $coaches = $stmtC->get_result();
     <?php 
     $opts=['Senior Men','Senior Women','U18 Men','U18 Women','U16 Men','U16 Women']; 
     foreach($opts as $o): ?>
-        <a class="btn" href="<?php echo asset_url('national-team.php?team='.urlencode($o)); ?>" style="background:#f3f4f6"><?php echo $o; ?></a>
+        <a 
+            href="<?php echo asset_url('national-team.php?team='.urlencode($o)); ?>" 
+            style="
+                display:inline-block;
+                padding:8px 16px;
+                background:#f3f4f6;
+                color:#111;
+                font-weight:500;
+                border-radius:8px;
+                border:1px solid #ccc;
+                text-decoration:none;
+                transition:all 0.2s ease;
+            "
+            onmouseover="this.style.background='#007bff'; this.style.color='#fff'; borderColor='#007bff';"
+            onmouseout="this.style.background='#f3f4f6'; this.style.color='#111'; borderColor='#ccc';"
+        >
+            <?php echo $o; ?>
+        </a>
     <?php endforeach; ?>
 </nav>
+
 
 <section class="section-title" style="text-align:center; width:100%;">
     <?php if (!empty($team['banner_image'])): ?>
@@ -50,7 +69,7 @@ $coaches = $stmtC->get_result();
 
     <!-- ROSTER -->
     <div class="card">
-        <div class="card-body">
+        <div class="table-wrapper">
             <h3>Roster</h3>
             <?php if ($players->num_rows > 0): ?>
             <table>
@@ -85,7 +104,7 @@ $coaches = $stmtC->get_result();
 
     <!-- COACHES -->
     <div class="card">
-        <div class="card-body">
+        <div class="table-wrapper">
             <h3>Coaches</h3>
             <?php if ($coaches->num_rows > 0): ?>
             <table>

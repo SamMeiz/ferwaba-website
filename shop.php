@@ -38,52 +38,49 @@
   <div style="display:flex;overflow-x:auto;gap:16px;padding:10px 20px;scrollbar-width:none;">
     <?php
     $teams = $mysqli->query("SELECT id, name, logo FROM teams ORDER BY name ASC");
-    while($t = $teams->fetch_assoc()): ?>
-      <a href="?team=<?php echo urlencode($t['id']); ?>" style="flex:0 0 auto;text-align:center;text-decoration:none;color:inherit;">
+    while($t = $teams->fetch_assoc()):
+      $teamId = $t['id'];
+      $teamName = sanitize($t['name']);
+      $teamLogo = !empty($t['logo']) ? "admin/uploads/{$t['logo']}" : "";
+    ?>
+      <div class="team-filter" 
+           data-team="<?php echo $teamId; ?>" 
+           style="flex:0 0 auto;text-align:center;cursor:pointer;">
         <div style="width:100px;height:100px;border-radius:50%;overflow:hidden;border:2px solid #eee;margin:auto;">
-          <?php if(!empty($t['logo'])): ?>
-            <img src="admin/uploads/<?php echo sanitize($t['logo']); ?>" alt="logo" style="width:100%;height:100%;object-fit:cover;">
+          <?php if($teamLogo): ?>
+            <img src="<?php echo $teamLogo; ?>" alt="logo" style="width:100%;height:100%;object-fit:cover;">
           <?php else: ?>
             <div style="background:#ddd;width:100%;height:100%;"></div>
           <?php endif; ?>
         </div>
-        <p style="font-size:14px;margin-top:8px;"><?php echo sanitize($t['name']); ?></p>
-      </a>
+        <p style="font-size:14px;margin-top:8px;"><?php echo $teamName; ?></p>
+      </div>
     <?php endwhile; ?>
   </div>
 </section>
 
-<!-- 🚹🚺 FILTER BAR -->
+<!-- 🚹🚺 SHOP SECTION -->
 <section id="shop-section" style="padding:0 20px;">
   <div class="section-title" style="text-align:center;">
     <h2>Shop</h2>
-    <form method="get" class="grid col-3" style="gap:8px;max-width:700px;margin:auto;">
-      <select name="category">
+ 
+    
+    <!-- Filter Form -->
+    <form method="get" style="max-width:700px;margin:20px auto 40px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+      <!-- Top row: two selects -->
+      <select name="category" onchange="this.form.submit()" style="padding:8px;border-radius:6px;border:1px solid #ccc;width:100%;">
         <option value="">All Categories</option>
         <option value="Jerseys" <?php echo (($_GET['category'] ?? '')==='Jerseys')?'selected':''; ?>>Jerseys</option>
         <option value="Kits" <?php echo (($_GET['category'] ?? '')==='Kits')?'selected':''; ?>>Kits</option>
         <option value="Gear" <?php echo (($_GET['category'] ?? '')==='Gear')?'selected':''; ?>>Gear</option>
       </select>
 
-      <select name="gender">
+      <select name="gender" onchange="this.form.submit()" style="padding:8px;border-radius:6px;border:1px solid #ccc;width:100%;">
         <option value="">All Genders</option>
         <option value="Men" <?php echo (($_GET['gender'] ?? '')==='Men')?'selected':''; ?>>Men</option>
         <option value="Women" <?php echo (($_GET['gender'] ?? '')==='Women')?'selected':''; ?>>Women</option>
         <option value="Unisex" <?php echo (($_GET['gender'] ?? '')==='Unisex')?'selected':''; ?>>Unisex</option>
       </select>
-
-      <select name="team">
-        <option value="">All Teams</option>
-        <?php
-        $teams->data_seek(0);
-        while($t = $teams->fetch_assoc()):
-        ?>
-          <option value="<?php echo $t['id']; ?>" <?php echo (($_GET['team'] ?? '')==$t['id'])?'selected':''; ?>>
-            <?php echo sanitize($t['name']); ?>
-          </option>
-        <?php endwhile; ?>
-      </select>
-      <button class="btn" type="submit">Filter</button>
     </form>
   </div>
 
@@ -123,49 +120,43 @@
 </section>
 
 <style>
-.grid.col-3 {
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-@media (max-width:900px) { .grid.col-3 { grid-template-columns:repeat(2,1fr); } }
-@media (max-width:600px) { .grid.col-3 { grid-template-columns:1fr; } }
+/* Shop Items Grid */
+.grid.col-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+@media (max-width:900px) { .grid.col-3 { grid-template-columns: repeat(2,1fr); } }
+@media (max-width:600px) { .grid.col-3 { grid-template-columns: 1fr; } }
 
+/* Card Styling */
 .card {
     position: relative;
     overflow: hidden;
     border-radius: 8px;
     cursor: pointer;
 }
-
-.card img {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
+.card img { width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s ease; }
 .card .overlay {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 0; left: 0; width: 100%;
     background: rgba(0,0,0,0.7);
-    color: #fff;
-    padding: 10px;
+    color: #fff; padding: 10px;
     transform: translateY(100%);
     transition: transform 0.3s ease;
     text-align: center;
 }
-
-.card:hover img {
-    transform: scale(1.05);
-}
-
-.card:hover .overlay {
-    transform: translateY(0);
-}
+.card:hover img { transform: scale(1.05); }
+.card:hover .overlay { transform: translateY(0); }
 </style>
+
+<script>
+// Team filter auto-submit
+const teamFilters = document.querySelectorAll('.team-filter');
+teamFilters.forEach(filter => {
+  filter.addEventListener('click', () => {
+    const teamId = filter.getAttribute('data-team');
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('team', teamId);
+    window.location.search = urlParams.toString();
+  });
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

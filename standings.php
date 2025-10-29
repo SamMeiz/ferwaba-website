@@ -29,6 +29,7 @@ $res_men = $stmt_men->get_result();
 ?>
 
 <div class="card">
+  <div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -86,6 +87,7 @@ $res_men = $stmt_men->get_result();
       ?>
     </tbody>
   </table>
+  </div>
 </div>
 
 <!-- WOMEN SECTION -->
@@ -115,8 +117,8 @@ $stmt_women->bind_param('ss', $division_women, $gender_women);
 $stmt_women->execute();
 $res_women = $stmt_women->get_result();
 ?>
-
 <div class="card">
+<div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -173,6 +175,7 @@ $res_women = $stmt_women->get_result();
       ?>
     </tbody>
   </table>
+  </div>
 </div>
 
 <script>

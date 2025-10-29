@@ -58,13 +58,13 @@ $ft_pct = calc_percent($stats['ft_made'] ?? 0, $stats['ft_attempted'] ?? 0);
   <h2><?php echo sanitize($player['name']); ?> - Player Card</h2>
 </section>
 
-<div class="card" style="max-width:700px;margin:auto;overflow:hidden">
+<div style="max-width:700px;margin:auto;overflow:hidden">
   <img 
     src="<?php echo $player['photo'] ? 'admin/uploads/'.sanitize($player['photo']) : 'https://via.placeholder.com/600x400?text=Player'; ?>" 
     alt="<?php echo sanitize($player['name']); ?>" 
     style="width:100%;height:350px;object-fit:cover"
-  >
-  <div class="card-body">
+  > 
+  
     <h3>#<?php echo (int)$player['jersey_number']; ?> - <?php echo sanitize($player['name']); ?></h3>
     <p><strong>Position:</strong> <?php echo sanitize($player['position']); ?></p>
     <p><strong>Height:</strong> <?php echo sanitize($player['height']); ?></p>
@@ -76,6 +76,8 @@ $ft_pct = calc_percent($stats['ft_made'] ?? 0, $stats['ft_attempted'] ?? 0);
     </p>
 
     <h3 style="margin-top:20px;">Statistics (Per Game)</h3>
+      <div class="card">
+      <div class="table-wrapper">
     <table style="width:100%;border-collapse:collapse;margin-top:8px">
       <tr>
         <th style="text-align:left;padding:6px;border-bottom:1px solid #ccc">GP</th>
