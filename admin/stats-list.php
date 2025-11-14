@@ -12,7 +12,7 @@ $stats = $mysqli->query("
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/admin.css">
 </head>
 <a href="dashboard.php" class="btn">⬅️ Back</a>
 <section class="section-title">
@@ -21,6 +21,7 @@ $stats = $mysqli->query("
 </section>
 
 <div class="card">
+  <div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -68,6 +69,7 @@ $stats = $mysqli->query("
       <?php endwhile; ?>
     </tbody>
   </table>
+  </div>
 </div>
 
 

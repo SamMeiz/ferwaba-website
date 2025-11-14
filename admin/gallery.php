@@ -47,7 +47,7 @@ while($g = $imgs->fetch_assoc()) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Gallery - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 <style>
 .flex { display:flex; flex-wrap:wrap; gap:8px; }
 .card {

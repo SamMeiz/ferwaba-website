@@ -4,7 +4,7 @@ require_login();
 ?>
 
 <head>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
   <style>
     .top-team { background-color: rgba(34,197,94,0.15); }
     .bottom-team { background-color: rgba(220,38,38,0.15); }
@@ -53,6 +53,7 @@ require_login();
 </div>
 
 <div class="card">
+  <div class="table-wrapper">
   <table id="standingsTable">
     <thead>
       <tr>
@@ -119,6 +120,7 @@ require_login();
       <?php endforeach; endforeach; ?>
     </tbody>
   </table>
+  </div>
 </div>
 
 <script>

@@ -30,62 +30,47 @@
 
         <nav class="main-nav" id="mainNav">
             <ul>
-                <li><a href="<?php echo asset_url('index.php'); ?>">Home</a></li>
-                <li><a href="<?php echo asset_url('standings.php'); ?>">Standings</a></li>
+                <?php
+                $current_page = basename($_SERVER['PHP_SELF']);
+                $current_path = $_SERVER['REQUEST_URI'];
+                
+                function is_active($url, $current_page, $current_path) {
+                    $page_name = basename(parse_url($url, PHP_URL_PATH));
+                    if ($page_name === $current_page) return true;
+                    if (strpos($current_path, $page_name) !== false) return true;
+                    return false;
+                }
+                ?>
+                <li><a href="<?php echo asset_url('index.php'); ?>" class="<?php echo is_active(asset_url('index.php'), $current_page, $current_path) ? 'active' : ''; ?>">Home</a></li>
+                <li><a href="<?php echo asset_url('standings.php'); ?>" class="<?php echo is_active(asset_url('standings.php'), $current_page, $current_path) ? 'active' : ''; ?>">Standings</a></li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('teams.php'); ?>">Teams</a>
-                    <ul class="sub">
-                        <li><a href="<?php echo asset_url('teams.php'); ?>">All Teams</a></li>
-                    </ul>
+                    <a href="<?php echo asset_url('teams.php'); ?>" class="<?php echo is_active(asset_url('teams.php'), $current_page, $current_path) ? 'active' : ''; ?>">Teams</a>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('players.php'); ?>">Players</a>
+                    <a href="<?php echo asset_url('players.php'); ?>" class="<?php echo is_active(asset_url('players.php'), $current_page, $current_path) ? 'active' : ''; ?>">Players</a>
                     <ul class="sub">
                         <li><a href="<?php echo asset_url('players.php'); ?>">All Players</a></li>
                         <li><a href="<?php echo asset_url('players.php#leaderboards'); ?>">Leaderboards</a></li>
                     </ul>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('national-team.php'); ?>">National Teams</a>
-                    <ul class="sub">
-                        <li><a href="<?php echo asset_url('national-team.php?team=Senior+Men'); ?>">Senior Men</a></li>
-                        <li><a href="<?php echo asset_url('national-team.php?team=Senior+Women'); ?>">Senior Women</a></li>
-                        <li><a href="<?php echo asset_url('national-team.php?team=U18+Men'); ?>">U18 Men</a></li>
-                        <li><a href="<?php echo asset_url('national-team.php?team=U18+Women'); ?>">U18 Women</a></li>
-                        <li><a href="<?php echo asset_url('national-team.php?team=U16+Men'); ?>">U16 Men</a></li>
-                        <li><a href="<?php echo asset_url('national-team.php?team=U16+Women'); ?>">U16 Women</a></li>
-                    </ul>
+                    <a href="<?php echo asset_url('national-team.php'); ?>" class="<?php echo is_active(asset_url('national-team.php'), $current_page, $current_path) ? 'active' : ''; ?>">National Teams</a>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('games.php'); ?>">Games</a>
-                    <ul class="sub">
-                        <li><a href="<?php echo asset_url('games.php#schedule'); ?>">Schedule</a></li>
-                        <li><a href="<?php echo asset_url('games.php#results'); ?>">Results</a></li>
-                    </ul>
+                    <a href="<?php echo asset_url('games.php'); ?>" class="<?php echo is_active(asset_url('games.php'), $current_page, $current_path) ? 'active' : ''; ?>">Games</a>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('playoffs.php'); ?>">BetPawa Playoffs</a>
+                    <a href="<?php echo asset_url('playoffs.php'); ?>" class="<?php echo is_active(asset_url('playoffs.php'), $current_page, $current_path) ? 'active' : ''; ?>">BetPawa Playoffs</a>
                     <ul class="sub">
                         <li><a href="<?php echo asset_url('playoffs.php'); ?>">Bracket</a></li>
                         <li><a href="<?php echo asset_url('playoffs.php#history'); ?>">Champion History</a></li>
                     </ul>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('news.php'); ?>">News</a>
-                    <ul class="sub">
-                        <li><a href="<?php echo asset_url('news.php?category=Latest'); ?>">Latest</a></li>
-                        <li><a href="<?php echo asset_url('news.php?category=Transfers'); ?>">Transfers</a></li>
-                        <li><a href="<?php echo asset_url('news.php?category=Injuries'); ?>">Injuries</a></li>
-                        <li><a href="<?php echo asset_url('news.php?category=Squad+Updates'); ?>">Squad Updates</a></li>
-                    </ul>
+                    <a href="<?php echo asset_url('news.php'); ?>" class="<?php echo is_active(asset_url('news.php'), $current_page, $current_path) ? 'active' : ''; ?>">News</a>
                 </li>
                 <li class="has-sub">
-                    <a href="<?php echo asset_url('shop.php'); ?>">Shop</a>
-                    <ul class="sub">
-                        <li><a href="<?php echo asset_url('shop.php?category=Jerseys'); ?>">Jerseys</a></li>
-                        <li><a href="<?php echo asset_url('shop.php?category=Kits'); ?>">Kits</a></li>
-                        <li><a href="<?php echo asset_url('shop.php?category=Gear'); ?>">Gear</a></li>
-                    </ul>
+                    <a href="<?php echo asset_url('shop.php'); ?>" class="<?php echo is_active(asset_url('shop.php'), $current_page, $current_path) ? 'active' : ''; ?>">Shop</a>
                 </li>
             </ul>
         </nav>

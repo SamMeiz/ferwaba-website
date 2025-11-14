@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/../includes/config.php';
 session_destroy();
-redirect('/admin/login.php');
+redirect('login.php');
 
 

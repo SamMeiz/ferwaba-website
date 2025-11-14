@@ -73,40 +73,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo $editing? 'Edit':'Add'; ?> Admin - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
-<div class="container" style="max-width:640px;margin:24px auto">
+<div class="container" style="max-width:640px">
+  <div class="section-title">
+    <h2><?php echo $editing? 'Edit':'Add'; ?> Admin</h2>
+    <a href="admins.php" class="btn btn-secondary">Back</a>
+  </div>
   <div class="card">
     <div class="card-body">
-      <h2 style="margin:0 0 12px"><?php echo $editing? 'Edit':'Add'; ?> Admin</h2>
-      <?php if($error): ?><div style="color:#b91c1c;margin-bottom:8px"><?php echo sanitize($error); ?></div><?php endif; ?>
+      <?php if($error): ?><div class="error"><?php echo sanitize($error); ?></div><?php endif; ?>
       <form method="post">
-        <div style="margin-bottom:8px">
+        <div class="form-group">
           <label>Full Name</label>
-          <input type="text" name="full_name" value="<?php echo sanitize($full_name); ?>" required style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <input type="text" name="full_name" value="<?php echo sanitize($full_name); ?>" required>
         </div>
-        <div style="margin-bottom:8px">
+        <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" value="<?php echo sanitize($email); ?>" required style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <input type="email" name="email" value="<?php echo sanitize($email); ?>" required>
         </div>
-        <div style="margin-bottom:8px">
+        <div class="form-group">
           <label>Password <?php if($editing): ?><span class="muted">(leave blank to keep unchanged)</span><?php endif; ?></label>
-          <input type="password" name="password" style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <input type="password" name="password" <?php echo !$editing ? 'required' : ''; ?>>
         </div>
-        <div style="margin-bottom:8px">
+        <div class="form-group">
           <label>Role</label>
-          <select name="role" style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <select name="role">
             <option value="SubAdmin" <?php echo $role==='SubAdmin'?'selected':''; ?>>SubAdmin</option>
             <option value="SuperAdmin" <?php echo $role==='SuperAdmin'?'selected':''; ?>>SuperAdmin</option>
           </select>
         </div>
-        <div style="margin-bottom:12px">
+        <div class="form-group">
           <label><input type="checkbox" name="is_active" <?php echo $is_active? 'checked':''; ?>> Active</label>
         </div>
-        <div>
-          <button class="btn" type="submit">Save</button>
-          <a class="btn" href="admins.php" style="margin-left:8px">Cancel</a>
+        <div class="action-buttons">
+          <button class="btn btn-success" type="submit">Save</button>
+          <a class="btn btn-secondary" href="admins.php">Cancel</a>
         </div>
       </form>
     </div>

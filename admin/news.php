@@ -10,19 +10,20 @@ $rows = $mysqli->query("SELECT id, title, content, category, image, video_url, c
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage News - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
 <div class="container" style="margin:24px auto; max-width:900px">
   <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
     <h2>News</h2>
     <div>
-      <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-right:8px;">⬅️ Back</a>
+      <a href="dashboard.php" class="btn btn-secondary">Back</a>
       <a href="news-form.php" class="btn">➕ Add Article</a>
     </div>
   </div>
 
   <div class="card">
+    <div class="table-wrapper">
     <table>
       <thead>
         <tr>
@@ -58,6 +59,7 @@ $rows = $mysqli->query("SELECT id, title, content, category, image, video_url, c
         <?php endwhile; ?>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 </body>

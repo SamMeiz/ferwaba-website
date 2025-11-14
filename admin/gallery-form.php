@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upload Photo - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 <style>
 body { background:#f9fafb; font-family:Arial,sans-serif; }
 .container { max-width:640px; margin:24px auto; }

@@ -116,8 +116,9 @@ $ft_pct = calc_percent($stats['ft_made'] ?? 0, $stats['ft_attempted'] ?? 0);
         <td style="padding:6px;border-bottom:1px solid #ccc"><?php echo $ft_pct; ?>%</td>
       </tr>
     </table>
-
+    </div>
   </div>
 </div>
+
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

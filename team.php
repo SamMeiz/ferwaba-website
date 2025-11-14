@@ -229,10 +229,6 @@ $fixtures_results = $mysqli->query("
   </div>
 </div>
 
-
-
-
-<!-- FIXTURES & RESULTS -->
 <!-- FIXTURES & RESULTS -->
 <section style="margin-top:32px;">
   <div class="section-title"><h3>Fixtures & Results</h3></div>

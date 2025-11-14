@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 
 <section class="section-title">

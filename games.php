@@ -1,5 +1,5 @@
 <?php require_once __DIR__ . '/includes/header.php'; ?>
-<br><br><br><br>
+<br><br><br><br><br><br>
 <head>
   <style>
 .games-filter { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; } 

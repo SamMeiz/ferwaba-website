@@ -20,9 +20,9 @@ $rows = $mysqli->query("
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Playoffs - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 <style>
-    body { background:#f9fafb; font-family:Arial,sans-serif; }
+    /* body { background:#f9fafb; font-family:Arial,sans-serif; }
     .container { max-width:1200px; margin:24px auto; }
     .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
     .section-title h2 { margin:0; font-size:1.8rem; }
@@ -34,7 +34,7 @@ $rows = $mysqli->query("
     th { background:#f3f4f6; font-weight:600; }
     tr:hover { background:#f9fafb; }
     td a { color:#2563eb; text-decoration:none; margin-right:8px; font-size:0.9rem; }
-    td a:hover { text-decoration:underline; }
+    td a:hover { text-decoration:underline; } */
 </style>
 </head>
 <body>
@@ -43,11 +43,12 @@ $rows = $mysqli->query("
         <h2>Playoffs</h2>
         <div>
             <a class="btn" href="playoff-form.php">Add Matchup</a>
-            <a class="btn" href="javascript:history.back()" style="background:#6b7280;">⬅️ Back</a>
+            <a class="btn" href="dashboard.php" style="background:#6b7280;">⬅️ Back</a>
         </div>
     </div>
 
     <div class="card">
+        <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
@@ -77,6 +78,7 @@ $rows = $mysqli->query("
                 <?php endwhile; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 </body>

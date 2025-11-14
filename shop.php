@@ -2,12 +2,19 @@
 <br><br><br><br>
 
 <!-- 🏀 HERO SECTION -->
-<section class="shop-hero" style="position:relative;height:420px;background:url('img/shop-hero.jpg') center/cover no-repeat;">
+<section class="shop-hero" 
+  style="position:relative;width:100%;height:600px;
+         background:url('img/ferwaba.jpg') center/cover no-repeat;">
   <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);"></div>
   <div style="position:relative;z-index:2;color:#fff;padding:80px 60px;max-width:700px;">
-    <h1 style="font-size:46px;font-weight:800;">ESSENTIALS</h1>
-    <h2 style="font-size:24px;margin-top:-10px;">FEAR OF GOD</h2>
-    <a href="#shop-section" class="btn" style="margin-top:20px;background:#E53935;color:#fff;padding:10px 24px;border-radius:30px;text-decoration:none;">Shop Now</a>
+    <h1 style="font-size:46px;font-weight:800;">Ferwaba & Visit Rwanda Collection</h1>
+    <h2 style="font-size:24px;margin-top:-10px;">Official merchandise celebrating Rwandan basketball pride</h2>
+    <a href="ferwaba-shop.php" 
+       class="btn" 
+       style="margin-top:20px;background:#E53935;color:#fff;
+              padding:10px 24px;border-radius:30px;text-decoration:none;">
+      Shop Now
+    </a>
   </div>
 </section>
 
@@ -18,15 +25,15 @@
   <h2 style="font-size:28px;margin-bottom:30px;">Shop by Category</h2>
   <div class="grid col-3" style="gap:20px;max-width:1000px;margin:auto;">
     <a href="?category=Jerseys" class="card" style="text-decoration:none;color:inherit;">
-      <img src="img/category-jersey.jpg" alt="Jerseys" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
+      <img src="img/jersey.jpg" alt="Jerseys" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
       <h3 style="margin-top:10px;">Jerseys</h3>
     </a>
     <a href="?category=Kits" class="card" style="text-decoration:none;color:inherit;">
-      <img src="img/category-kit.jpg" alt="Kits" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
+      <img src="img/gear.jpg" alt="Kits" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
       <h3 style="margin-top:10px;">Kits</h3>
     </a>
     <a href="?category=Gear" class="card" style="text-decoration:none;color:inherit;">
-      <img src="img/category-gear.jpg" alt="Gear" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
+      <img src="img/kit.jpg" alt="Gear" style="width:100%;height:240px;object-fit:cover;border-radius:8px;">
       <h3 style="margin-top:10px;">Gear</h3>
     </a>
   </div>
@@ -64,7 +71,6 @@
   <div class="section-title" style="text-align:center;">
     <h2>Shop</h2>
  
-    
     <!-- Filter Form -->
     <form method="get" style="max-width:700px;margin:20px auto 40px auto;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
       <!-- Top row: two selects -->
@@ -73,6 +79,7 @@
         <option value="Jerseys" <?php echo (($_GET['category'] ?? '')==='Jerseys')?'selected':''; ?>>Jerseys</option>
         <option value="Kits" <?php echo (($_GET['category'] ?? '')==='Kits')?'selected':''; ?>>Kits</option>
         <option value="Gear" <?php echo (($_GET['category'] ?? '')==='Gear')?'selected':''; ?>>Gear</option>
+        <option value="Ferwaba and Visit Rwanda" <?php echo (($_GET['category'] ?? '')==='Ferwaba and Visit Rwanda')?'selected':''; ?>>Ferwaba & Visit Rwanda</option>
       </select>
 
       <select name="gender" onchange="this.form.submit()" style="padding:8px;border-radius:6px;border:1px solid #ccc;width:100%;">
@@ -111,8 +118,9 @@
         <?php endif; ?>
         <div class="overlay">
           <h3><?php echo sanitize($i['name']); ?></h3>
-          <div><?php echo sanitize($i['category']); ?> – <?php echo sanitize($i['gender']); ?></div>
-          <div style="margin-top:4px;font-weight:700;">RWF <?php echo number_format((float)$i['price'],2); ?></div>
+          <p style="margin:4px 0;font-size:14px;"><?php echo sanitize($i['category']); ?> – <?php echo sanitize($i['gender']); ?></p>
+          <div style="margin:6px 0;font-weight:700;">RWF <?php echo number_format((float)$i['price'],2); ?></div>
+          <a href="item.php?id=<?php echo $i['id']; ?>" class="buy-btn">Buy Now</a>
         </div>
       </div>
     <?php endwhile; ?>
@@ -121,33 +129,68 @@
 
 <style>
 /* Shop Items Grid */
-.grid.col-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-@media (max-width:900px) { .grid.col-3 { grid-template-columns: repeat(2,1fr); } }
-@media (max-width:600px) { .grid.col-3 { grid-template-columns: 1fr; } }
+.grid.col-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media(max-width:900px){ .grid.col-3{ grid-template-columns:repeat(2,1fr);} }
+@media(max-width:600px){ .grid.col-3{ grid-template-columns:1fr;} }
 
 /* Card Styling */
 .card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    cursor: pointer;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+  cursor:pointer;
 }
-.card img { width: 100%; height: 240px; object-fit: cover; display: block; transition: transform 0.3s ease; }
+.card img {
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  display:block;
+  transition:transform 0.4s ease, filter 0.4s ease;
+}
 .card .overlay {
-    position: absolute;
-    bottom: 0; left: 0; width: 100%;
-    background: rgba(0,0,0,0.7);
-    color: #fff; padding: 10px;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    text-align: center;
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  opacity:0;
+  transition:opacity 0.4s ease;
+  color:#fff;
+  background:transparent;
 }
-.card:hover img { transform: scale(1.05); }
-.card:hover .overlay { transform: translateY(0); }
+.card:hover img {
+  transform:scale(1.05);
+  filter:brightness(0.7);
+}
+.card:hover .overlay {
+  opacity:1;
+}
+.overlay h3 {
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:8px;
+  color:#fff;
+}
+.buy-btn {
+  display:inline-block;
+  margin-top:8px;
+  background:#E53935;
+  color:#fff;
+  padding:8px 18px;
+  border-radius:25px;
+  text-decoration:none;
+  font-weight:600;
+  transition:background 0.3s ease;
+}
+.buy-btn:hover {
+  background:#ff4444;
+}
 </style>
 
 <script>
-// Team filter auto-submit
+// 🧩 Team filter auto-submit
 const teamFilters = document.querySelectorAll('.team-filter');
 teamFilters.forEach(filter => {
   filter.addEventListener('click', () => {

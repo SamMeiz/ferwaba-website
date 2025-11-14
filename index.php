@@ -1,5 +1,22 @@
 <?php require_once __DIR__ . '/includes/header.php'; ?>
+ <head>
+  <style>
+ .btn-ticket {
+  display: inline-block;
+  background: #0047AB;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  border: 1px solid #0047AB;
+  transition: 0.25s;
+}
 
+
+</style>
+ </head>
 <section class="hero">
   <div class="hero-backgrounds">
     <div class="hero-bg active" style="background-image:url('img/banner1.png');" data-title="Rwanda Basketball League" data-sub="Official RBL hub. Fixtures, results, standings, news."></div>
@@ -68,48 +85,46 @@
           <th>Division</th>
           <th>Gender</th>
           <th>Location</th>
+          <th>Ticket</th>
         </tr>
       </thead>
       <tbody>
-        <?php
-        $today = date('Y-m-d');
-        $three_days = date('Y-m-d', strtotime('+3 days'));
+  <?php
+  $today = date('Y-m-d');
+  $three_days = date('Y-m-d', strtotime('+3 days'));
 
-        $q = "SELECT g.*, th.name AS home_name, ta.name AS away_name 
-              FROM games g
-              JOIN teams th ON th.id = g.home_team_id
-              JOIN teams ta ON ta.id = g.away_team_id
-              WHERE g.status='Scheduled' 
-              ORDER BY g.game_date ASC, g.id ASC 
-              LIMIT 5";
+  $q = "SELECT g.*, th.name AS home_name, ta.name AS away_name 
+        FROM games g
+        JOIN teams th ON th.id = g.home_team_id
+        JOIN teams ta ON ta.id = g.away_team_id
+        WHERE g.status='Scheduled' 
+        ORDER BY g.game_date ASC, g.id ASC 
+        LIMIT 5";
 
-        if($r = $mysqli->query($q)){
-          while($g = $r->fetch_assoc()):
-            $row_class = '';
-            if ($g['game_date'] >= $today && $g['game_date'] <= $three_days) {
-                $row_class = 'upcoming-highlight'; // add CSS class for highlight
-            }
-        ?>
-            <tr class="<?php echo $row_class; ?>">
-              <td><?php echo sanitize($g['game_date']); ?></td>
-              <td><?php echo sanitize($g['home_name'].' vs '.$g['away_name']); ?></td>
-              <td><?php echo sanitize($g['division']); ?></td>
-              <td><?php echo sanitize($g['gender']); ?></td>
-              <td><?php echo sanitize($g['location']); ?></td>
-            </tr>
-        <?php endwhile; } ?>
-      </tbody>
+  if($r = $mysqli->query($q)){
+    while($g = $r->fetch_assoc()):
+      $row_class = '';
+      if ($g['game_date'] >= $today && $g['game_date'] <= $three_days) {
+          $row_class = 'upcoming-highlight'; // add CSS class for highlight
+      }
+  ?>
+      <tr class="<?php echo $row_class; ?>">
+        <td><?php echo sanitize($g['game_date']); ?></td>
+        <td><?php echo sanitize($g['home_name'].' vs '.$g['away_name']); ?></td>
+        <td><?php echo sanitize($g['division']); ?></td>
+        <td><?php echo sanitize($g['gender']); ?></td>
+        <td><?php echo sanitize($g['location']); ?></td>
+        <td>
+          <a href="https://ticqet.rw" target="_blank" class="btn-ticket">Get Ticket</a>
+        </td>
+      </tr>
+  <?php endwhile; } ?>
+</tbody>
+
     </table>
   
   </div></div>
 </section>
-
-<!-- <style>
-  .upcoming-highlight {
-    background-color: rgba(34,197,94,0.15); /* light green highlight */
-    font-weight: 600;
-  }
-</style> -->
 
 <!-- Top Standings -->
 <section>
@@ -117,7 +132,7 @@
     <h2>🏀 Top Standings</h2>
   </div>
 
-  <div class="grid" style="gap:16px;"> <!-- single-column grid -->
+  <div class="grid col-1">
     <?php
     $divisions = ["Division 1", "Division 2"];
     foreach ($divisions as $div):
@@ -140,18 +155,19 @@
 
     <div class="card">
       <div class="card-body">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <h4><?php echo sanitize($div); ?></h4>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <h4 style="margin:0;"><?php echo sanitize($div); ?></h4>
           <a href="standings.php?division=<?php echo urlencode($div); ?>&gender=<?php echo urlencode($selectedGender); ?>" class="btn-small">Full Table</a>
         </div>
 
         <!-- Gender buttons -->
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;">
           <?php foreach ($genders as $gender): 
-            $activeClass = ($selectedGender === $gender) ? 'btn' : 'btn-small';
+            $isActive = ($selectedGender === $gender);
+            $activeClass = $isActive ? 'btn-small active' : 'btn-small';
             $url = "?{$paramName}=" . urlencode($gender);
           ?>
-            <a href="<?php echo $url; ?>" class="<?php echo $activeClass; ?>" style="margin-right:8px;">
+            <a href="<?php echo $url; ?>" class="<?php echo $activeClass; ?>" style="min-width:60px;text-align:center;">
               <?php echo sanitize($gender); ?>
             </a>
           <?php endforeach; ?>

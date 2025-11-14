@@ -9,19 +9,20 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Games - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Games</h2>
     <a class="btn" href="game-form.php">Add Game</a>
-    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
+    <a href="dashboard.php" class="btn btn-secondary">Back</a>
   </div>
   <div class="card">
+    <div class="table-wrapper">
     <table>
       <thead>
-        <tr><th>Date</th><th>Match</th><th>Division</th><th>Gender</th><th>Status</th><th>Score</th><th>Actions</th></tr>
+        <tr><th>Date</th><th>Match</th><th>Division</th><th>Gender</th><th>Status</th><th>Score</th><th>location</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php while($g=$games->fetch_assoc()): ?>
@@ -32,6 +33,7 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
           <td><?php echo sanitize($g['gender']); ?></td>
           <td><?php echo sanitize($g['status']); ?></td>
           <td><?php echo (int)$g['home_score'].' - '.(int)$g['away_score']; ?></td>
+          <td><?php echo sanitize($g['location']); ?></td>
           <td>
             <a href="game-form.php?id=<?php echo (int)$g['id']; ?>">Edit</a>
             <a href="delete-game.php?id=<?php echo (int)$g['id']; ?>" onclick="return confirm('Delete game? This will recalc standings.')">Delete</a>
@@ -40,6 +42,7 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
         <?php endwhile; ?>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 </body>

@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?><br><br><br><br>
+<?php require_once __DIR__ . '/includes/header.php'; ?><br><br><br><br> <br><br>
 
 <!-- MEN SECTION -->
 <section class="section-title">
@@ -64,7 +64,7 @@ $res_men = $stmt_men->get_result();
       ?>
       <tr <?= $row_class ?>>
         <td>
-          <a href="team.php?id=<?= $row['team_id'] ?>" style="display:flex;align-items:center;gap:8px">
+          <a href="team.php?id=<?= $row['team_id'] ?>" style="display:flex;align-items:center;gap:8px;color:#374151;text-decoration:none;font-weight:500;">
             <?php if($row['logo']): ?>
               <img src="admin/uploads/<?= sanitize($row['logo']) ?>" style="width:28px;height:28px;border-radius:6px;object-fit:cover">
             <?php endif; ?>
@@ -152,7 +152,7 @@ $res_women = $stmt_women->get_result();
       ?>
       <tr <?= $row_class ?>>
         <td>
-          <a href="team.php?id=<?= $row['team_id'] ?>" style="display:flex;align-items:center;gap:8px">
+          <a href="team.php?id=<?= $row['team_id'] ?>" style="display:flex;align-items:center;gap:8px;color:#374151;text-decoration:none;font-weight:500;">
             <?php if($row['logo']): ?>
               <img src="admin/uploads/<?= sanitize($row['logo']) ?>" style="width:28px;height:28px;border-radius:6px;object-fit:cover">
             <?php endif; ?>

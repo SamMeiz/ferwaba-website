@@ -37,22 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
-<div class="container" style="max-width:420px;margin:60px auto">
+<div class="login-container">
   <div class="card">
     <div class="card-body">
-      <h2 style="margin:0 0 12px">Admin Login</h2>
-      <?php if($error): ?><div style="color:#b91c1c;margin-bottom:8px"><?php echo sanitize($error); ?></div><?php endif; ?>
+      <h2 style="margin:0 0 20px">Admin Login</h2>
+      <?php if($error): ?><div class="error"><?php echo sanitize($error); ?></div><?php endif; ?>
       <form method="post">
-        <div style="margin-bottom:8px">
+        <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" required style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <input type="email" name="email" required>
         </div>
-        <div style="margin-bottom:12px">
+        <div class="form-group">
           <label>Password</label>
-          <input type="password" name="password" required style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px">
+          <input type="password" name="password" required>
         </div>
         <button class="btn" type="submit">Sign In</button>
       </form>

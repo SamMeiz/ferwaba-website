@@ -9,16 +9,17 @@ $res = $mysqli->query("SELECT id,name,gender,division,location,logo FROM teams O
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Teams - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Teams</h2>
-    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
+    <a href="dashboard.php" class="btn btn-secondary">Back</a>
     <a class="btn" href="team-form.php">Add Team</a>
   </div>
   <div class="card">
+    <div class="table-wrapper">
     <table>
       <thead>
         <tr><th>Logo</th><th>Name</th><th>Gender</th><th>Division</th><th>Location</th><th>Actions</th></tr>
@@ -26,7 +27,7 @@ $res = $mysqli->query("SELECT id,name,gender,division,location,logo FROM teams O
       <tbody>
         <?php while($t = $res->fetch_assoc()): ?>
         <tr>
-          <td><?php if($t['logo']): ?><img src="/admin/uploads/<?php echo sanitize($t['logo']); ?>" alt="logo" style="width:40px;height:40px;object-fit:cover;border-radius:6px"><?php endif; ?></td>
+          <td><?php if($t['logo']): ?><img src="/ferwaba1/admin/uploads/<?php echo sanitize($t['logo']); ?>" alt="logo" style="width:40px;height:40px;object-fit:cover;border-radius:6px"><?php endif; ?></td>
           <td><?php echo sanitize($t['name']); ?></td>
           <td><?php echo sanitize($t['gender']); ?></td>
           <td><?php echo sanitize($t['division']); ?></td>
@@ -39,6 +40,7 @@ $res = $mysqli->query("SELECT id,name,gender,division,location,logo FROM teams O
         <?php endwhile; ?>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 </body>

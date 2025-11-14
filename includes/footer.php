@@ -3,7 +3,7 @@
     <div class="footer-top">
       <!-- Left: FERWABA Logo + Partner logos -->
       <div class="footer-brand">
-        <img src="/ferwaba1/img/ferwaba-logo.png" alt="FERWABA Logo" class="footer-logo">
+      <img src="<?php echo asset_url('img/logo.png'); ?>" alt="FERWABA Logo" style="width: 100px;">
         <div class="footer-partners">
           <img src="/ferwaba1/img/partner1.png" alt="Partner 1">
           <img src="/ferwaba1/img/partner2.png" alt="Partner 2">

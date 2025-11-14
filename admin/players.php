@@ -9,16 +9,17 @@ $players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Players - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/style.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
 </head>
 <body>
 <div class="container" style="margin:20px auto">
   <div class="section-title">
     <h2>Players</h2>
-    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
+    <a href="dashboard.php" class="btn btn-secondary">Back</a>
     <a class="btn" href="player-form.php">Add Player</a>
   </div>
   <div class="card">
+    <div class="table-wrapper">
     <table>
       <thead>
         <tr><th>Photo</th><th>#</th><th>Name</th><th>Position</th><th>Team</th><th>Nationality</th><th>Actions</th></tr>
@@ -40,6 +41,7 @@ $players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,
         <?php endwhile; ?>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 </body>
