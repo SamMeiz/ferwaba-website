@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2025 at 10:21 PM
+-- Generation Time: Nov 15, 2025 at 09:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -77,7 +77,8 @@ CREATE TABLE `gallery` (
 --
 
 INSERT INTO `gallery` (`id`, `team_id`, `image`, `caption`, `uploaded_at`) VALUES
-(1, 5, 'gallery_1761148793_4c2ccbeb.png', '', '2025-10-22 15:59:53');
+(1, 5, 'gallery_1761148793_4c2ccbeb.png', '', '2025-10-22 15:59:53'),
+(2, 5, 'gallery_1761735317_0554e35f.png', '', '2025-10-29 10:55:17');
 
 -- --------------------------------------------------------
 
@@ -107,7 +108,7 @@ INSERT INTO `games` (`id`, `home_team_id`, `away_team_id`, `game_date`, `locatio
 (6, 6, 5, '2025-10-20', 'nakka', 89, 78, 'Division 1', 'Men', 'Completed', 'hb'),
 (7, 5, 6, '2025-10-20', 'BK Arena', 123, 89, 'Division 1', 'Men', 'Completed', 'hb'),
 (8, 8, 7, '2025-10-21', 'kigali-Rwanda', 128, 98, 'Division 1', 'Men', 'Completed', ''),
-(9, 5, 8, '2025-10-21', 'BK Arena', 0, 0, 'Division 1', 'Men', 'Scheduled', ''),
+(9, 5, 8, '2025-10-21', 'BK Arena', 94, 89, 'Division 1', 'Men', 'Completed', ''),
 (10, 6, 7, '2025-10-30', 'nakka', 0, 0, 'Division 1', 'Men', 'Scheduled', '');
 
 -- --------------------------------------------------------
@@ -147,7 +148,8 @@ CREATE TABLE `national_players` (
 --
 
 INSERT INTO `national_players` (`id`, `team_id`, `name`, `position`, `jersey_number`, `club`, `photo`, `created_at`) VALUES
-(1, 1, 'Ntore habimana', 'pg', 12, 'APR', '1760609955_Screenshot 2025-10-06 103740.png', '2025-10-16 10:19:15');
+(1, 1, 'Ntore habimana', 'pg', 12, 'APR', '1760609955_Screenshot 2025-10-06 103740.png', '2025-10-16 10:19:15'),
+(2, 2, 'APR', '0', 12, 'APR', '1763041415_kit.jpg', '2025-11-13 13:43:35');
 
 -- --------------------------------------------------------
 
@@ -168,7 +170,8 @@ CREATE TABLE `national_teams` (
 --
 
 INSERT INTO `national_teams` (`id`, `team_name`, `category`, `banner_image`, `created_at`) VALUES
-(1, 'Amavubi', 'Senior Men', '1760609905_Screenshot 2025-10-06 103751.png', '2025-10-16 10:18:25');
+(1, 'Amavubi', 'Senior Men', '1760609905_Screenshot 2025-10-06 103751.png', '2025-10-16 10:18:25'),
+(2, 'Amavubi', 'U18 Men', '1763041398_logo.png', '2025-11-13 13:43:18');
 
 -- --------------------------------------------------------
 
@@ -191,7 +194,11 @@ CREATE TABLE `news` (
 --
 
 INSERT INTO `news` (`id`, `title`, `content`, `category`, `image`, `video_url`, `created_at`) VALUES
-(1, 'RBL OPENING DAY', 'ajddflvwkfgkwkufguiwghuohou;ghoiwow', 'Latest', 'news_1761077891_2405f863.png', '', '2025-10-21 20:18:11');
+(1, 'RBL OPENING DAY', 'ajddflvwkfgkwkufguiwghuohou;ghoiwow', 'Latest', 'news_1761077891_2405f863.png', '', '2025-10-21 20:18:11'),
+(2, 'Mpoyo Ties the Game', 'Mpooyo does it again! A clutch bucket to tie things up — the arena explodes as fans leap to their feet! That was pure determination from the star guard, refusing to let his team fall behind. You can feel the energy surging now; it’s anyone’s game from here!', 'Latest', 'news_1761663339_ef63325c.jpeg', '', '2025-10-28 14:55:39'),
+(3, 'What a block!', 'Outstanding timing from Diarra on that rejection. He read the play perfectly, rotated over, and met the attacker at the summit. That block not only denies two easy points but sends a clear message — nothing easy in the paint tonight.', 'Latest', 'news_1761663433_4a208c1c.jpeg', '', '2025-10-28 14:57:13'),
+(4, 'Sweet moves', 'Exceptional ball control  there — quick hands, sharp footwork, and total command of the tempo. He uses his dribble not just to entertain, but to create space and open up the defense. That’s textbook guard play at its finest.', 'Latest', 'news_1761663573_2d483155.jpeg', '', '2025-10-28 14:59:33'),
+(5, 'Osborn layer', 'That’s an elite finish from Osborn. Great body control, smart use of angles, and the perfect touch off the board. He read the help defense early and adjusted midair — a veteran-level move from the young star.', 'Latest', 'news_1761663653_42ccbf2c.jpg', '', '2025-10-28 15:00:53');
 
 -- --------------------------------------------------------
 
@@ -215,7 +222,7 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`id`, `team_id`, `name`, `position`, `height`, `nationality`, `jersey_number`, `photo`) VALUES
-(2, 5, 'Ntore habimana', 'PG', '6\'5', 'Rwandan', 12, 'player_1760629502_bbe8888a.png'),
+(2, 5, 'Ntore habi', 'PG', '6\'5', 'Rwandan', 12, 'player_1760629502_bbe8888a.png'),
 (3, 7, 'sisi rosine', 'SG', '5\'6', 'Rwandan', 3, 'player_1761143300_8585cddd.png');
 
 -- --------------------------------------------------------
@@ -266,15 +273,10 @@ CREATE TABLE `playoffs` (
   `home_score` int(11) DEFAULT 0,
   `away_score` int(11) DEFAULT 0,
   `winner_team_id` int(11) DEFAULT NULL,
-  `status` enum('Pending','Completed') DEFAULT 'Pending'
+  `status` enum('Pending','Completed') DEFAULT 'Pending',
+  `seed` int(11) DEFAULT NULL,
+  `series_format` varchar(20) DEFAULT 'Single'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `playoffs`
---
-
-INSERT INTO `playoffs` (`id`, `stage`, `start_date`, `end_date`, `home_team_id`, `away_team_id`, `home_score`, `away_score`, `winner_team_id`, `status`) VALUES
-(1, 'Quarterfinal', '2025-10-22', '2025-10-22', 5, 8, 0, 0, NULL, 'Pending');
 
 -- --------------------------------------------------------
 
@@ -327,10 +329,12 @@ CREATE TABLE `standings` (
 --
 
 INSERT INTO `standings` (`id`, `team_id`, `games_played`, `wins`, `losses`, `points`, `win_percentage`, `games_behind`, `division`, `gender`) VALUES
-(11, 5, 2, 1, 1, 3, NULL, NULL, 'Division 1', 'Men'),
+(11, 5, 3, 2, 1, 5, NULL, NULL, 'Division 1', 'Men'),
 (12, 6, 2, 1, 1, 3, NULL, NULL, 'Division 1', 'Men'),
 (14, 7, 0, 0, 0, 0, NULL, NULL, 'Division 1', 'Women'),
-(15, 8, 1, 1, 0, 2, 0.00, 0.00, 'Division 1', 'Men');
+(15, 8, 2, 1, 1, 3, 0.00, 0.00, 'Division 1', 'Men'),
+(16, 9, 0, 0, 0, 0, 0.00, 0.00, 'Division 1', 'Men'),
+(17, 7, 1, 0, 1, 1, NULL, NULL, 'Division 1', 'Men');
 
 -- --------------------------------------------------------
 
@@ -356,7 +360,8 @@ INSERT INTO `teams` (`id`, `name`, `gender`, `division`, `location`, `logo`, `de
 (5, 'APR', 'Men', 'Division 1', 'Kigali-Rwanda', 'team_1760610317_d6bc7244.png', ''),
 (6, 'REG', 'Men', 'Division 1', 'Kigali-Rwanda', 'team_1761052848_5a7dc83c.png', ''),
 (7, 'Patriots', 'Women', 'Division 1', 'kigali-Rwanda', 'team_1761055987_4a102eab.png', ''),
-(8, 'Espoir', 'Men', 'Division 1', 'kigali-Rwanda', 'team_1761068432_07f0f72a.png', '');
+(8, 'Espoir', 'Men', 'Division 1', 'kigali-Rwanda', 'team_1761068432_07f0f72a.png', ''),
+(9, 'Azmaco', 'Men', 'Division 1', 'kigali-Rwanda', 'team_1762190980_d20f5a63.png', '');
 
 --
 -- Indexes for dumped tables
@@ -478,7 +483,7 @@ ALTER TABLE `coaches`
 -- AUTO_INCREMENT for table `gallery`
 --
 ALTER TABLE `gallery`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `games`
@@ -496,19 +501,19 @@ ALTER TABLE `national_coaches`
 -- AUTO_INCREMENT for table `national_players`
 --
 ALTER TABLE `national_players`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `national_teams`
 --
 ALTER TABLE `national_teams`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `players`
@@ -526,7 +531,7 @@ ALTER TABLE `player_stats`
 -- AUTO_INCREMENT for table `playoffs`
 --
 ALTER TABLE `playoffs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `shop_items`
@@ -538,13 +543,13 @@ ALTER TABLE `shop_items`
 -- AUTO_INCREMENT for table `standings`
 --
 ALTER TABLE `standings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
