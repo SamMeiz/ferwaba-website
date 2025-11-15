@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Ferwaba</title>
-    <meta name="description" content="Learn about Inkingi Art Space, our mission to promote contemporary African art, and our commitment to fostering cultural dialogue.">
-    <meta name="keywords" content="about, mission, contemporary African art, cultural hub, art gallery, Inkingi Art Space">
+    <title>Staff - Ferwaba</title>
+    <meta name="description" content="Meet the talented contemporary African artists featured at Inkingi Art Space. Discover their unique styles and artistic journeys.">
+    <meta name="keywords" content="African artists, contemporary art, artist profiles, art gallery, creative talent">
     
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,67 +19,66 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.php">
-                    <h1>FERWABA</h1>
+                    <h1>Ferwaba</h1>
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
                 <a href="index.php" class="nav-link">Home</a>
-                <a href="about.php" class="nav-link active">About</a>
+                <a href="about.php" class="nav-link">About</a>
                 <a href="contact.php" class="nav-link">Contact</a>
-                <a href="staff.php" class="nav-link">Staff</a>
+                <a href="staff.php" class="nav-link active">Staff</a>
                 <a href="national-team.php" class="nav-link highlight">National Team</a>
                 <a href="competitions.php" class="nav-link">Competitions</a>
+                
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
         </div>
-    </nav><br><br>
+    </nav><br><br><br>
 
     <!-- Page Header -->
-    <section class="page-header">
+    <section class="page-header" style="padding: 40px 0; background-color: #f0f2f5; text-align:center;">
         <div class="container">
-            <h1>About Us</h1>
-            <p>The official governing body for basketball in Rwanda</p>
+            <h1 style="font-size:36px; margin-bottom:10px;">Our Staff</h1>
+            <p style="font-size:18px; color:#555;">Meet the team that drives FERWABA forward</p>
         </div>
     </section>
 
-    <!-- About FERWABA -->
-    <section class="our-story">
-        <div class="container">
-            <div class="story-content">
-                <div class="story-text">
-                    <h2>About FERWABA</h2>
-                    <p>The Rwanda Basketball Federation (FERWABA) was established in 1974 and is the national governing body for basketball in Rwanda. FERWABA organizes leagues, tournaments, and development programs for players, coaches, and referees, while managing the national teams for international competitions.</p>
-                    <p>Our mission is to develop basketball across Rwanda by promoting talent, fostering competitive excellence, and supporting clubs and communities involved in the sport.</p>
+    <!-- Staff Grid -->
+    <section class="staff-section" style="padding:50px 0;">
+        <div class="container" style="display:flex; flex-wrap:wrap; justify-content:center; gap:40px;">
+            
+            <!-- Staff Card -->
+            <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
+                <div style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
+                    <img src="assets/images/staff1.jpg" alt="John Doe" style="width:100%; height:100%; object-fit:cover;">
                 </div>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">John Doe</h3>
+                <p style="color:#0077cc; font-weight:600; margin-top:5px;">President</p>
             </div>
-        </div>
-    </section>
 
-    <!-- Mission & Values -->
-    <section class="our-values">
-        <div class="container">
-            <h2>Our Mission & Values</h2>
-            <p><strong>Mission:</strong> To promote and develop basketball in Rwanda through organized competitions, talent development, and community engagement.</p>
-            <ul class="mission-list">
-                <li>Integrity and professionalism in all operations</li>
-                <li>Excellence in basketball development and performance</li>
-                <li>Support and growth of basketball clubs and communities</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="about-cta">
-        <div class="container">
-            <h2>Get Involved</h2>
-            <p>Join FERWABA to support basketball in Rwanda, whether as a player, coach, official, or fan.</p>
-            <div class="cta-buttons">
-                <a href="contact.php" class="btn btn-primary">Contact Us</a>
-                <a href="competitions.php" class="btn btn-secondary">Explore Competitions</a>
+            <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
+                <div style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
+                    <img src="assets/images/staff2.jpg" alt="Jane Smith" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Jane Smith</h3>
+                <p style="color:#0077cc; font-weight:600; margin-top:5px;">Secretary General</p>
             </div>
+
+            <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
+                <div style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
+                    <img src="assets/images/staff3.jpg" alt="Michael Johnson" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Michael Johnson</h3>
+                <p style="color:#0077cc; font-weight:600; margin-top:5px;">Head Coach</p>
+            </div>
+
+            <!-- Add more staff cards here -->
         </div>
     </section>
-</body>
-
 
     <!-- Footer -->
     <footer class="footer">
@@ -160,5 +159,33 @@
 </footer>
 
     <script src="assets/js/main.js"></script>
+    <script>
+        // Artist filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const artistCards = document.querySelectorAll('.artist-card[data-medium]');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter artists
+                    artistCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-medium') === filter) {
+                            card.style.display = 'block';
+                            card.classList.add('fade-in');
+                        } else {
+                            card.style.display = 'none';
+                            card.classList.remove('fade-in');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

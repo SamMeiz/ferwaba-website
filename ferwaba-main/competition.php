@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Our Mission - Inkingi Art Space</title>
+    <title>Competitions - Ferwaba</title>
     <meta name="description" content="Support Inkingi Art Space in promoting contemporary African art and supporting emerging artists. Make a donation today.">
     <meta name="keywords" content="donate, support art, African art, art gallery, cultural support, art funding">
     
@@ -20,22 +20,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+   <!-- Navigation -->
+   <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.php">
-                    <h1>Inkingi Art Space</h1>
+                    <h1>Ferwaba</h1>
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
                 <a href="index.php" class="nav-link">Home</a>
-                <a href="gallery.php" class="nav-link">Gallery</a>
-                <a href="artists.php" class="nav-link">Artists</a>
-                <a href="exhibitions.php" class="nav-link">Exhibitions</a>
-                <a href="donations.php" class="nav-link highlight active">Donations</a>
                 <a href="about.php" class="nav-link">About</a>
                 <a href="contact.php" class="nav-link">Contact</a>
+                <a href="staff.php" class="nav-link">Staff</a>
+                <a href="national-team.php" class="nav-link highlight">National Team</a>
+                <a href="competitions.php" class="nav-link active">Competitions</a>
+                
             </div>
             <div class="nav-toggle" id="nav-toggle">
                 <span class="bar"></span>
@@ -44,7 +44,6 @@
             </div>
         </div>
     </nav>
-
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -294,62 +293,81 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Inkingi Art Space</h3>
-                    <p>Contemporary African Art Gallery dedicated to showcasing exceptional talent and fostering cultural dialogue.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="gallery.php">Gallery</a></li>
-                        <li><a href="artists.php">Artists</a></li>
-                        <li><a href="exhibitions.php">Exhibitions</a></li>
-                        <li><a href="about.php">About</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact Info</h4>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> Gasabo District, Kacyiru, 24 KG 550 st</p>
-                        <p><i class="fas fa-phone"></i>(+250)788299791</p>
-                        <p><i class="fas fa-envelope"></i> info@inkingiartspace.com</p>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4>Visit Us</h4>
-                <div class="map-container" style="border-radius: 12px; overflow: hidden; max-width: 100%; margin: auto;">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.709508591165!2d30.081878!3d-1.936026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca7f283280a65%3A0xc1e7669c3b4abb84!2sInkingi%20Arts%20Space!5e0!3m2!1sen!2srw!4v1726146000000!5m2!1sen!2srw"
-                      width="100%"
-                      height="350"
-                      style="border:0;"
-                      allowfullscreen=""
-                      loading="lazy"
-                      referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                    <div style="text-align: center; margin-top: 10px;">
-                    <a href="http://google.com/maps/place/Inkingi+Arts+Space/@-1.949696,30.1006848,12z/data=!4m6!3m5!1s0x19dca7f283280a65:0xc1e7669c3b4abb84!8m2!3d-1.9360256!4d30.0853119!16s%2Fg%2F11vj6076p_?entry=ttu&g_ep=EgoyMDI1MDkwOS4wIKXMDSoASAFQAw%3D%3D" 
-                     target="_blank" 
-                     style="color: #0077cc; text-decoration: none; font-weight: 600;">
-                    📍 Open Inkingi Arts Space on Google Maps
-                    </a>
-                </div>
-                </div>
-             </div>
+    <div class="container">
+        <div class="footer-content">
+
+            <!-- Ferwaba Intro Section -->
+            <div class="footer-section">
+                <h3>Ferwaba</h3>
+                <p>Rwanda Basketball Federation dedicated to promoting and developing basketball excellence across the nation.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/ferwaba" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/ferwaba" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.twitter.com/ferwaba" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.youtube.com/@ferwaba" target="_blank" class="social-link"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Inkingi Art Space. All rights reserved.</p>
+
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="rbl.php">RBL</a></li>
+                    <li><a href="gmc.php">GMC</a></li>
+                    <li><a href="legacy.php">Legacy Cup</a></li>
+                    <li><a href="teams.php">National Teams</a></li>
+                    <li><a href="about.php">About</a></li>
+                </ul>
             </div>
+
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <!-- <div class="contact-info"> -->
+                    <p><i class="fas fa-map-marker-alt"></i> KG 17 Ave, Kigali</p>
+                    <p><i class="fas fa-phone"></i> (+250) 791586243</p>
+                    <p><i class="fas fa-envelope"></i> info@ferwaba.rw</p>
+            </div>
+
+            <!-- Google Maps -->
+            <div class="footer-section">
+                <h4>Visit Us</h4>
+
+                <div class="map-wrapper" style="
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    width:100%;
+                    margin:auto;
+                ">
+                    <div class="map-container" style="
+                        width:100%;
+                        max-width:600px;
+                        border-radius:12px;
+                        overflow:hidden;
+                        margin:auto;
+                    ">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.5289447897!2d30.11545!3d-1.95308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca700506d750d%3A0xc2003608f4f76438!2sFERWABA!5e0!3m2!1sen!2srw!4v1731610000000!5m2!1sen!2srw"
+                            width="100%"
+                            height="250"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </footer>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
     <script src="assets/js/main.js"></script>
     <script>
