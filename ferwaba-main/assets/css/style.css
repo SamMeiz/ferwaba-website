@@ -29,6 +29,16 @@ p { margin-bottom:1rem; color:var(--text-light); }
 .nav-container { max-width:1200px; margin:0 auto; padding:0 20px; display:flex; justify-content:space-between; align-items:center; height:70px; }
 .nav-logo h1 { font-size:1.8rem; color:white; margin:0; }
 .nav-logo a { text-decoration:none; color:white; }
+.nav-logo .nav-brand {display: flex;align-items: center;gap: 12px;text-decoration: none;color: inherit;}
+.nav-logo-img {height: 44px;width: auto;object-fit: contain;display: block;
+}
+
+/* Responsive size */
+@media (max-width: 700px) {
+    .nav-logo-img { height: 36px; }
+    .nav-logo h1 { font-size: 1.05rem; }
+}
+
 .nav-menu { display:flex; gap:2rem; align-items:center; }
 .nav-link { text-decoration:none; color:white; font-weight:500; padding:8px 16px; border-radius:var(--border-radius); transition:var(--transition); position:relative; }
 .nav-link:hover, .nav-link.active { background-color:rgba(255,255,255,0.2); color:white; border-bottom:3px solid var(--accent-color); }

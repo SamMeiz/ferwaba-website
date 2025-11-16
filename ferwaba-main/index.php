@@ -46,8 +46,8 @@
    <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="index.php">
-                    <h1>Ferwaba</h1>
+                <a href="index.php" class="nav-brand">
+                    <img src="assets/images/logo.png" alt="Ferwaba Logo" class="nav-logo-img" />
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
@@ -171,7 +171,7 @@
                 </div>
             </div>
             <div class="text-center">
-                <a href="competition.php" class="btn btn-secondary">View All Competitions</a>
+                <a href="competitions.php" class="btn btn-secondary">View All Competitions</a>
             </div>
         </div>
     </section>

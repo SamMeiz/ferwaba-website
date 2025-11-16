@@ -15,11 +15,11 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
+      <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="index.php">
-                    <h1>FERWABA</h1>
+                <a href="index.php" class="nav-brand">
+                    <img src="assets/images/logo.png" alt="Ferwaba Logo" class="nav-logo-img" />
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
@@ -29,9 +29,15 @@
                 <a href="staff.php" class="nav-link">Staff</a>
                 <a href="national-team.php" class="nav-link highlight">National Team</a>
                 <a href="competitions.php" class="nav-link">Competitions</a>
+                
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
         </div>
-    </nav>
+    </nav><br><br>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -261,6 +267,16 @@
                 });
             });
         });
+                // Mobile navigation toggle
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                navToggle.classList.toggle('active');
+            });
+        }
     </script>
 </body>
 </html>

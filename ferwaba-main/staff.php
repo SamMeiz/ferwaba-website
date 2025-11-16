@@ -19,7 +19,7 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.php">
-                    <h1>Ferwaba</h1>
+                    <img src="assets/images/logo.png" alt="Ferwaba Logo" class="nav-logo-img" />
                 </a>
             </div>
             <div class="nav-menu" id="nav-menu">
@@ -186,6 +186,16 @@
                 });
             });
         });
+                // Mobile navigation toggle
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                navToggle.classList.toggle('active');
+            });
+        }
     </script>
 </body>
 </html>
