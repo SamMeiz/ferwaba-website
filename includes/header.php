@@ -53,9 +53,9 @@
                         <li><a href="<?php echo asset_url('players.php#leaderboards'); ?>">Leaderboards</a></li>
                     </ul>
                 </li>
-                <li class="has-sub">
+                <!-- <li class="has-sub">
                     <a href="<?php echo asset_url('national-team.php'); ?>" class="<?php echo is_active(asset_url('national-team.php'), $current_page, $current_path) ? 'active' : ''; ?>">National Teams</a>
-                </li>
+                </li> -->
                 <li class="has-sub">
                     <a href="<?php echo asset_url('games.php'); ?>" class="<?php echo is_active(asset_url('games.php'), $current_page, $current_path) ? 'active' : ''; ?>">Games</a>
                 </li>

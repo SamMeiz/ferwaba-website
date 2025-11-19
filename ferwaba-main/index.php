@@ -245,58 +245,147 @@
         </div>
     </section>
 
-    <!-- Reviews Section -->
-    <section class="reviews-section">
+
+    <!-- News Section -->
+    <section class="news-section">
         <div class="container">
             <div class="section-header">
-                <h2>What Our Fans Say</h2>
-                <p>Read reviews from our ferwaba community</p>
+                <h2>Latest News</h2>
+                <p>Updates from our ferwaba community</p>
             </div>
-            <div class="reviews-grid" id="reviews-container">
-                <div class="review-card">
-                    <div class="review-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+            <div class="news-grid">
+                <div class="news-card">
+                    <div class="news-image">
+                        <img src="assets/images/ferwa.jpg" alt="RBL Season Highlights">
                     </div>
-                    <p class="review-text">Ferwaba has truly elevated basketball in Rwanda. The competitions are world-class!</p>
-                    <div class="review-author">
-                        <strong>Uwase Claudine</strong>
-                        <span>Basketball Fan</span>
-                    </div>
-                </div>
-                <div class="review-card">
-                    <div class="review-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <p class="review-text">The RBL season was absolutely incredible. Can't wait for the next one!</p>
-                    <div class="review-author">
-                        <strong>Mugisha Eric</strong>
-                        <span>Sports Enthusiast</span>
+                    <div class="news-details">
+                        <span class="news-meta">Nov 2025 · Ferwaba</span>
+                        <h3> Ferwaba new Executive Director.</h3>
+                        <p>The Rwanda Basketball Federation (FERWABA) has appointed François-Régis Gahuranyi as its new Executive Director.
+
+Gahuranyi, who previously served as Executive Director of the Rwanda Cycling Federation (FERWACY), replaces Fionah Ishimwe, who held the position for the past three years.</p>
+                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
-                <div class="review-card">
-                    <div class="review-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                <div class="news-card">
+                    <div class="news-image">
+                        <img src="assets/images/nat.jpg" alt="National Team Camp">
                     </div>
-                    <p class="review-text">Ferwaba is doing amazing work promoting basketball talent in Rwanda. Proud to be a supporter!</p>
-                    <div class="review-author">
-                        <strong>Ishimwe Grace</strong>
-                        <span>Season Ticket Holder</span>
+                    <div class="news-details">
+                        <span class="news-meta">Nov 2025 · National Team</span>
+                        <h3>National Team Camp</h3>
+                        <p>The 2027 FIBA World Cup qualifiers will be played across six windows between November 2025 and March 2027, with a total of 420 games worldwide. The African windows are scheduled for November 2025, February 2026, and July 2026.</p>
+                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="news-card">
+                    <div class="news-image">
+                        <img src="assets/images/apr.jpg" alt="Youth Development Program">
+                    </div>
+                    <div class="news-details">
+                        <span class="news-meta">Nov 2025 · Fiba Wcc</span>
+                        <h3>APR crowned WBLA Zone 5 Champions</h3>
+                        <p>APR secured their first Women's Basketball League Africa (WBLA) Zone 5 title, defeating rivals Rwanda Energy Group (REG) 82-71 in an entertaining final on in Nairobi, Kenya, on Saturday.</p>
+                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
         </div>
+        <style>
+            .news-section {
+                padding: 80px 0;
+                background-color: #f8f9fa;
+            }
+            
+            .news-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+                margin-top: 40px;
+            }
+            
+            .news-card {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .news-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            }
+            
+            .news-image {
+                width: 100%;
+                height: 220px;
+                overflow: hidden;
+            }
+            
+            .news-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            
+            .news-card:hover .news-image img {
+                transform: scale(1.1);
+            }
+            
+            .news-details {
+                padding: 24px;
+            }
+            
+            .news-meta {
+                display: inline-block;
+                font-size: 0.85rem;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+            }
+            
+            .news-details h3 {
+                margin: 12px 0;
+                font-size: 1.4rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                line-height: 1.4;
+            }
+            
+            .news-details p {
+                margin: 12px 0 20px;
+                font-size: 1rem;
+                color: #555;
+                line-height: 1.6;
+            }
+            
+            .news-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #ff6b35;
+                font-weight: 600;
+                text-decoration: none;
+                transition: gap 0.3s ease;
+            }
+            
+            .news-link:hover {
+                gap: 12px;
+            }
+            
+            .news-link i {
+                font-size: 0.9rem;
+            }
+            
+            @media (max-width: 768px) {
+                .news-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
     </section>
 
     <!-- Support CTA -->
