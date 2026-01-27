@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php require_once __DIR__ . '/../includes/header.php'; ?>
 <br><br><br><br>
 
 <?php
@@ -12,7 +12,7 @@ $team = $stmt->get_result()->fetch_assoc();
 
 if (!$team) {
     echo "<p>No team found for this category.</p>";
-    require_once __DIR__ . '/includes/footer.php';
+    require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
 
@@ -135,4 +135,4 @@ $coaches = $stmtC->get_result();
 
 </div>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

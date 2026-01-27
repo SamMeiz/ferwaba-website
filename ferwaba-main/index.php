@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -114,7 +114,7 @@
                 <div class="hero-content" data-slide="2">
                     <h2 class="hero-title">Rwanda Basketball League</h2>
                     <p class="hero-subtitle">Watch the best teams compete for the championship</p>
-                    <a href="/ferwaba1/index.php" class="btn btn-primary">View RBL</a>
+                    <a href="../competitions/rbl/pages/index.php" class="btn btn-primary">View RBL</a>
                 </div>
                 
                 <div class="hero-content" data-slide="3">
@@ -140,33 +140,33 @@
                     <div class="artwork-image">
                         <img src="assets/images/SPC.jpg" alt="Ferwaba SuperCup">
                         <div class="artwork-overlay">
-                            <a href="/ferwaba1/Cups/supercup.php" class="btn btn-outline">View SuperCup</a>
+                            <a href="../competitions/supercup.php" class="btn btn-outline">View SuperCup</a>
                         </div>
                     </div>
                     <div class="artwork-info">
-                       <a href="/ferwaba1/Cups/supercup.php" style="text-decoration: none; color: inherit;"><h3>Ferwaba SuperCup</h3></a> 
+                       <a href="../competitions/supercup.php" style="text-decoration: none; color: inherit;"><h3>Ferwaba SuperCup</h3></a> 
                     </div>
                 </div>
                 <div class="artwork-card">
                     <div class="artwork-image">
                         <img src="assets/images/Gmc.jpg" alt="Genocide Memorial Cup">
                         <div class="artwork-overlay">
-                            <a href="/ferwaba1/Cups/gmc.php" class="btn btn-outline">View GMC</a>
+                            <a href="../competitions/gmc.php" class="btn btn-outline">View GMC</a>
                         </div>
                     </div>
                     <div class="artwork-info">
-                    <a href="/ferwaba1/Cups/gmc.php" style="text-decoration: none; color: inherit;"><h3>Genocide Memorial Cup(GMC)</h3></a> 
+                    <a href="../competitions/gmc.php" style="text-decoration: none; color: inherit;"><h3>Genocide Memorial Cup(GMC)</h3></a> 
                     </div>
                 </div>
                 <div class="artwork-card">
                     <div class="artwork-image">
                         <img src="assets/images/RC.jpg" alt="rwanda cup">
                         <div class="artwork-overlay">
-                            <a href="/ferwaba1/Cups/rwanda-cup.php" class="btn btn-outline">View Details</a>
+                            <a href="../competitions/rwanda-cup.php" class="btn btn-outline">View Details</a>
                         </div>
                     </div>
                     <div class="artwork-info">
-                       <a href="/ferwaba1/Cups/rwanda-cup.php" style="text-decoration: none; color: inherit;"><h3>Rwanda Cup</h3"></a>
+                       <a href="../competitions/rwanda-cup.php" style="text-decoration: none; color: inherit;"><h3>Rwanda Cup</h3"></a>
                     </div>
                 </div>
             </div>
@@ -262,8 +262,7 @@
                         <span class="news-meta">Nov 2025 · Ferwaba</span>
                         <h3> Ferwaba new Executive Director.</h3>
                         <p>The Rwanda Basketball Federation (FERWABA) has appointed François-Régis Gahuranyi as its new Executive Director.
-
-Gahuranyi, who previously served as Executive Director of the Rwanda Cycling Federation (FERWACY), replaces Fionah Ishimwe, who held the position for the past three years.</p>
+                           Gahuranyi, who previously served as Executive Director of the Rwanda Cycling Federation (FERWACY), replaces Fionah Ishimwe, who held the position for the past three years.</p>
                         <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
@@ -289,102 +288,23 @@ Gahuranyi, who previously served as Executive Director of the Rwanda Cycling Fed
                         <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
-            </div>
         </div>
         <style>
-            .news-section {
-                padding: 80px 0;
-                background-color: #f8f9fa;
-            }
-            
-            .news-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 30px;
-                margin-top: 40px;
-            }
-            
-            .news-card {
-                background: white;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-            
-            .news-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-            }
-            
-            .news-image {
-                width: 100%;
-                height: 220px;
-                overflow: hidden;
-            }
-            
-            .news-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.3s ease;
-            }
-            
-            .news-card:hover .news-image img {
-                transform: scale(1.1);
-            }
-            
-            .news-details {
-                padding: 24px;
-            }
-            
-            .news-meta {
-                display: inline-block;
-                font-size: 0.85rem;
-                color: #666;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 12px;
-            }
-            
-            .news-details h3 {
-                margin: 12px 0;
-                font-size: 1.4rem;
-                font-weight: 600;
-                color: #1a1a1a;
-                line-height: 1.4;
-            }
-            
-            .news-details p {
-                margin: 12px 0 20px;
-                font-size: 1rem;
-                color: #555;
-                line-height: 1.6;
-            }
-            
-            .news-link {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                color: #ff6b35;
-                font-weight: 600;
-                text-decoration: none;
-                transition: gap 0.3s ease;
-            }
-            
-            .news-link:hover {
-                gap: 12px;
-            }
-            
-            .news-link i {
-                font-size: 0.9rem;
-            }
-            
-            @media (max-width: 768px) {
-                .news-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
+         .news-section { padding: 80px 0; background-color: #f8f9fa; }
+         .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+         .news-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+         .news-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); }
+         .news-image { width: 100%; height: 220px; overflow: hidden; }
+         .news-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+         .news-card:hover .news-image img { transform: scale(1.1); }
+         .news-details { padding: 24px; }
+         .news-meta { display: inline-block; font-size: 0.85rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+         .news-details h3 { margin: 12px 0; font-size: 1.4rem; font-weight: 600; color: #1a1a1a; line-height: 1.4; }
+         .news-details p { margin: 12px 0 20px; font-size: 1rem; color: #555; line-height: 1.6; }
+         .news-link { display: inline-flex; align-items: center; gap: 8px; color: #ff6b35; font-weight: 600; text-decoration: none; transition: gap 0.3s ease; }
+         .news-link:hover { gap: 12px; }
+         .news-link i { font-size: 0.9rem; }
+        @media (max-width: 768px) { .news-grid { grid-template-columns: 1fr; } }
         </style>
     </section>
 
@@ -571,84 +491,6 @@ document.addEventListener('DOMContentLoaded', function() {
             observer.observe(impactSection);
         }
 
-        // Reviews rotation functionality
-        const reviews = [
-            {
-                text: "Ferwaba has truly elevated basketball in Rwanda. The competitions are world-class!",
-                author: "Uwase Claudine",
-                role: "Basketball Fan"
-            },
-            {
-                text: "The RBL season was absolutely incredible. Can't wait for the next one!",
-                author: "Mugisha Eric",
-                role: "Sports Enthusiast"
-            },
-            {
-                text: "Ferwaba is doing amazing work promoting basketball talent in Rwanda. Proud to be a supporter!",
-                author: "Ishimwe Grace",
-                role: "Season Ticket Holder"
-            },
-            {
-                text: "The Genocide Memorial Cup is a beautiful tribute. Amazing basketball and meaningful purpose.",
-                author: "Nkurunziza Jean Paul",
-                role: "Community Leader"
-            },
-            {
-                text: "I love the energy at every Ferwaba game. The atmosphere is electric!",
-                author: "Uwera Divine",
-                role: "Student Athlete"
-            },
-            {
-                text: "Watching our local teams compete at this level makes me so proud. Go Ferwaba!",
-                author: "Habimana Patrick",
-                role: "Long-time Fan"
-            },
-            {
-                text: "The Legacy Cup showcases the future stars of Rwandan basketball. Inspiring!",
-                author: "Mukamana Alice",
-                role: "Basketball Coach"
-            },
-            {
-                text: "Ferwaba's commitment to youth development is outstanding. Great for our community!",
-                author: "Nsengiyumva David",
-                role: "Parent"
-            },
-            {
-                text: "Every game is a celebration of Rwandan talent and sportsmanship. Well done Ferwaba!",
-                author: "Iradukunda Sarah",
-                role: "Sports Journalist"
-            },
-            {
-                text: "The quality of basketball has improved so much. Ferwaba is leading the way!",
-                author: "Bizimana Robert",
-                role: "Former Player"
-            },
-            {
-                text: "From grassroots to professional level, Ferwaba supports it all. Truly impressive!",
-                author: "Mukamazimpaka Jeanne",
-                role: "Volunteer"
-            },
-            {
-                text: "The venues, organization, and passion - everything about Ferwaba events is top-notch!",
-                author: "Kamanzi Emmanuel",
-                role: "Event Attendee"
-            },
-            {
-                text: "Supporting Ferwaba means supporting the future of sports in Rwanda. Count me in!",
-                author: "Ingabire Marie",
-                role: "Sponsor"
-            },
-            {
-                text: "The competitions bring our communities together. Basketball is more than a game here!",
-                author: "Ndayisaba Samuel",
-                role: "Local Resident"
-            },
-            {
-                text: "Ferwaba has created opportunities for so many young athletes. Thank you for your work!",
-                author: "Umutoni Christine",
-                role: "Youth Advocate"
-            }
-        ];
 
         let currentReviewSet = 0;
         

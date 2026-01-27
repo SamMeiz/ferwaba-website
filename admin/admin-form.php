@@ -1,5 +1,6 @@
-<?php require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = ($editing = isset($_GET['id']) && ctype_digit($_GET['id'])) ? 'Edit Admin' : 'Add Admin';
+require_once __DIR__ . '/includes/admin-header.php';
 require_superadmin();
 
 $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -13,7 +14,7 @@ $error = '';
 
 if ($editing) {
   $stmt = $mysqli->prepare("SELECT full_name,email,role,is_active FROM admins WHERE id=? LIMIT 1");
-  $stmt->bind_param('i',$id);
+  $stmt->bind_param('i', $id);
   $stmt->execute();
   $res = $stmt->get_result();
   if ($row = $res->fetch_assoc()) {
@@ -49,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $stmt->bind_param('sssii', $full_name, $email, $role, $is_active, $id);
         }
         if ($stmt->execute()) {
-          redirect('admins.php');
+          header("Location: admins.php");
+          exit();
         } else {
           $error = 'Failed to save admin (email may be taken).';
         }
@@ -59,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $hashed = hash_password($password);
       $stmt->bind_param('sssii', $full_name, $email, $hashed, $role, $is_active);
       if ($stmt->execute()) {
-        redirect('admins.php');
+        header("Location: admins.php");
+        exit();
       } else {
         $error = 'Failed to create admin (email may be taken).';
       }
@@ -67,55 +70,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo $editing? 'Edit':'Add'; ?> Admin - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-</head>
-<body>
-<div class="container" style="max-width:640px">
-  <div class="section-title">
-    <h2><?php echo $editing? 'Edit':'Add'; ?> Admin</h2>
-    <a href="admins.php" class="btn btn-secondary">Back</a>
+
+<div class="page-header">
+  <div>
+    <h1><?php echo $editing ? 'Edit Admin' : 'Add New Admin'; ?></h1>
+    <p><?php echo $editing ? 'Update administrator details' : 'Create a new administrator account'; ?></p>
   </div>
-  <div class="card">
-    <div class="card-body">
-      <?php if($error): ?><div class="error"><?php echo sanitize($error); ?></div><?php endif; ?>
-      <form method="post">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" name="full_name" value="<?php echo sanitize($full_name); ?>" required>
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" name="email" value="<?php echo sanitize($email); ?>" required>
-        </div>
-        <div class="form-group">
-          <label>Password <?php if($editing): ?><span class="muted">(leave blank to keep unchanged)</span><?php endif; ?></label>
-          <input type="password" name="password" <?php echo !$editing ? 'required' : ''; ?>>
-        </div>
-        <div class="form-group">
-          <label>Role</label>
-          <select name="role">
-            <option value="SubAdmin" <?php echo $role==='SubAdmin'?'selected':''; ?>>SubAdmin</option>
-            <option value="SuperAdmin" <?php echo $role==='SuperAdmin'?'selected':''; ?>>SuperAdmin</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" name="is_active" <?php echo $is_active? 'checked':''; ?>> Active</label>
-        </div>
-        <div class="action-buttons">
-          <button class="btn btn-success" type="submit">Save</button>
-          <a class="btn btn-secondary" href="admins.php">Cancel</a>
-        </div>
-      </form>
-    </div>
+  <div class="section-actions">
+    <a href="admins.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Admins</a>
   </div>
 </div>
-</body>
-</html>
 
+<?php if ($error): ?>
+<div class="message message-error">
+  <i class="fas fa-exclamation-circle"></i>
+  <?php echo sanitize($error); ?>
+</div>
+<?php endif; ?>
 
+<div class="form-container">
+  <form method="post">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="full_name"><i class="fas fa-user"></i> Full Name</label>
+        <input type="text" id="full_name" name="full_name" value="<?php echo sanitize($full_name); ?>" required placeholder="Enter full name">
+      </div>
+
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        <input type="email" id="email" name="email" value="<?php echo sanitize($email); ?>" required placeholder="admin@ferwaba.rw">
+      </div>
+
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password <?php if ($editing): ?><span class="form-hint">(leave blank to keep current)</span><?php endif; ?></label>
+        <input type="password" id="password" name="password" <?php echo !$editing ? 'required' : ''; ?> placeholder="Enter password">
+      </div>
+
+      <div class="form-group">
+        <label for="role"><i class="fas fa-shield-alt"></i> Role</label>
+        <select id="role" name="role">
+          <option value="SubAdmin" <?php echo $role === 'SubAdmin' ? 'selected' : ''; ?>>SubAdmin</option>
+          <option value="SuperAdmin" <?php echo $role === 'SuperAdmin' ? 'selected' : ''; ?>>SuperAdmin</option>
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <div class="checkbox-group">
+          <input type="checkbox" id="is_active" name="is_active" <?php echo $is_active ? 'checked' : ''; ?>>
+          <label for="is_active"><i class="fas fa-check-circle"></i> Account is active</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">
+        <i class="fas fa-save"></i>
+        <?php echo $editing ? 'Update Admin' : 'Create Admin'; ?>
+      </button>
+      <a href="admins.php" class="btn btn-secondary">
+        <i class="fas fa-times"></i>
+        Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

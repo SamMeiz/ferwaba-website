@@ -1,6 +1,6 @@
-<?php 
-require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Shop Management';
+require_once __DIR__ . '/includes/admin-header.php';
 
 // Fetch all teams (for grouping)
 $teams = [];
@@ -15,94 +15,127 @@ $rows = $mysqli->query("
   FROM shop_items
   ORDER BY team_id ASC, created_at DESC
 ");
+
+$itemsByTeam = [];
+while ($i = $rows->fetch_assoc()) {
+  $teamName = $teams[$i['team_id']] ?? 'Unassigned';
+  $itemsByTeam[$teamName][] = $i;
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Shop - FERWABA</title>
-  <link rel="stylesheet" href="../css/admin.css">
-  <style>
-    .team-folder { margin-bottom: 32px; }
-    .team-folder h3 {
-      margin-bottom: 12px;
-      padding: 8px 12px;
-      background: var(--blue);
-      color: #fff;
-      border-radius: 6px;
-      display: inline-block;
-    }
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
-    .shop-item {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #fff;
-      transition: transform 0.2s;
-    }
-    .shop-item:hover { transform: scale(1.02); }
-    .shop-item img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-    }
-    .shop-item .info {
-      padding: 10px;
-    }
-    .shop-item .info h4 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .shop-item .info .muted {
-      color: #666;
-      font-size: 14px;
-    }
-  </style>
-</head>
-<body>
-<div class="container" style="margin:20px auto">
-  <div class="section-title">
-    <h2>Shop Management</h2>
-    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
-    <a class="btn" href="shop-form.php">Add Item</a>
+
+<style>
+.shop-item-card {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.shop-item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.shop-item-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+.shop-item-info {
+  padding: 14px;
+}
+.shop-item-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 6px;
+}
+.shop-item-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.shop-item-price {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+}
+.shop-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.team-section {
+  margin-bottom: 32px;
+}
+.team-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gray-200);
+}
+</style>
+
+<div class="page-header">
+  <div>
+    <h1>Shop Management</h1>
+    <p>Manage merchandise and products</p>
   </div>
-
-  <?php
-  $currentTeam = null;
-  while ($i = $rows->fetch_assoc()):
-    $teamName = $teams[$i['team_id']] ?? 'Unassigned';
-    
-    // When team changes, close previous table and start a new one
-    if ($teamName !== $currentTeam):
-      if ($currentTeam !== null) echo '</tbody></table></div>'; // close previous folder
-      echo '<div class="team-folder">';
-      echo '<h3>' . htmlspecialchars($teamName) . '</h3>';
-      echo '<div class="card"><table>';
-      echo '<thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Gender</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
-      $currentTeam = $teamName;
-    endif;
-  ?>
-    <tr>
-      <td><?php if($i['image']): ?><img src="/ferwaba1/admin/uploads/<?php echo sanitize($i['image']); ?>" alt="img" style="width:48px;height:32px;object-fit:cover"><?php endif; ?></td>
-      <td><?php echo sanitize($i['name']); ?></td>
-      <td><?php echo sanitize($i['category']); ?></td>
-      <td><?php echo sanitize($i['gender']); ?></td>
-      <td>RWF <?php echo number_format((float)$i['price'], 2); ?></td>
-      <td><?php echo $i['is_active'] ? 'Active' : 'Inactive'; ?></td>
-      <td>
-        <a href="shop-form.php?id=<?php echo (int)$i['id']; ?>">Edit</a> |
-        <a href="delete-shop.php?id=<?php echo (int)$i['id']; ?>" onclick="return confirm('Delete this item?')">Delete</a>
-      </td>
-    </tr>
-  <?php endwhile; ?>
-
-  <?php if ($currentTeam !== null) echo '</tbody></table></div></div>'; ?>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="shop-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Item</a>
+  </div>
 </div>
-</body>
-</html>
+
+<div class="admin-card">
+  <div class="admin-card-body">
+    <?php if (empty($itemsByTeam)): ?>
+      <div class="empty-state">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>No shop items found</h3>
+        <p>Add your first product to the shop.</p>
+        <a href="shop-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Item</a>
+      </div>
+    <?php else: ?>
+      <?php foreach ($itemsByTeam as $teamName => $items): ?>
+        <div class="team-section">
+          <h3><i class="fas fa-tag"></i> <?php echo sanitize($teamName); ?></h3>
+          <div class="shop-items-grid">
+            <?php foreach ($items as $i): ?>
+              <div class="shop-item-card">
+                <?php if ($i['image']): ?>
+                  <img src="uploads/<?php echo sanitize($i['image']); ?>" alt="<?php echo sanitize($i['name']); ?>" class="shop-item-image">
+                <?php else: ?>
+                  <div class="shop-item-image" style="background: var(--gray-200); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-image" style="color: var(--gray-400); font-size: 32px;"></i>
+                  </div>
+                <?php endif; ?>
+                <div class="shop-item-info">
+                  <h4><?php echo sanitize($i['name']); ?></h4>
+                  <div class="shop-item-meta">
+                    <span class="shop-item-price">RWF <?php echo number_format((float)$i['price'], 0); ?></span>
+                    <span class="status-badge <?php echo $i['is_active'] ? 'status-active' : 'status-inactive'; ?>">
+                      <?php echo $i['is_active'] ? 'Active' : 'Inactive'; ?>
+                    </span>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <a href="shop-form.php?id=<?php echo (int)$i['id']; ?>" class="action-link edit">
+                      <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="delete-shop.php?id=<?php echo (int)$i['id']; ?>" class="action-link delete" onclick="return confirm('Delete this item?')">
+                      <i class="fas fa-trash"></i> Delete
+                    </a>
+                  </div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+</div>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

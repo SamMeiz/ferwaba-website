@@ -1,66 +1,72 @@
-<?php 
-require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'News Management';
+require_once __DIR__ . '/includes/admin-header.php';
 
-$rows = $mysqli->query("SELECT id, title, content, category, image, video_url, created_at FROM news ORDER BY created_at DESC, id DESC");
+$rows = $mysqli->query("SELECT id, title, category, image, created_at FROM news ORDER BY created_at DESC, id DESC");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage News - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-</head>
-<body>
-<div class="container" style="margin:24px auto; max-width:900px">
-  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <h2>News</h2>
-    <div>
-      <a href="dashboard.php" class="btn btn-secondary">Back</a>
-      <a href="news-form.php" class="btn">➕ Add Article</a>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="table-wrapper">
-    <table>
+<div class="page-header">
+  <div>
+    <h1>News Management</h1>
+    <p>Manage news articles and announcements</p>
+  </div>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="news-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Article</a>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3><i class="fas fa-newspaper"></i> All Articles</h3>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $rows->num_rows; ?> articles</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="admin-table">
       <thead>
         <tr>
-          <th>Image</th>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Content</th>
-          <th>Video URL</th>
-          <th>Published</th>
-          <th>Actions</th>
+          <th><i class="fas fa-image"></i> Image</th>
+          <th><i class="fas fa-heading"></i> Title</th>
+          <th><i class="fas fa-tag"></i> Category</th>
+          <th><i class="fas fa-calendar"></i> Published</th>
+          <th><i class="fas fa-cogs"></i> Actions</th>
         </tr>
       </thead>
       <tbody>
-        <?php while($n = $rows->fetch_assoc()): ?>
+        <?php while ($n = $rows->fetch_assoc()): ?>
         <tr>
           <td>
-            <?php if($n['image']): ?>
-              <img src="/ferwaba1/admin/uploads/<?php echo sanitize($n['image']); ?>" alt="img" style="width:48px;height:32px;object-fit:cover;border-radius:6px">
-
+            <?php if ($n['image']): ?>
+              <img src="uploads/<?php echo sanitize($n['image']); ?>" alt="img">
+            <?php else: ?>
+              <div style="width: 44px; height: 44px; background: var(--gray-200); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                <i class="fas fa-image"></i>
+              </div>
             <?php endif; ?>
           </td>
-          <td><?php echo sanitize($n['image']); ?></td>
-          <td><?php echo sanitize($n['title']); ?></td>
-          <td><?php echo sanitize($n['category']); ?></td>
-          <td><?php echo sanitize($n['content']); ?></td>
-          <td><?php echo sanitize($n['video_url']); ?></td>
-          <td><?php echo sanitize($n['created_at']); ?></td>
+          <td><strong><?php echo sanitize($n['title']); ?></strong></td>
           <td>
-            <a href="news-form.php?id=<?php echo (int)$n['id']; ?>" class="btn-small">✏️ Edit</a>
-            <a href="delete-news.php?id=<?php echo (int)$n['id']; ?>" class="btn-small danger" onclick="return confirm('Delete this article?')">🗑️ Delete</a>
+            <span class="status-badge" style="background: var(--gray-100); color: var(--gray-700);">
+              <i class="fas fa-tag"></i>
+              <?php echo sanitize($n['category']); ?>
+            </span>
+          </td>
+          <td><?php echo date('M d, Y', strtotime($n['created_at'])); ?></td>
+          <td>
+            <div class="action-links">
+              <a href="news-form.php?id=<?php echo (int)$n['id']; ?>" class="action-link edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a href="delete-news.php?id=<?php echo (int)$n['id']; ?>" class="action-link delete" onclick="return confirm('Delete this article?')">
+                <i class="fas fa-trash"></i> Delete
+              </a>
+            </div>
           </td>
         </tr>
         <?php endwhile; ?>
       </tbody>
     </table>
-    </div>
   </div>
 </div>
-</body>
-</html>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

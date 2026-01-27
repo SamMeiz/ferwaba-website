@@ -1,49 +1,69 @@
-<?php require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Coaches Management';
+require_once __DIR__ . '/includes/admin-header.php';
 
 $coaches = $mysqli->query("SELECT c.id,c.name,c.role,c.nationality,c.photo,t.name AS team_name FROM coaches c LEFT JOIN teams t ON t.id=c.team_id ORDER BY t.name ASC, c.role ASC, c.name ASC");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Coaches - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-</head>
-<body>
-<div class="container" style="margin:20px auto">
-  <div class="section-title">
-    <h2>Coaches</h2>
-    <a href="dashboard.php" class="btn btn-secondary">Back</a>
-    <a class="btn" href="coach-form.php">Add Coach</a>
+
+<div class="page-header">
+  <div>
+    <h1>Coaches Management</h1>
+    <p>Manage coaching staff</p>
   </div>
-  <div class="card">
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr><th>Photo</th><th>Name</th><th>Role</th><th>Team</th><th>Nationality</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          <?php while($c=$coaches->fetch_assoc()): ?>
-          <tr>
-            <td><?php if($c['photo']): ?><img src="/ferwaba1/admin/uploads/<?php echo sanitize($c['photo']); ?>" alt="photo" style="width:36px;height:36px;object-fit:cover;border-radius:50%"><?php endif; ?></td>
-            <td><?php echo sanitize($c['name']); ?></td>
-            <td><?php echo sanitize($c['role']); ?></td>
-            <td><?php echo sanitize($c['team_name'] ?? ''); ?></td>
-            <td><?php echo sanitize($c['nationality']); ?></td>
-            <td class="table-actions">
-              <a href="coach-form.php?id=<?php echo (int)$c['id']; ?>">Edit</a>
-              <a href="delete-coach.php?id=<?php echo (int)$c['id']; ?>" onclick="return confirm('Delete coach?')" style="color:#dc2626">Delete</a>
-            </td>
-          </tr>
-          <?php endwhile; ?>
-        </tbody>
-      </table>
-    </div>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="coach-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Coach</a>
   </div>
 </div>
-</body>
-</html>
 
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3><i class="fas fa-chalkboard-teacher"></i> All Coaches</h3>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $coaches->num_rows; ?> coaches</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-image"></i> Photo</th>
+          <th><i class="fas fa-user"></i> Name</th>
+          <th><i class="fas fa-briefcase"></i> Role</th>
+          <th><i class="fas fa-users"></i> Team</th>
+          <th><i class="fas fa-globe"></i> Nationality</th>
+          <th><i class="fas fa-cogs"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($c = $coaches->fetch_assoc()): ?>
+        <tr>
+          <td>
+            <?php if ($c['photo']): ?>
+              <img src="uploads/<?php echo sanitize($c['photo']); ?>" alt="photo">
+            <?php else: ?>
+              <div style="width: 44px; height: 44px; background: var(--gray-200); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                <i class="fas fa-user"></i>
+              </div>
+            <?php endif; ?>
+          </td>
+          <td><strong><?php echo sanitize($c['name']); ?></strong></td>
+          <td><?php echo sanitize($c['role']); ?></td>
+          <td><?php echo sanitize($c['team_name'] ?? '-'); ?></td>
+          <td><?php echo sanitize($c['nationality']); ?></td>
+          <td>
+            <div class="action-links">
+              <a href="coach-form.php?id=<?php echo (int)$c['id']; ?>" class="action-link edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a href="delete-coach.php?id=<?php echo (int)$c['id']; ?>" class="action-link delete" onclick="return confirm('Delete coach?')">
+                <i class="fas fa-trash"></i> Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        <?php endwhile; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

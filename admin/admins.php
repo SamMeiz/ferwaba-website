@@ -1,5 +1,6 @@
-<?php require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Admins Management';
+require_once __DIR__ . '/includes/admin-header.php';
 require_superadmin();
 
 // Handle activation toggle
@@ -9,7 +10,8 @@ if (isset($_GET['toggle']) && ctype_digit($_GET['toggle'])) {
         die('Cannot deactivate self');
     }
     $mysqli->query("UPDATE admins SET is_active = IF(is_active=1,0,1) WHERE id=$id");
-    redirect('admins.php');
+    header("Location: admins.php");
+    exit();
 }
 
 // Handle delete (prevent self)
@@ -21,56 +23,80 @@ if (isset($_GET['delete']) && ctype_digit($_GET['delete'])) {
     $stmt = $mysqli->prepare("DELETE FROM admins WHERE id=? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
-    redirect('admins.php');
+    header("Location: admins.php");
+    exit();
 }
 
 $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admins ORDER BY id DESC");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admins - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-  </head>
-<body>
-<div class="container">
-  <div class="section-title">
-    <h2>Admins</h2>
-    <div>
-      <a href="dashboard.php" class="btn btn-secondary">Back</a>
-      <a class="btn" href="admin-form.php">Add Admin</a>
-    </div>
+
+<div class="page-header">
+  <div>
+    <h1>Admins Management</h1>
+    <p>Manage administrator accounts and permissions</p>
   </div>
-  <div class="card">
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          <?php while($a = $admins->fetch_assoc()): ?>
-          <tr>
-            <td><?php echo sanitize($a['full_name']); ?></td>
-            <td><?php echo sanitize($a['email']); ?></td>
-            <td><?php echo sanitize($a['role']); ?></td>
-            <td><span class="status-badge <?php echo $a['is_active']? 'status-active':'status-inactive'; ?>"><?php echo $a['is_active']? 'Active':'Inactive'; ?></span></td>
-            <td class="table-actions">
-              <a href="admin-form.php?id=<?php echo (int)$a['id']; ?>">Edit</a>
-              <?php if((int)$a['id'] !== (int)$_SESSION['admin_id']): ?>
-              <a href="admins.php?toggle=<?php echo (int)$a['id']; ?>">Toggle</a>
-              <a href="delete-admin.php?id=<?php echo (int)$a['id'];  ?>" onclick="return confirm('Delete admin?')" style="color:#dc2626">Delete</a>
-              <?php endif; ?>
-            </td>
-          </tr>
-          <?php endwhile; ?>
-        </tbody>
-      </table>
-    </div>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="admin-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Admin</a>
   </div>
 </div>
-</body>
-</html>
 
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3><i class="fas fa-users-cog"></i> All Administrators</h3>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $admins->num_rows; ?> admins</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-user"></i> Name</th>
+          <th><i class="fas fa-envelope"></i> Email</th>
+          <th><i class="fas fa-shield-alt"></i> Role</th>
+          <th><i class="fas fa-toggle-on"></i> Status</th>
+          <th><i class="fas fa-cogs"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($a = $admins->fetch_assoc()): ?>
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                <?php echo strtoupper(substr($a['full_name'], 0, 1)); ?>
+              </div>
+              <strong><?php echo sanitize($a['full_name']); ?></strong>
+            </div>
+          </td>
+          <td><?php echo sanitize($a['email']); ?></td>
+          <td><span class="role-badge"><?php echo sanitize($a['role']); ?></span></td>
+          <td>
+            <span class="status-badge <?php echo $a['is_active'] ? 'status-active' : 'status-inactive'; ?>">
+              <i class="fas fa-circle" style="font-size: 8px;"></i>
+              <?php echo $a['is_active'] ? 'Active' : 'Inactive'; ?>
+            </span>
+          </td>
+          <td>
+            <div class="action-links">
+              <a href="admin-form.php?id=<?php echo (int)$a['id']; ?>" class="action-link edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <?php if ((int)$a['id'] !== (int)$_SESSION['admin_id']): ?>
+              <a href="admins.php?toggle=<?php echo (int)$a['id']; ?>" class="action-link <?php echo $a['is_active'] ? 'delete' : 'view'; ?>">
+                <i class="fas fa-toggle-<?php echo $a['is_active'] ? 'off' : 'on'; ?>"></i>
+                <?php echo $a['is_active'] ? 'Deactivate' : 'Activate'; ?>
+              </a>
+              <a href="delete-admin.php?id=<?php echo (int)$a['id']; ?>" class="action-link delete" onclick="return confirm('Are you sure you want to delete this admin?')">
+                <i class="fas fa-trash"></i> Delete
+              </a>
+              <?php endif; ?>
+            </div>
+          </td>
+        </tr>
+        <?php endwhile; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

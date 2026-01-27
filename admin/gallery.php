@@ -1,14 +1,12 @@
-<?php 
-require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Gallery Management';
+require_once __DIR__ . '/includes/admin-header.php';
 
-// --- Filters ---
 $selectedGender = $_GET['gender'] ?? 'All';
-$selectedType   = $_GET['type'] ?? 'All';
+$selectedType = $_GET['type'] ?? 'All';
 
-// --- Fetch gallery ---
 $imgs = $mysqli->query("
-    SELECT g.id, g.image, g.caption, 
+    SELECT g.id, g.image, g.caption,
            t.name AS team_name, t.gender, t.division,
            nt.team_name AS nteam_name, nt.category
     FROM gallery g
@@ -17,18 +15,15 @@ $imgs = $mysqli->query("
     ORDER BY COALESCE(t.name, nt.team_name) ASC
 ");
 
-// --- Organize images ---
 $galleryByTeam = [];
-while($g = $imgs->fetch_assoc()) {
-    // Determine source
+while ($g = $imgs->fetch_assoc()) {
     $isNational = !empty($g['nteam_name']);
     $team = $isNational ? $g['nteam_name'] : $g['team_name'];
-    $gender = $isNational 
-        ? (strpos($g['category'], 'Women') !== false ? 'Women' : 'Men') 
+    $gender = $isNational
+        ? (strpos($g['category'], 'Women') !== false ? 'Women' : 'Men')
         : ($g['gender'] ?? '');
     $type = $isNational ? 'National Teams' : 'Division Teams';
 
-    // Apply filters
     if ($selectedGender !== 'All' && $gender !== $selectedGender) continue;
     if ($selectedType !== 'All' && $type !== $selectedType) continue;
 
@@ -41,93 +36,126 @@ while($g = $imgs->fetch_assoc()) {
     ];
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Gallery - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
+
 <style>
-.flex { display:flex; flex-wrap:wrap; gap:8px; }
-.card {
-  width:18%;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
 }
-.card img {
-  width:100%;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  border-radius:6px;
+.gallery-item {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
-.card-body {
-  padding:4px;
-  text-align:center;
-  font-size:11px;
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
-.muted { color:#6b7280; font-size:0.75rem; }
-.filter-form {
-  display:flex;
-  gap:12px;
-  align-items:center;
-  margin-bottom:20px;
+.gallery-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
 }
-.filter-form select {
-  padding:6px;
-  border:1px solid #d1d5db;
-  border-radius:6px;
+.gallery-item-body {
+  padding: 12px;
+}
+.gallery-item-caption {
+  font-size: 12px;
+  color: var(--gray-600);
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.gallery-filter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.gallery-filter label {
+  font-weight: 500;
+  color: var(--gray-700);
+}
+.gallery-filter select {
+  padding: 8px 12px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+.gallery-filter select:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 </style>
-</head>
-<body>
-<div class="container" style="margin:20px auto">
-  <div class="section-title">
-    <h2>Gallery</h2>
-    <a class="btn" href="<?php echo asset_url('gallery-form.php'); ?>">Upload Photo</a>
-    <a href="javascript:history.back()" class="btn" style="background:#6b7280;margin-left:8px;">⬅️ Back</a>
+
+<div class="page-header">
+  <div>
+    <h1>Gallery Management</h1>
+    <p>Manage photos and media</p>
   </div>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="gallery-form.php" class="btn btn-primary"><i class="fas fa-upload"></i> Upload Photo</a>
+  </div>
+</div>
 
-  <!-- Filter Form -->
-  <form method="get" class="filter-form">
-    <label>Gender:</label>
-    <select name="gender" onchange="this.form.submit()">
-      <option value="All" <?php if($selectedGender==='All') echo 'selected'; ?>>All</option>
-      <option value="Men" <?php if($selectedGender==='Men') echo 'selected'; ?>>Men</option>
-      <option value="Women" <?php if($selectedGender==='Women') echo 'selected'; ?>>Women</option>
-    </select>
+<div class="admin-card">
+  <div class="admin-card-body">
+    <form method="get" class="gallery-filter">
+      <label><i class="fas fa-venus-mars"></i> Gender:</label>
+      <select name="gender" onchange="this.form.submit()">
+        <option value="All" <?php echo $selectedGender === 'All' ? 'selected' : ''; ?>>All</option>
+        <option value="Men" <?php echo $selectedGender === 'Men' ? 'selected' : ''; ?>>Men</option>
+        <option value="Women" <?php echo $selectedGender === 'Women' ? 'selected' : ''; ?>>Women</option>
+      </select>
 
-    <label>Team Type:</label>
-    <select name="type" onchange="this.form.submit()">
-      <option value="All" <?php if($selectedType==='All') echo 'selected'; ?>>All</option>
-      <option value="Division Teams" <?php if($selectedType==='Division Teams') echo 'selected'; ?>>Division Teams</option>
-      <option value="National Teams" <?php if($selectedType==='National Teams') echo 'selected'; ?>>National Teams</option>
-    </select>
-  </form>
+      <label><i class="fas fa-users"></i> Team Type:</label>
+      <select name="type" onchange="this.form.submit()">
+        <option value="All" <?php echo $selectedType === 'All' ? 'selected' : ''; ?>>All</option>
+        <option value="Division Teams" <?php echo $selectedType === 'Division Teams' ? 'selected' : ''; ?>>Division Teams</option>
+        <option value="National Teams" <?php echo $selectedType === 'National Teams' ? 'selected' : ''; ?>>National Teams</option>
+      </select>
+    </form>
 
-  <!-- Gallery Display -->
-  <?php foreach($galleryByTeam as $team => $images): ?>
-    <h3 style="margin-top:24px;"><?php echo sanitize($team); ?></h3>
-    <div class="flex">
-      <?php foreach($images as $g): ?>
-        <div class="card">
-          <img src="/ferwaba1/admin/uploads/<?php echo sanitize($g['image']); ?>" alt="img">
-          <div class="card-body">
-            <?php if(!empty($g['caption'])): ?>
-              <div class="muted"><?php echo sanitize($g['caption']); ?></div>
-            <?php endif; ?>
-            <div style="margin-top:2px;">
-              <a href="delete-gallery.php?id=<?php echo (int)$g['id']; ?>" 
-                 onclick="return confirm('Delete image?')" 
-                 style="color:#ef4444;font-size:11px;">Delete</a>
+    <?php if (empty($galleryByTeam)): ?>
+      <div class="empty-state">
+        <i class="fas fa-images"></i>
+        <h3>No photos found</h3>
+        <p>Try adjusting your filters or upload new photos.</p>
+      </div>
+    <?php else: ?>
+      <?php foreach ($galleryByTeam as $team => $images): ?>
+        <h3 style="margin: 24px 0 16px; font-size: 16px; font-weight: 600; color: var(--gray-700);">
+          <i class="fas fa-folder"></i> <?php echo sanitize($team); ?>
+          <span style="color: var(--gray-500); font-weight: 400; font-size: 14px;">(<?php echo count($images); ?>)</span>
+        </h3>
+        <div class="gallery-grid">
+          <?php foreach ($images as $g): ?>
+            <div class="gallery-item">
+              <img src="uploads/<?php echo sanitize($g['image']); ?>" alt="gallery image">
+              <div class="gallery-item-body">
+                <?php if (!empty($g['caption'])): ?>
+                  <p class="gallery-item-caption"><?php echo sanitize($g['caption']); ?></p>
+                <?php endif; ?>
+                <a href="delete-gallery.php?id=<?php echo (int)$g['id']; ?>" class="action-link delete" onclick="return confirm('Delete this image?')">
+                  <i class="fas fa-trash"></i> Delete
+                </a>
+              </div>
             </div>
-          </div>
+          <?php endforeach; ?>
         </div>
       <?php endforeach; ?>
-    </div>
-  <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
 </div>
-</body>
-</html>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

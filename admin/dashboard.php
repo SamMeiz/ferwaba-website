@@ -1,42 +1,231 @@
-<?php require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Dashboard';
+require_once __DIR__ . '/includes/admin-header.php';
+
+// Get stats
+$stats = [
+  'teams' => $mysqli->query("SELECT COUNT(*) as count FROM teams")->fetch_assoc()['count'],
+  'players' => $mysqli->query("SELECT COUNT(*) as count FROM players")->fetch_assoc()['count'],
+  'coaches' => $mysqli->query("SELECT COUNT(*) as count FROM coaches")->fetch_assoc()['count'],
+  'games' => $mysqli->query("SELECT COUNT(*) as count FROM games")->fetch_assoc()['count'],
+  'news' => $mysqli->query("SELECT COUNT(*) as count FROM news")->fetch_assoc()['count'],
+  'gallery' => $mysqli->query("SELECT COUNT(*) as count FROM gallery")->fetch_assoc()['count'],
+];
+
+// Get recent items
+$recent_games = $mysqli->query("SELECT g.*, t1.name as home_team, t2.name as away_team FROM games g LEFT JOIN teams t1 ON g.home_team_id = t1.id LEFT JOIN teams t2 ON g.away_team_id = t2.id ORDER BY g.game_date DESC LIMIT 5");
+$recent_news = $mysqli->query("SELECT * FROM news ORDER BY created_at DESC LIMIT 4");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - FERWABA</title>
-  <link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-</head>
-<body>
-<div class="container" style="margin:20px auto">
-  <div class="section-title">
-    <h2>Dashboard</h2>
-    <div>
-      <?php if (current_admin_role() === 'SuperAdmin'): ?>
-        <a class="btn btn-secondary" href="change-password.php" style="margin-right:8px">Change Password</a>
-      <?php endif; ?>
-      <a class="btn btn-danger" href="logout.php">Logout</a>
-    </div>
-  </div>
-  <div class="dashboard-grid">
-    <a class="dashboard-card" href="admins.php"><h3>Manage Admins</h3><p class="muted">SuperAdmin only</p></a>
-    <a class="dashboard-card" href="teams.php"><h3>Manage Teams</h3></a>
-    <a class="dashboard-card" href="players.php"><h3>Manage Players</h3></a>
-    <a class="dashboard-card" href="coaches.php"><h3>Manage Coaches</h3></a>
-    <a class="dashboard-card" href="games.php"><h3>Manage Games</h3></a>
-    <a class="dashboard-card" href="standings-list.php"><h3>Manage Standings</h3></a>
-    <a class="dashboard-card" href="playoffs.php"><h3>Manage Playoffs</h3></a>
-    <a class="dashboard-card" href="news.php"><h3>Manage News</h3></a>
-    <a class="dashboard-card" href="shop.php"><h3>Manage Shop</h3></a>
-    <a class="dashboard-card" href="gallery.php"><h3>Manage Gallery</h3></a>
-    <a class="dashboard-card" href="national-teams.php"><h3>Manage National Teams</h3></a>
-    <a class="dashboard-card" href="national-players.php"><h3>Manage National Players</h3></a>
-    <a class="dashboard-card" href="stats-list.php"><h3>Manage Player Statistics</h3></a>
-  </div>
+
+<style>
+.dashboard-welcome {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  color: #fff;
+  margin-bottom: 28px;
+}
+
+.dashboard-welcome h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dashboard-welcome p {
+  opacity: 0.85;
+  font-size: 15px;
+}
+
+.quick-links-section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 16px;
+}
+
+.recent-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.recent-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recent-card-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.recent-card-body {
+  padding: 0;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 14px;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.recent-item:hover {
+  background: var(--gray-50);
+}
+
+.recent-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.recent-item-content {
+  flex: 1;
+}
+
+.recent-item-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 2px;
+}
+
+.recent-item-content p {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.recent-item-action {
+  color: var(--gray-400);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-welcome {
+    padding: 20px;
+  }
+
+  .dashboard-welcome h2 {
+    font-size: 20px;
+  }
+}
+</style>
+
+<div class="dashboard-welcome">
+  <h2>Welcome back, <?php echo sanitize($_SESSION['admin_name'] ?? 'Admin'); ?>!</h2>
+  <p>Manage your FERWABA basketball league content from this dashboard.</p>
 </div>
-</body>
-</html>
 
+<!-- Stats Grid -->
+<div class="stats-grid">
+  <a href="teams.php" class="stat-card">
+    <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['teams']); ?></h3>
+      <p>Teams</p>
+    </div>
+  </a>
+  <a href="players.php" class="stat-card">
+    <div class="stat-icon green"><i class="fas fa-user-astronaut"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['players']); ?></h3>
+      <p>Players</p>
+    </div>
+  </a>
+  <a href="coaches.php" class="stat-card">
+    <div class="stat-icon purple"><i class="fas fa-chalkboard-teacher"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['coaches']); ?></h3>
+      <p>Coaches</p>
+    </div>
+  </a>
+  <a href="games.php" class="stat-card">
+    <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['games']); ?></h3>
+      <p>Games</p>
+    </div>
+  </a>
+  <a href="news.php" class="stat-card">
+    <div class="stat-icon teal"><i class="fas fa-newspaper"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['news']); ?></h3>
+      <p>News Articles</p>
+    </div>
+  </a>
+  <a href="gallery.php" class="stat-card">
+    <div class="stat-icon red"><i class="fas fa-images"></i></div>
+    <div class="stat-content">
+      <h3><?php echo number_format($stats['gallery']); ?></h3>
+      <p>Gallery Items</p>
+    </div>
+  </a>
+</div>
 
+<!-- Management Grid -->
+<div class="section-title" style="margin-top: 32px;">Quick Management</div>
+<div class="dashboard-grid">
+  <a href="teams.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+    <h3>Manage Teams</h3>
+    <p>Add, edit, or remove teams</p>
+  </a>
+  <a href="players.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-user-astronaut"></i></div>
+    <h3>Manage Players</h3>
+    <p>Player roster management</p>
+  </a>
+  <a href="games.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-calendar-alt"></i></div>
+    <h3>Manage Games</h3>
+    <p>Schedule and results</p>
+  </a>
+  <a href="standings-list.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-list-ol"></i></div>
+    <h3>Standings</h3>
+    <p>League standings</p>
+  </a>
+  <a href="playoffs.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-trophy"></i></div>
+    <h3>Playoffs</h3>
+    <p>Playoff brackets</p>
+  </a>
+  <a href="news.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-newspaper"></i></div>
+    <h3>News</h3>
+    <p>Latest announcements</p>
+  </a>
+  <a href="shop.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-shopping-bag"></i></div>
+    <h3>Shop</h3>
+    <p>Merchandise management</p>
+  </a>
+  <a href="gallery.php" class="dashboard-card">
+    <div class="icon-wrapper"><i class="fas fa-images"></i></div>
+    <h3>Gallery</h3>
+    <p>Photos and media</p>
+  </a>
+</div>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

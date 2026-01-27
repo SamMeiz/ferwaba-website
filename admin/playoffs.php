@@ -1,6 +1,6 @@
-<?php 
-require_once __DIR__ . '/../includes/config.php';
-require_login();
+<?php
+$page_title = 'Playoffs Management';
+require_once __DIR__ . '/includes/admin-header.php';
 
 $rows = $mysqli->query("
     SELECT p.*, 
@@ -14,72 +14,90 @@ $rows = $mysqli->query("
     ORDER BY FIELD(p.stage,'Quarterfinal','Semifinal','Final','3rd Place'), p.start_date ASC, p.id ASC
 ");
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Playoffs - FERWABA</title>
-<link rel="stylesheet" href="<?php echo asset_url('../css/admin.css'); ?>">
-<style>
-    /* body { background:#f9fafb; font-family:Arial,sans-serif; }
-    .container { max-width:1200px; margin:24px auto; }
-    .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
-    .section-title h2 { margin:0; font-size:1.8rem; }
-    .section-title .btn { padding:6px 14px; border-radius:6px; text-decoration:none; color:#fff; background:#2563eb; font-size:0.9rem; margin-top:4px; }
-    .section-title .btn:hover { opacity:0.85; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); padding:16px; overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; }
-    th, td { padding:10px 12px; text-align:left; border-bottom:1px solid #e5e7eb; }
-    th { background:#f3f4f6; font-weight:600; }
-    tr:hover { background:#f9fafb; }
-    td a { color:#2563eb; text-decoration:none; margin-right:8px; font-size:0.9rem; }
-    td a:hover { text-decoration:underline; } */
-</style>
-</head>
-<body>
-<div class="container">
-    <div class="section-title">
-        <h2>Playoffs</h2>
-        <div>
-            <a class="btn" href="playoff-form.php">Add Matchup</a>
-            <a class="btn" href="dashboard.php" style="background:#6b7280;">⬅️ Back</a>
-        </div>
-    </div>
 
-    <div class="card">
-        <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Stage</th>
-                    <th>Dates</th>
-                    <th>Matchup</th>
-                    <th>Status</th>
-                    <th>Score</th>
-                    <th>Winner</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while($p=$rows->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo sanitize($p['stage']); ?></td>
-                    <td><?php echo sanitize($p['start_date'].' to '.$p['end_date']); ?></td>
-                    <td><?php echo sanitize(($p['home_name']??'TBD').' vs '.($p['away_name']??'TBD')); ?></td>
-                    <td><?php echo sanitize($p['status']); ?></td>
-                    <td><?php echo (int)$p['home_score'].' - '.(int)$p['away_score']; ?></td>
-                    <td><?php echo sanitize($p['winner_name'] ?? ''); ?></td>
-                    <td>
-                        <a href="playoff-form.php?id=<?php echo (int)$p['id']; ?>">Edit</a>
-                        <a href="delete-playoff.php?id=<?php echo (int)$p['id']; ?>" onclick="return confirm('Delete matchup?')">Delete</a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-        </div>
-    </div>
+<div class="page-header">
+  <div>
+    <h1>Playoffs Management</h1>
+    <p>Manage playoff matchups and results</p>
+  </div>
+  <div class="section-actions">
+    <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="playoff-form.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Matchup</a>
+  </div>
 </div>
-</body>
-</html>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3><i class="fas fa-list"></i> All Playoff Matchups</h3>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $rows->num_rows; ?> matches</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-trophy"></i> Stage</th>
+          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-users"></i> Matchup</th>
+          <th><i class="fas fa-scoreboard"></i> Score</th>
+          <th><i class="fas fa-star"></i> Winner</th>
+          <th><i class="fas fa-info-circle"></i> Status</th>
+          <th><i class="fas fa-cogs"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($p = $rows->fetch_assoc()): ?>
+        <tr>
+          <td>
+            <?php
+            $stageColors = [
+              'Quarterfinal' => 'status-active',
+              'Semifinal' => 'status-pending',
+              'Final' => 'status-active',
+              '3rd Place' => 'status-inactive'
+            ];
+            ?>
+            <span class="status-badge <?php echo $stageColors[$p['stage']] ?? ''; ?>">
+              <?php echo sanitize($p['stage']); ?>
+            </span>
+          </td>
+          <td><?php echo date('M d, Y', strtotime($p['start_date'])); ?></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-weight: 600;"><?php echo sanitize($p['home_name'] ?? 'TBD'); ?></span>
+              <span style="color: var(--gray-400);">vs</span>
+              <span style="font-weight: 600;"><?php echo sanitize($p['away_name'] ?? 'TBD'); ?></span>
+            </div>
+          </td>
+          <td><strong><?php echo (int)$p['home_score']; ?> - <?php echo (int)$p['away_score']; ?></strong></td>
+          <td><?php echo sanitize($p['winner_name'] ?? '-'); ?></td>
+          <td>
+            <span class="status-badge <?php echo $p['status'] === 'Completed' ? 'status-active' : ($p['status'] === 'Live' ? 'status-pending' : 'status-inactive'); ?>">
+              <?php echo sanitize($p['status']); ?>
+            </span>
+          </td>
+          <td>
+            <div class="action-links">
+              <a href="playoff-form.php?id=<?php echo (int)$p['id']; ?>" class="action-link edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a href="delete-playoff.php?id=<?php echo (int)$p['id']; ?>" class="action-link delete" onclick="return confirm('Delete this matchup?')">
+                <i class="fas fa-trash"></i> Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        <?php endwhile; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: var(--gray-100); border-radius: var(--radius);">
+  <i class="fas fa-info-circle"></i>
+  <span style="color: var(--gray-600); font-size: 14px;">
+    <strong>Note:</strong> The playoff bracket visualization is shown on the frontend at 
+    <code>competitions/rbl/pages/playoffs.php</code> for visitors.
+  </span>
+</div>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

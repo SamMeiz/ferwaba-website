@@ -138,6 +138,16 @@ CREATE TABLE IF NOT EXISTS shop_items(
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS partners(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150),
+  logo VARCHAR(255),
+  website_url VARCHAR(255),
+  display_order INT DEFAULT 0,
+  is_active BOOLEAN DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- =========================
 -- 🌍 NATIONAL TEAMS MODULE
 -- =========================

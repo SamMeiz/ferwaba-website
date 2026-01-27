@@ -201,7 +201,7 @@
                     <div class="league-info">
                         <h3>Rwanda Basketball League</h3>
                         <p>The premier professional basketball league in Rwanda featuring top teams from across the country competing at the highest level.</p>
-                        <a href="teams.php" class="btn">View Teams</a>
+                        <a href="../competitions/rbl/pages/index.php" class="btn">View RBL</a>
                         <div class="league-stats">
                             <div class="stat">
                                 <div class="stat-value">2</div>
@@ -237,7 +237,7 @@
                     <div class="cup-info">
                         <h3>Genocide Memorial Cup</h3>
                         <p>Honoring the memory of victims while celebrating basketball excellence.</p>
-                        <a href="/ferwaba1/Cups/gmc.php" class="btn">View GMC</a>
+                        <a href="../competitions/gmc.php" class="btn">View GMC</a>
                         <div class="cup-stats">
                             <div class="stat">
                                 <div class="stat-value">16</div>
@@ -259,7 +259,7 @@
                     <div class="cup-info">
                         <h3>Heroes Cup</h3>
                         <p>Elite knockout tournament featuring Rwanda's finest teams.</p>
-                        <a href="/ferwaba1/Cups/heroes.php" class="btn">View Details</a>
+                        <a href="../competitions/heroes.php" class="btn">View Heroes Cup</a>
                         <div class="cup-stats">
                             <div class="stat">
                                 <div class="stat-value">8</div>
@@ -281,7 +281,7 @@
                     <div class="cup-info">
                         <h3>Legacy Cup</h3>
                         <p>Celebrating the rich history and legacy of Rwandan basketball.</p>
-                        <a href="/ferwaba1/Cups/legacy.php" class="btn">View Details</a>
+                        <a href="../competitions/legacy.php" class="btn">View Details</a>
                         <div class="cup-stats">
                             <div class="stat">
                                 <div class="stat-value">12</div>
@@ -303,7 +303,7 @@
                     <div class="cup-info">
                         <h3>Rwanda Cup</h3>
                         <p>The national championship determining Rwanda's supreme champions.</p>
-                        <a href="/ferwaba1/Cups/rwanda-cup.php" class="btn">View Details</a>
+                        <a href="../competitions/rwanda-cup.php" class="btn">View Details</a>
                         <div class="cup-stats">
                             <div class="stat">
                                 <div class="stat-value">16</div>
@@ -325,7 +325,7 @@
                     <div class="cup-info">
                         <h3>Super Cup</h3>
                         <p>Season opener between league and cup champions.</p>
-                        <a href="/ferwaba1/Cups/supercup.php" class="btn">View Super Cup</a>
+                        <a href="../competitions/supercup.php" class="btn">View Super Cup</a>
                         <div class="cup-stats">
                             <div class="stat">
                                 <div class="stat-value">2</div>

@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php require_once __DIR__ . '/../includes/header.php'; ?>
 <br><br><br><br><br><br>
 
 
@@ -109,4 +109,4 @@ body {
 .ferwaba-hero .btn:hover { filter:brightness(0.85); transform:translateY(-2px); }
 </style>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>
