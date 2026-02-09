@@ -1,11 +1,11 @@
 
 
-# 📘 **FERWABA BASKETBALL WEBSITE – COMPLETE PROJECT DOCUMENTATION & MVP**
+# 🏀 FERWABA - Rwanda Basketball Federation Website
 
-> **Version:** 1.5 (October 2025)
-> **Scope:** Full frontend + admin backend, static results, media uploads, playoffs, no live streams
-> **Design:** BAL/NBA-inspired modern theme, dark blue + gold
-> **Tech Stack:** PHP, MySQL, HTML5, CSS3, JS
+> **Version:** 2.0 (January 2026)
+> **Full Documentation:** [FULL_PROJECT_DOCUMENTATION.md](./FULL_PROJECT_DOCUMENTATION.md)
+> **Aesthetic:** Professional Government Sport-Backed System (Rwanda National Colors)
+> **Stack:** PHP 8.1, MySQL, Vanilla CSS, JS (ES6+)
 > **MVP:** Functional CRUD system for teams, players, coaches, games, standings, playoffs, and media galleries
 
 ---

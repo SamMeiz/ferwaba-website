@@ -221,7 +221,7 @@ $related = $mysqli->query("SELECT id, title, image, created_at FROM news WHERE i
 <div class="news-detail-page">
   <div class="article-layout">
     <main class="article-main">
-      <a href="news.php" class="back-link">
+      <a href="news" class="back-link">
         <i class="fas fa-arrow-left"></i> Back to All News
       </a>
 
@@ -288,7 +288,7 @@ $related = $mysqli->query("SELECT id, title, image, created_at FROM news WHERE i
           The Rwanda Basketball League is the premier professional competition in the country. Stay tuned for official
           updates.
         </p>
-        <a href="standings.php"
+        <a href="standings"
           style="display:block; text-align:center; background:#fbbf24; color:#1a365d; font-weight:800; padding:12px; border-radius:10px; font-size:13px; text-transform:uppercase;">View
           Standings</a>
       </div>

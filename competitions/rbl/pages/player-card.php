@@ -295,7 +295,7 @@ $ft_pct = calc_percent($stats['ft_made'] ?? 0, $stats['ft_attempted'] ?? 0);
 
 <div class="player-page-wrapper">
 
-  <a href="players.php" class="back-link-pro">
+  <a href="players" class="back-link-pro">
     <i class="fas fa-arrow-left"></i> Back to Roster
   </a>
 

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/config.php';
 require_login();
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $editing = $id > 0;
 
 // Fetch all teams
@@ -31,17 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $team_id = (int)($_POST['team_id'] ?? 0);
   $division = $_POST['division'] ?? 'Division 1';
   $gender = $_POST['gender'] ?? 'Men';
+  $team_group = $_POST['team_group'] ?? null;
   $wins = (int)($_POST['wins'] ?? 0);
   $losses = (int)($_POST['losses'] ?? 0);
   $games_played = $wins + $losses;
   $points = ($wins * 2) + ($losses * 1);
 
   if ($editing) {
-    $stmt = $mysqli->prepare("UPDATE standings SET team_id=?, division=?, gender=?, games_played=?, wins=?, losses=?, points=? WHERE id=?");
-    $stmt->bind_param('issiiiii', $team_id, $division, $gender, $games_played, $wins, $losses, $points, $id);
+    $stmt = $mysqli->prepare("UPDATE standings SET team_id=?, division=?, gender=?, team_group=?, games_played=?, wins=?, losses=?, points=? WHERE id=?");
+    $stmt->bind_param('isssiiiii', $team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points, $id);
   } else {
-    $stmt = $mysqli->prepare("INSERT INTO standings (team_id, division, gender, games_played, wins, losses, points) VALUES (?,?,?,?,?,?,?)");
-    $stmt->bind_param('issiiii', $team_id, $division, $gender, $games_played, $wins, $losses, $points);
+    $stmt = $mysqli->prepare("INSERT INTO standings (team_id, division, gender, team_group, games_played, wins, losses, points) VALUES (?,?,?,?,?,?,?,?)");
+    $stmt->bind_param('isssiiii', $team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points);
   }
 
   if ($stmt->execute()) {
@@ -52,8 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
+
 <head>
-<link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin.css">
 </head>
 
 <section class="section-title">
@@ -65,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <select name="team_id" required>
       <option value="">Select Team</option>
       <?php while ($t = $teams->fetch_assoc()): ?>
-        <option value="<?php echo $t['id']; ?>" <?php if ($t['id'] == $standing['team_id']) echo 'selected'; ?>>
+        <option value="<?php echo $t['id']; ?>" <?php if ($t['id'] == $standing['team_id'])
+             echo 'selected'; ?>>
           <?php echo sanitize($t['name']); ?>
         </option>
       <?php endwhile; ?>
@@ -74,15 +77,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <label>Division
     <select name="division">
-      <option value="Division 1" <?php if ($standing['division'] == 'Division 1') echo 'selected'; ?>>Division 1</option>
-      <option value="Division 2" <?php if ($standing['division'] == 'Division 2') echo 'selected'; ?>>Division 2</option>
+      <option value="Division 1" <?php if ($standing['division'] == 'Division 1')
+        echo 'selected'; ?>>Division 1</option>
+      <option value="Division 2" <?php if ($standing['division'] == 'Division 2')
+        echo 'selected'; ?>>Division 2</option>
     </select>
   </label>
 
   <label>Gender
     <select name="gender">
-      <option value="Men" <?php if ($standing['gender'] == 'Men') echo 'selected'; ?>>Men</option>
-      <option value="Women" <?php if ($standing['gender'] == 'Women') echo 'selected'; ?>>Women</option>
+      <option value="Men" <?php if ($standing['gender'] == 'Men')
+        echo 'selected'; ?>>Men</option>
+      <option value="Women" <?php if ($standing['gender'] == 'Women')
+        echo 'selected'; ?>>Women</option>
+    </select>
+  </label>
+
+  <label>Group (For Div 2)
+    <select name="team_group">
+      <option value="">No Group</option>
+      <option value="Group A" <?php if (($standing['team_group'] ?? '') == 'Group A')
+        echo 'selected'; ?>>Group A</option>
+      <option value="Group B" <?php if (($standing['team_group'] ?? '') == 'Group B')
+        echo 'selected'; ?>>Group B</option>
     </select>
   </label>
 
@@ -100,4 +117,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </form>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>

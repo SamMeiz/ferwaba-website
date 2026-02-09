@@ -1,345 +1,325 @@
-<?php require_once __DIR__ . '/../includes/header.php'; ?><br><br>
+<?php require_once __DIR__ . '/../includes/header.php'; ?>
 
 <style>
-  /* Professional Player Cards */
-  .players-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+  /* Leaderboard Styles */
+  .leaderboard-container {
+    padding: 60px 0;
   }
 
-  .player-card-pro {
-    position: relative;
-    background: #fff;
-    border-radius: 16px;
+  .leaderboard-title {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .leaderboard-title h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .leaderboard-title p {
+    color: #fbbf24;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .stat-category {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    text-decoration: none;
-    color: inherit;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-header {
+    background: linear-gradient(135deg, #1a2a44 0%, #2c5282 100%);
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+  }
+
+  .stat-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .stat-header span {
+    font-size: 12px;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* 👑 The King/Queen */
+  .top-player-spotlight {
+    padding: 40px 20px 30px;
+    text-align: center;
+    background: linear-gradient(to bottom, #f8fafc 0%, #fff 100%);
+    position: relative;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .crown-icon {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    color: #fbbf24;
+    filter: drop-shadow(0 4px 6px rgba(251, 191, 36, 0.4));
+    animation: float 3s ease-in-out infinite;
+    z-index: 10;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translate(-50%, 0);
+    }
+
+    50% {
+      transform: translate(-50%, -10px);
+    }
+  }
+
+  .top-player-img-wrapper {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 16px;
+    position: relative;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+  }
+
+  .top-player-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    background: #fff;
+  }
+
+  .top-player-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .top-player-team {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .top-player-stat {
+    display: inline-block;
+    background: #1a2a44;
+    color: #fbbf24;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(26, 42, 68, 0.3);
+  }
+
+  .top-player-stat span {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    margin-left: 4px;
+    text-transform: uppercase;
+  }
+
+  /* List (2-5) */
+  .runners-up-list {
+    padding: 10px 0;
+  }
+
+  .runner-up-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s;
+  }
+
+  .runner-up-row:last-child {
+    border-bottom: none;
+  }
+
+  .runner-up-row:hover {
+    background: #f8fafc;
+  }
+
+  .rank-badge {
+    width: 24px;
+    height: 24px;
+    background: #e2e8f0;
+    color: #64748b;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    margin-right: 12px;
+  }
+
+  .rank-2 {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .rank-3 {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .runner-info {
+    flex-grow: 1;
+  }
+
+  .runner-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1e293b;
     display: block;
   }
 
-  .player-card-pro:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.2);
+  .runner-team {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
   }
 
-  .player-card-image {
-    position: relative;
-    width: 100%;
-    height: 280px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  .player-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-
-  .player-card-pro:hover .player-card-image img {
-    transform: scale(1.1);
-  }
-
-  .player-jersey {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+  .runner-stat {
     font-weight: 800;
-    color: #2563eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-  }
-
-  .player-card-content {
-    padding: 24px;
-  }
-
-  .player-name {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #1a1a1a;
-  }
-
-  .player-details {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    color: #666;
-    font-size: 14px;
-  }
-
-  .player-detail-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .player-detail-item i {
-    color: #2563eb;
-    width: 16px;
-  }
-
-  .gender-filter-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-
-  .gender-btn {
-    padding: 10px 28px;
-    border-radius: 25px;
-    background: #f3f4f6;
-    color: #4b5563;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-  }
-
-  .gender-btn.active {
-    background: #2563eb;
-    color: #fff;
-    border-color: #2563eb;
-  }
-
-  .gender-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-  }
-
-  .division-section {
-    margin: 60px 0;
-  }
-
-  .division-title {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 30px;
-    color: #1a1a1a;
-    position: relative;
-    padding-bottom: 12px;
-  }
-
-  .division-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #2563eb, #60a5fa);
-    border-radius: 2px;
-  }
-
-  .view-more-link {
-    display: inline-block;
-    padding: 12px 32px;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: #fff;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-  }
-
-  .view-more-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+    font-size: 16px;
+    color: #1a2a44;
   }
 
   @media (max-width: 768px) {
-    .player-card-image {
-      height: 240px;
+    .stats-grid {
+      grid-template-columns: 1fr;
+      padding: 0 16px;
     }
   }
 </style>
 
-<section class="section-title">
-  <h2>Players</h2>
-  <div class="gender-filter-buttons">
-    <?php
-    $genders = ['All', 'Men', 'Women'];
-    $activeGender = $_GET['gender'] ?? 'All';
-    foreach ($genders as $g):
-      $isActive = ($activeGender === $g) ? 'active' : '';
-      ?>
-      <a href="?gender=<?php echo urlencode($g); ?>" class="gender-btn <?php echo $isActive; ?>">
-        <?php echo $g; ?>
-      </a>
-    <?php endforeach; ?>
-  </div>
-</section>
-
-<!-- ===== Division 1 ===== -->
-<section class="division-section">
-  <h3 class="division-title">Division 1 Players</h3>
-  <div class="grid col-3">
-    <?php
-    $genderFilter = ($activeGender !== 'All') ? "AND t.gender=?" : "";
-    $sql = "
-      SELECT p.id, p.name, p.position, p.jersey_number, p.photo, t.name AS team_name, t.gender, t.division
-      FROM players p
-      JOIN teams t ON t.id = p.team_id
-      WHERE t.division='Division 1' $genderFilter
-      ORDER BY p.name ASC
-      LIMIT 9";
-    $stmt = $mysqli->prepare($sql);
-    if ($genderFilter)
-      $stmt->bind_param('s', $activeGender);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    while ($p = $res->fetch_assoc()):
-      $photo = !empty($p['photo']) ? '../../../admin/uploads/' . sanitize($p['photo']) : 'https://via.placeholder.com/600x300?text=Player';
-      ?>
-      <a class="player-card-pro" href="player-card.php?id=<?php echo (int) $p['id']; ?>">
-        <div class="player-card-image">
-          <img src="<?php echo $photo; ?>" alt="<?php echo sanitize($p['name']); ?>">
-          <div class="player-jersey">#<?php echo (int) $p['jersey_number']; ?></div>
-        </div>
-        <div class="player-card-content">
-          <h3 class="player-name"><?php echo sanitize($p['name']); ?></h3>
-          <div class="player-details">
-            <div class="player-detail-item">
-              <i class="fas fa-basketball-ball"></i>
-              <span><?php echo sanitize($p['position']); ?></span>
-            </div>
-            <div class="player-detail-item">
-              <i class="fas fa-shield-alt"></i>
-              <span><?php echo sanitize($p['team_name']); ?></span>
-            </div>
-          </div>
-        </div>
-      </a>
-    <?php endwhile; ?>
-  </div>
-  <div style="text-align:center;margin-top:30px;">
-    <a href="players-division.php?division=Division%201&gender=<?php echo urlencode($activeGender); ?>"
-      class="view-more-link">View All Division 1 Players</a>
-  </div>
-</section>
-
-<!-- ===== Division 2 ===== -->
-<section class="division-section">
-  <h3 class="division-title">Division 2 Players</h3>
-  <div class="grid col-3">
-    <?php
-    $sql2 = "
-      SELECT p.id, p.name, p.position, p.jersey_number, p.photo, t.name AS team_name, t.gender, t.division
-      FROM players p
-      JOIN teams t ON t.id = p.team_id
-      WHERE t.division='Division 2' $genderFilter
-      ORDER BY p.name ASC
-      LIMIT 9";
-    $stmt2 = $mysqli->prepare($sql2);
-    if ($genderFilter)
-      $stmt2->bind_param('s', $activeGender);
-    $stmt2->execute();
-    $res2 = $stmt2->get_result();
-    while ($p = $res2->fetch_assoc()):
-      $photo = !empty($p['photo']) ? '../../../admin/uploads/' . sanitize($p['photo']) : 'https://via.placeholder.com/600x300?text=Player';
-      ?>
-      <a class="player-card-pro" href="player-card.php?id=<?php echo (int) $p['id']; ?>">
-        <div class="player-card-image">
-          <img src="<?php echo $photo; ?>" alt="<?php echo sanitize($p['name']); ?>">
-          <div class="player-jersey">#<?php echo (int) $p['jersey_number']; ?></div>
-        </div>
-        <div class="player-card-content">
-          <h3 class="player-name"><?php echo sanitize($p['name']); ?></h3>
-          <div class="player-details">
-            <div class="player-detail-item">
-              <i class="fas fa-basketball-ball"></i>
-              <span><?php echo sanitize($p['position']); ?></span>
-            </div>
-            <div class="player-detail-item">
-              <i class="fas fa-shield-alt"></i>
-              <span><?php echo sanitize($p['team_name']); ?></span>
-            </div>
-          </div>
-        </div>
-      </a>
-    <?php endwhile; ?>
-  </div>
-  <div style="text-align:center;margin-top:30px;">
-    <a href="players-division.php?division=Division%202&gender=<?php echo urlencode($activeGender); ?>"
-      class="view-more-link">View All Division 2 Players</a>
-  </div>
-</section>
-
-<!-- ===== Leaderboards (tables side by side) ===== -->
-<section id="leaderboards" style="margin-top:40px">
-  <div class="section-title">
-    <h2>Leaderboards</h2>
+<div class="leaderboard-container">
+  <div class="leaderboard-title">
+    <p>Season 2025/26</p>
+    <h1>Statistical Leaders</h1>
   </div>
 
-  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
+  <div class="stats-grid">
     <?php
-    $stats = [
-      'Points' => 'total_points',
-      'Rebounds' => 'total_rebounds',
-      'Assists' => 'total_assists',
-      'Blocks' => 'total_blocks',
-      'Steals' => 'total_steals'
+    $categories = [
+      'Points' => ['col' => 'total_points', 'label' => 'PPG', 'icon' => 'fa-basketball-ball'],
+      'Rebounds' => ['col' => 'total_rebounds', 'label' => 'RPG', 'icon' => 'fa-hand-holding'],
+      'Assists' => ['col' => 'total_assists', 'label' => 'APG', 'icon' => 'fa-hands-helping'],
+      'Steals' => ['col' => 'total_steals', 'label' => 'SPG', 'icon' => 'fa-hand-rock'],
+      'Blocks' => ['col' => 'total_blocks', 'label' => 'BPG', 'icon' => 'fa-hand-paper']
     ];
 
-    $i = 0;
-    foreach ($stats as $label => $column):
-      // For bottom row (Blocks, Steals), span 1 column each but leave the last column empty
-      $style = '';
-      if ($i === 3)
-        $style = 'grid-column: 1 / 2;'; // Blocks starts at first column of second row
-      if ($i === 4)
-        $style = 'grid-column: 2 / 3;'; // Steals at second column of second row
-    
+    foreach ($categories as $title => $meta):
+      $col = $meta['col'];
+      // Query top 5 players for this stat
+      // Calculate average: total_stat / games_played
+      // Use LEFT JOIN to ensure we get players even if stats table is empty for them
       $sql = "
-        SELECT p.name, t.name AS team_name,
-               ROUND(s.$column / NULLIF(s.games_played,0),1) AS avg_stat
-        FROM player_stats s
-        JOIN players p ON p.id = s.player_id
+        SELECT p.name, p.photo, p.position, t.name AS team_name,
+               COALESCE(s.$col, 0) AS total, 
+               COALESCE(s.games_played, 0) AS games_played,
+               COALESCE(ROUND(s.$col / NULLIF(s.games_played, 0), 1), 0) AS avg_stat
+        FROM players p
         JOIN teams t ON t.id = p.team_id
-        WHERE s.games_played > 0
-        ORDER BY avg_stat DESC
+        LEFT JOIN player_stats s ON p.id = s.player_id
+        ORDER BY avg_stat DESC, p.name ASC
         LIMIT 5";
       $res = $mysqli->query($sql);
-      $i++;
-      ?>
-      <table style="border:1px solid #e5e7eb; border-radius:8px; width:100%; <?php echo $style; ?>">
-        <thead style="background:#f3f4f6;">
-          <tr>
-            <th colspan="2" style="padding:8px; text-align:center;"><?php echo sanitize($label); ?></th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php $rank = 1;
-          while ($r = $res->fetch_assoc()): ?>
-            <tr>
-              <td style="padding:4px 8px;"><strong><?php echo $rank++; ?>.</strong> <?php echo sanitize($r['name']); ?></td>
-              <td style="padding:4px 8px; text-align:right; font-weight:600;">
-                <?php echo sanitize($r['avg_stat']); ?>
-                <?php echo ($label === 'Points') ? 'PPG' : (($label === 'Rebounds') ? 'RPG' : (($label === 'Assists') ? 'APG' : (($label === 'Blocks') ? 'BPG' : 'SPG'))); ?>
-              </td>
-            </tr>
-          <?php endwhile; ?>
-        </tbody>
-      </table>
-    <?php endforeach; ?>
+
+      if ($res && $res->num_rows > 0):
+        $players = [];
+        while ($row = $res->fetch_assoc()) {
+          $players[] = $row;
+        }
+        $topPlayer = $players[0];
+        ?>
+        <div class="stat-category">
+          <div class="stat-header">
+            <h2><?php echo $title; ?></h2>
+            <span>Top 5 <?php echo ($title === 'Points') ? 'Scoring Leaders' : $title . ' Leaders'; ?></span>
+          </div>
+
+          <!-- 👑 Top Player -->
+          <div class="top-player-spotlight">
+            <i class="fas fa-crown crown-icon"></i>
+            <div class="top-player-img-wrapper">
+              <img
+                src="<?php echo !empty($topPlayer['photo']) ? '../../../admin/uploads/' . sanitize($topPlayer['photo']) : 'https://via.placeholder.com/150'; ?>"
+                alt="<?php echo sanitize($topPlayer['name']); ?>" class="top-player-img">
+            </div>
+            <div class="top-player-name"><?php echo sanitize($topPlayer['name']); ?></div>
+            <div class="top-player-team">
+              <i class="fas fa-shield-alt"></i> <?php echo sanitize($topPlayer['team_name']); ?>
+            </div>
+            <div class="top-player-stat">
+              <?php echo $topPlayer['avg_stat']; ?>
+              <span><?php echo $meta['label']; ?></span>
+            </div>
+          </div>
+
+          <!-- Runners Up -->
+          <div class="runners-up-list">
+            <?php
+            for ($i = 1; $i < count($players); $i++):
+              $p = $players[$i];
+              ?>
+              <div class="runner-up-row">
+                <div class="rank-badge rank-<?php echo $i + 1; ?>"><?php echo $i + 1; ?></div>
+                <div class="runner-info">
+                  <span class="runner-name"><?php echo sanitize($p['name']); ?></span>
+                  <span class="runner-team"><?php echo sanitize($p['team_name']); ?></span>
+                </div>
+                <div class="runner-stat"><?php echo $p['avg_stat']; ?></div>
+              </div>
+            <?php endfor; ?>
+          </div>
+        </div>
+      <?php endif; endforeach; ?>
   </div>
-</section>
+</div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

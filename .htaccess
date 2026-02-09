@@ -1,0 +1,62 @@
+# FERWABA - Main .htaccess Configuration
+# This file handles URL rewriting, security, and performance optimizations.
+
+# 1. Disable Directory Indexing
+# Prevents users from seeing a list of files in a directory
+Options -Indexes
+
+# 1.1 Block access to sensitive files
+<Files "config.php">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</Files>
+
+# 2. Default Index Page
+# Sets the priority for the file to load when a directory is requested
+DirectoryIndex index.php ferwaba-main/index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Update this if the project is moved to a different subfolder or root
+    RewriteBase /ferwaba/
+
+    # 3. Remove .php extension from URLs
+    # This allows links like 'about' instead of 'about.php'
+    # It checks if the file exists with a .php extension and rewrites it internally
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+    # 4. Redirect Root to ferwaba-main/
+    # If no file is specified, serve the main landing page
+    RewriteRule ^$ ferwaba-main/index.php [L]
+
+</IfModule>
+
+# 5. Security Headers (Optional but recommended)
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# 6. Performance: Asset Caching
+# Tells the browser to cache static files for better performance
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# 7. Error Handling (Optional)
+# ErrorDocument 404 /ferwaba/ferwaba-main/index.php

@@ -80,10 +80,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </button>
         </form>
 
-        <div style="text-align: center; margin-top: 20px;">
-          <a href="../index.php"
-            style="color: var(--gray-500); font-size: 13px; text-decoration: none; font-weight: 600;">
-            <i class="fas fa-arrow-left"></i> Back to Website
+        <div style="text-align: center; margin-top: 24px; display: flex; justify-content: center; gap: 24px;">
+          <a href="../ferwaba-main/index.php"
+            style="color: var(--gray-600); font-size: 13px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: color 0.2s;">
+            <i class="fas fa-arrow-left"></i> Back to FERWABA
+          </a>
+          <a href="../competitions/rbl/pages/index.php"
+            style="color: var(--primary); font-size: 13px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: color 0.2s;">
+            <i class="fas fa-basketball-ball"></i> Back to RBL
           </a>
         </div>
       </div>

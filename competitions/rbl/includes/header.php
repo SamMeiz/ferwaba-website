@@ -24,6 +24,35 @@
   <script defer src="../../../assets/js/main.js"></script>
 
   <style>
+    /* RBL Pages Background - Rwanda Arena */
+    body {
+      background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98)),
+        url('../img/rwanda-arena.png') center/cover fixed no-repeat;
+      min-height: 100vh;
+      position: relative;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #fff;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(0, 71, 171, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 184, 28, 0.15) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .site-main {
+      position: relative;
+      z-index: 1;
+    }
+
     /* Professional Government Header Styles */
     .top-bar {
       background: linear-gradient(90deg, #1a365d 0%, #2c5282 100%);
@@ -176,54 +205,65 @@
 
     /* 🍔 Animated Hamburger Toggle */
     .nav-toggle {
-        display: none;
-        background: none;
-        border: none;
-        width: 44px;
-        height: 44px;
-        cursor: pointer;
-        position: relative;
-        z-index: 120;
-        transition: all 0.3s ease;
-        padding: 0;
+      display: none;
+      background: none;
+      border: none;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      position: relative;
+      z-index: 120;
+      transition: all 0.3s ease;
+      padding: 0;
     }
 
     .hamburger-box {
-        width: 24px;
-        height: 18px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+      width: 24px;
+      height: 18px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
-    .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-        content: '';
-        display: block;
-        width: 24px;
-        height: 2px;
-        background-color: #fff;
-        position: absolute;
-        transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6), background-color 0.3s ease;
-        border-radius: 4px;
+    .hamburger-inner,
+    .hamburger-inner::before,
+    .hamburger-inner::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #fff;
+      position: absolute;
+      transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6), background-color 0.3s ease;
+      border-radius: 4px;
     }
 
-    .hamburger-inner { top: 50%; transform: translateY(-50%); }
-    .hamburger-inner::before { top: -8px; }
-    .hamburger-inner::after { bottom: -8px; }
+    .hamburger-inner {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .hamburger-inner::before {
+      top: -8px;
+    }
+
+    .hamburger-inner::after {
+      bottom: -8px;
+    }
 
     .nav-toggle.active .hamburger-inner {
-        background-color: transparent !important;
+      background-color: transparent !important;
     }
 
     .nav-toggle.active .hamburger-inner::before {
-        transform: translateY(8px) rotate(45deg);
-        background-color: #fbbf24;
+      transform: translateY(8px) rotate(45deg);
+      background-color: #fbbf24;
     }
 
     .nav-toggle.active .hamburger-inner::after {
-        transform: translateY(-8px) rotate(-45deg);
-        background-color: #fbbf24;
+      transform: translateY(-8px) rotate(-45deg);
+      background-color: #fbbf24;
     }
 
     .has-sub {
@@ -286,7 +326,8 @@
         position: fixed;
         top: 0;
         right: -100%;
-        width: 260px; /* Catchy, compact width */
+        width: 260px;
+        /* Catchy, compact width */
         height: 100vh;
         background: linear-gradient(165deg, #0f172a 0%, #1e3a8a 100%);
         flex-direction: column;
@@ -304,7 +345,8 @@
 
       .main-nav ul {
         flex-direction: column;
-        gap: 8px; /* Tighter spacing */
+        gap: 8px;
+        /* Tighter spacing */
         width: 100%;
       }
 
@@ -343,18 +385,48 @@
         opacity: 0;
       }
 
-      .main-nav.active li:nth-child(1) { animation-delay: 0.1s; }
-      .main-nav.active li:nth-child(2) { animation-delay: 0.15s; }
-      .main-nav.active li:nth-child(3) { animation-delay: 0.2s; }
-      .main-nav.active li:nth-child(4) { animation-delay: 0.25s; }
-      .main-nav.active li:nth-child(5) { animation-delay: 0.3s; }
-      .main-nav.active li:nth-child(6) { animation-delay: 0.35s; }
-      .main-nav.active li:nth-child(7) { animation-delay: 0.4s; }
-      .main-nav.active li:nth-child(8) { animation-delay: 0.45s; }
+      .main-nav.active li:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+
+      .main-nav.active li:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .main-nav.active li:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      .main-nav.active li:nth-child(4) {
+        animation-delay: 0.25s;
+      }
+
+      .main-nav.active li:nth-child(5) {
+        animation-delay: 0.3s;
+      }
+
+      .main-nav.active li:nth-child(6) {
+        animation-delay: 0.35s;
+      }
+
+      .main-nav.active li:nth-child(7) {
+        animation-delay: 0.4s;
+      }
+
+      .main-nav.active li:nth-child(8) {
+        animation-delay: 0.45s;
+      }
 
       @keyframes slideInNav {
-        from { opacity: 0; transform: translateX(30px); }
-        to { opacity: 1; transform: translateX(0); }
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
 
       .has-sub .sub {
@@ -366,19 +438,20 @@
         border-radius: 12px;
         display: none;
       }
-      
+
       .has-sub.open .sub {
         display: flex;
       }
     }
 
     @media (max-width: 640px) {
-        .logo-title {
-            font-size: 16px;
-        }
-        .logo-subtitle {
-            font-size: 9px;
-        }
+      .logo-title {
+        font-size: 16px;
+      }
+
+      .logo-subtitle {
+        font-size: 9px;
+      }
     }
 
     /* Global Reset for Underlines */
@@ -397,7 +470,7 @@
         <span><i class="fas fa-envelope"></i> info@ferwaba.rw</span>
       </div>
       <div class="top-bar-right">
-        <a href="../../../ferwaba-main/index.php"><i class="fas fa-globe"></i> FERWABA Main</a>
+        <a href="../../../ferwaba-main/index"><i class="fas fa-globe"></i> FERWABA Main</a>
         <a href="https://ticqet.rw" target="_blank"><i class="fas fa-ticket-alt"></i> Buy Tickets</a>
       </div>
     </div>
@@ -405,7 +478,7 @@
 
   <header class="site-header" id="header">
     <div class="header-inner">
-      <a class="logo" href="index.php">
+      <a class="logo" href="index">
         <img src="../img/logo.png" alt="FERWABA Logo">
         <div class="logo-text">
           <span class="logo-title">Rwanda Basketball League</span>
@@ -415,7 +488,7 @@
 
       <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation">
         <div class="hamburger-box">
-            <span class="hamburger-inner"></span>
+          <span class="hamburger-inner"></span>
         </div>
       </button>
 
@@ -428,65 +501,58 @@
             return ($page === $current) ? 'active' : '';
           }
           ?>
-          <li><a href="index.php" class="<?php echo is_active('index.php', $current_page); ?>">Home</a></li>
-          <li><a href="standings.php" class="<?php echo is_active('standings.php', $current_page); ?>">Standings</a>
+          <li><a href="index" class="<?php echo is_active('index.php', $current_page); ?>">Home</a></li>
+          <li><a href="standings" class="<?php echo is_active('standings.php', $current_page); ?>">Standings</a>
           </li>
-          <li><a href="teams.php" class="<?php echo is_active('teams.php', $current_page); ?>">Teams</a></li>
+          <li><a href="teams" class="<?php echo is_active('teams.php', $current_page); ?>">Teams</a></li>
+          <li><a href="players" class="<?php echo is_active('players.php', $current_page); ?>">Leaderboard</a></li>
+          <li><a href="games" class="<?php echo is_active('games.php', $current_page); ?>">Schedule</a></li>
           <li class="has-sub">
-            <a href="players.php" class="<?php echo is_active('players.php', $current_page); ?>">Players</a>
+            <a href="playoffs" class="<?php echo is_active('playoffs.php', $current_page); ?>">Playoffs</a>
             <ul class="sub">
-              <li><a href="players.php">All Players</a></li>
-              <li><a href="players.php#leaderboards">Leaderboards</a></li>
+              <li><a href="playoffs">Bracket</a></li>
+              <li><a href="playoffs#history">Champions</a></li>
             </ul>
           </li>
-          <li><a href="games.php" class="<?php echo is_active('games.php', $current_page); ?>">Schedule</a></li>
-          <li class="has-sub">
-            <a href="playoffs.php" class="<?php echo is_active('playoffs.php', $current_page); ?>">Playoffs</a>
-            <ul class="sub">
-              <li><a href="playoffs.php">Bracket</a></li>
-              <li><a href="playoffs.php#history">Champions</a></li>
-            </ul>
-          </li>
-          <li><a href="news.php" class="<?php echo is_active('news.php', $current_page); ?>">News</a></li>
-          <li><a href="shop.php" class="<?php echo is_active('shop.php', $current_page); ?>">Shop</a></li>
+          <li><a href="news" class="<?php echo is_active('news.php', $current_page); ?>">News</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const topBar = document.querySelector('.top-bar');
-        const header = document.getElementById('header');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-                if (topBar) topBar.style.transform = 'translateY(-100%)';
-                header.style.top = '0';
-            } else {
-                header.classList.remove('scrolled');
-                if (topBar) topBar.style.transform = 'translateY(0)';
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+      const topBar = document.querySelector('.top-bar');
+      const header = document.getElementById('header');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+          if (topBar) topBar.style.transform = 'translateY(-100%)';
+          header.style.top = '0';
+        } else {
+          header.classList.remove('scrolled');
+          if (topBar) topBar.style.transform = 'translateY(0)';
+        }
+      });
+
+      const navToggle = document.getElementById('navToggle');
+      const mainNav = document.getElementById('mainNav');
+
+      if (navToggle && mainNav) {
+        navToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          mainNav.classList.toggle('active');
+          navToggle.classList.toggle('active'); // Toggle the animated hamburger state
         });
 
-        const navToggle = document.getElementById('navToggle');
-        const mainNav = document.getElementById('mainNav');
-        
-        if (navToggle && mainNav) {
-            navToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mainNav.classList.toggle('active');
-                navToggle.classList.toggle('active'); // Toggle the animated hamburger state
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!mainNav.contains(e.target) && !navToggle.contains(e.target)) {
-                    mainNav.classList.remove('active');
-                    navToggle.classList.remove('active');
-                }
-            });
-        }
+        document.addEventListener('click', (e) => {
+          if (!mainNav.contains(e.target) && !navToggle.contains(e.target)) {
+            mainNav.classList.remove('active');
+            navToggle.classList.remove('active');
+          }
+        });
+      }
     });
   </script>
 

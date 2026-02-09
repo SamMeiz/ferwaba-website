@@ -144,6 +144,7 @@ require_once __DIR__ . '/includes/admin-header.php';
           <th><i class="fas fa-hashtag"></i> Rank</th>
           <th><i class="fas fa-users"></i> Team</th>
           <th><i class="fas fa-trophy"></i> Division</th>
+          <th><i class="fas fa-layer-group"></i> Group</th>
           <th><i class="fas fa-venus-mars"></i> Gender</th>
           <th><i class="fas fa-gamepad"></i> GP</th>
           <th><i class="fas fa-check-circle"></i> W</th>
@@ -191,12 +192,21 @@ require_once __DIR__ . '/includes/admin-header.php';
               <td>
                 <span class="rank-badge"><?php echo $rank; ?></span>
               </td>
-              <td><strong><?php echo sanitize($row['name']); ?></strong></td>
-              <td><?php echo sanitize($row['division']); ?></td>
+              <td><strong><?php echo sanitize($row['name'] ?? ''); ?></strong></td>
+              <td><?php echo sanitize($row['division'] ?? ''); ?></td>
+              <td>
+                <?php if (!empty($row['team_group'])): ?>
+                  <span class="status-badge" style="background: var(--blue-100); color: var(--blue-700); font-size: 11px;">
+                    <?php echo sanitize($row['team_group']); ?>
+                  </span>
+                <?php else: ?>
+                  <span style="color: var(--gray-400);">—</span>
+                <?php endif; ?>
+              </td>
               <td>
                 <span class="status-badge" style="background: var(--gray-100); color: var(--gray-700);">
-                  <i class="fas fa-<?php echo $row['gender'] === 'Female' ? 'venus' : 'mars'; ?>"></i>
-                  <?php echo sanitize($row['gender']); ?>
+                  <i class="fas fa-<?php echo ($row['gender'] ?? 'Men') === 'Women' ? 'venus' : 'mars'; ?>"></i>
+                  <?php echo sanitize($row['gender'] ?? 'Men'); ?>
                 </span>
               </td>
               <td><?php echo (int) $row['games_played']; ?></td>

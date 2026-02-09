@@ -231,6 +231,39 @@
     box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
   }
 
+  .btn-live-home {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 12px;
+    animation: pulse-home 1.5s infinite;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  @keyframes pulse-home {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    }
+
+    70% {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+    }
+
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+    }
+  }
+
   .upcoming-highlight td {
     background: rgba(34, 197, 94, 0.08) !important;
   }
@@ -378,18 +411,146 @@
     <p>The premier professional basketball competition organized by FERWABA. Follow your favorite teams and players
       throughout the season.</p>
     <div class="hero-buttons">
-      <a class="hero-btn hero-btn-primary" href="games.php"><i class="fas fa-calendar-alt"></i> View Schedule</a>
-      <a class="hero-btn hero-btn-secondary" href="standings.php"><i class="fas fa-trophy"></i> Standings</a>
+      <a class="hero-btn hero-btn-primary" href="games"><i class="fas fa-calendar-alt"></i> View Schedule</a>
+      <a class="hero-btn hero-btn-secondary" href="standings"><i class="fas fa-trophy"></i> Standings</a>
     </div>
   </div>
 </section>
+
+<!-- Latest Headlines Scrollable Section -->
+<section class="latest-news-scroll" style="padding: 40px 0; overflow: hidden;">
+  <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h3
+        style="color: #fbbf24; margin: 0; text-transform: uppercase; font-size: 16px; font-weight: 800; letter-spacing: 1px;">
+        <i class="fas fa-newspaper"></i> Latest Headlines
+      </h3>
+      <div style="font-size: 12px; color: #94a3b8; font-style: italic;"><i class="fas fa-arrows-alt-h"></i> Swipe to
+        explore</div>
+    </div>
+
+    <div class="news-scroll-wrapper"
+      style="display: flex; gap: 24px; overflow-x: auto; padding-bottom: 24px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+
+      <?php
+      // Fetch latest 6 news items dynamically
+      $news_limit = 6;
+      $news_sql = "SELECT id, title, content, image, category, created_at FROM news ORDER BY created_at DESC LIMIT ?";
+      $stmt = $mysqli->prepare($news_sql);
+
+      if ($stmt) {
+        $stmt->bind_param('i', $news_limit);
+        $stmt->execute();
+        $res_news = $stmt->get_result();
+
+        while ($news = $res_news->fetch_assoc()):
+          // Path logic: admin uploads are in ../../../admin/uploads/ relative to RBL pages
+          $img_path = !empty($news['image'])
+            ? '../../../admin/uploads/' . sanitize($news['image'])
+            : '../../../ferwaba-main/assets/images/comp.jpg';
+
+          $cat = !empty($news['category']) ? sanitize($news['category']) : 'News';
+
+          // Dynamic badge styles
+          $badge_bg = '#fbbf24';
+          $badge_col = '#000';
+          if (stripos($cat, 'match') !== false || stripos($cat, 'playoff') !== false) {
+            $badge_bg = '#ef4444';
+            $badge_col = '#fff';
+          } elseif (stripos($cat, 'team') !== false) {
+            $badge_bg = '#3b82f6';
+            $badge_col = '#fff';
+          } elseif (stripos($cat, 'women') !== false) {
+            $badge_bg = '#ec4899';
+            $badge_col = '#fff';
+          }
+          ?>
+          <!-- Dynamic News Card -->
+          <div class="news-card"
+            style="flex: 0 0 320px; background: rgba(30, 41, 59, 1.0); border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; transition: transform 0.3s;">
+            <div style="height: 360px; overflow: hidden; position: relative;">
+              <img src="<?php echo $img_path; ?>" alt="<?php echo sanitize($news['title']); ?>"
+                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+              <div
+                style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(0,0,0,0.6) 100%); pointer-events: none;">
+              </div>
+              <span
+                style="position: absolute; top: 16px; left: 16px; background: <?php echo $badge_bg; ?>; color: <?php echo $badge_col; ?>; font-size: 11px; font-weight: 800; padding: 6px 14px; text-transform: uppercase; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); letter-spacing: 0.5px;"><?php echo $cat; ?></span>
+            </div>
+            <div style="padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: #1e293b;">
+              <h4
+                style="color: #fff; font-size: 19px; font-weight: 700; margin: 0 0 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 54px;">
+                <?php echo sanitize($news['title']); ?>
+              </h4>
+              <p
+                style="color: #94a3b8; font-size: 14px; margin: 0 0 20px; line-height: 1.6; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                <?php echo sanitize(substr(strip_tags($news['content']), 0, 100)) . '...'; ?>
+              </p>
+              <a href="news-card.php?id=<?php echo $news['id']; ?>"
+                style="align-self: flex-start; color: #fbbf24; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;">Read
+                Full Story <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+          <?php
+        endwhile;
+        $stmt->close();
+      }
+      ?>
+
+      <!-- Archive Card (Always at end) -->
+      <div class="news-card"
+        style="flex: 0 0 320px; background: rgba(30, 41, 59, 1.0); border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; transition: transform 0.3s;">
+        <div
+          style="height: 360px; background: #0f172a; display: flex; align-items: center; justify-content: center; position: relative;">
+          <i class="fas fa-newspaper" style="font-size: 64px; color: #334155;"></i>
+          <span
+            style="position: absolute; top: 16px; left: 16px; background: #64748b; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 14px; text-transform: uppercase; border-radius: 30px;">Archive</span>
+        </div>
+        <div style="padding: 24px; flex-grow: 1; display: flex; flex-direction: column;">
+          <h4 style="color: #fff; font-size: 19px; font-weight: 700; margin: 0 0 12px; line-height: 1.4;">Explore More
+            News</h4>
+          <p style="color: #94a3b8; font-size: 14px; margin: 0 0 20px; line-height: 1.6; flex-grow: 1;">Check our news
+            archive for past stories, match reports, and announcements.</p>
+          <a href="news"
+            style="align-self: flex-start; color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #3b82f6; padding: 10px 20px; border-radius: 30px; text-transform: uppercase; letter-spacing: 1px;">View
+            Archive <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .news-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .news-scroll-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .news-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(251, 191, 36, 0.5);
+    border-radius: 3px;
+  }
+
+  .news-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .news-card:hover img {
+    transform: scale(1.05);
+  }
+</style>
 
 
 <!-- Upcoming Games Section -->
 <section class="home-section">
   <div class="section-header">
     <h2><i class="fas fa-calendar-alt"></i> Upcoming Games</h2>
-    <a class="view-all-btn" href="games.php"><i class="fas fa-arrow-right"></i> View All Games</a>
+    <a class="view-all-btn" href="games"><i class="fas fa-arrow-right"></i> View All Games</a>
   </div>
 
   <div class="games-card">
@@ -397,6 +558,7 @@
       <thead>
         <tr>
           <th>Date</th>
+          <th>Time</th>
           <th>Match</th>
           <th>Division</th>
           <th>Gender</th>
@@ -413,7 +575,7 @@
         FROM games g
         JOIN teams th ON th.id = g.home_team_id
         JOIN teams ta ON ta.id = g.away_team_id
-        WHERE g.status='Scheduled' 
+        WHERE g.status IN ('Scheduled', 'Live') 
         ORDER BY g.game_date ASC, g.id ASC 
         LIMIT 5";
 
@@ -426,12 +588,29 @@
             ?>
             <tr class="<?php echo $row_class; ?>">
               <td><?php echo date('M d, Y', strtotime($g['game_date'])); ?></td>
+              <td><?php echo (!empty($g['game_time'])) ? date('g:i A', strtotime($g['game_time'])) : 'TBD'; ?></td>
               <td class="match-cell"><?php echo sanitize($g['home_name'] . ' vs ' . $g['away_name']); ?></td>
               <td><?php echo sanitize($g['division']); ?></td>
               <td><?php echo sanitize($g['gender']); ?></td>
               <td><?php echo sanitize($g['location']); ?></td>
               <td>
-                <a href="https://ticqet.rw" target="_blank" class="btn-ticket"><i class="fas fa-ticket-alt"></i> Tickets</a>
+                <?php
+                $current_time = time();
+                $is_game_time = false;
+                if (!empty($g['game_date']) && !empty($g['game_time'])) {
+                  $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
+                  if ($game_ts && $current_time >= $game_ts)
+                    $is_game_time = true;
+                }
+
+                $show_live = (strtolower($g['status']) === 'live' || ($is_game_time && strtolower($g['status']) === 'scheduled')) && !empty($g['live_link']) && $g['live_link'] !== 'N/A';
+
+                if ($show_live): ?>
+                  <a href="<?php echo sanitize($g['live_link']); ?>" target="_blank" class="btn-live-home"><i
+                      class="fas fa-play-circle"></i> Live</a>
+                <?php else: ?>
+                  <a href="https://ticqet.rw" target="_blank" class="btn-ticket"><i class="fas fa-ticket-alt"></i> Tickets</a>
+                <?php endif; ?>
               </td>
             </tr>
           <?php endwhile;
@@ -445,7 +624,7 @@
 <section class="home-section">
   <div class="section-header">
     <h2><i class="fas fa-trophy"></i> League Standings</h2>
-    <a class="view-all-btn" href="standings.php"><i class="fas fa-arrow-right"></i> Full Tables</a>
+    <a class="view-all-btn" href="standings"><i class="fas fa-arrow-right"></i> Full Tables</a>
   </div>
 
   <div class="standings-grid">
@@ -472,7 +651,7 @@
       <div class="standings-mini-card">
         <div class="standings-mini-header">
           <h4><?php echo sanitize($div); ?></h4>
-          <a href="standings.php?division=<?php echo urlencode($div); ?>&gender=<?php echo urlencode($selectedGender); ?>"
+          <a href="standings?division=<?php echo urlencode($div); ?>&gender=<?php echo urlencode($selectedGender); ?>"
             class="btn-small">Full Table</a>
         </div>
 

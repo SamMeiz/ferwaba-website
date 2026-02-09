@@ -284,8 +284,9 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
 .status-final {
@@ -308,11 +309,58 @@
   text-decoration: none;
   transition: all 0.3s ease;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-tickets:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(251,191,36,0.4);
+}
+
+.btn-live {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  animation: pulse 2s infinite;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  border: 2px solid #fff;
+}
+
+.btn-live:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239,68,68,0.6);
+  color: #fff;
+}
+
+.btn-highlights {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-highlights:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59,130,246,0.4);
 }
 
 .empty-state {
@@ -345,6 +393,7 @@
     grid-template-columns: 1fr;
     gap: 16px;
     text-align: center;
+    padding: 16px;
   }
   .game-matchup {
     justify-content: center;
@@ -354,6 +403,9 @@
   }
   .game-actions {
     justify-content: center;
+  }
+  .score-wrapper {
+    text-align: center;
   }
 }
 
@@ -375,6 +427,39 @@
   .games-filter input[type="date"] {
     flex: 1;
     min-width: 120px;
+  }
+  
+  /* Better mobile visibility - centered */
+  .date-section {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 12px;
+  }
+  
+  .game-row {
+    padding: 16px 12px;
+  }
+  
+  .team-name {
+    font-size: 14px;
+  }
+  
+  .team-score {
+    font-size: 18px;
+  }
+  
+  .game-time {
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .teams-wrapper {
+    align-items: center;
+  }
+  
+  .team-row {
+    justify-content: center;
   }
 }
 </style>
@@ -514,7 +599,24 @@ function toggleCompleted(checkbox) {
       </div>
 
       <div class="game-actions">
-        <a href="https://ticqet.rw" target="_blank" class="btn-tickets"><i class="fas fa-ticket-alt"></i> Tickets</a>
+        <?php 
+        $current_time = time();
+        $is_game_time = false;
+        if(!empty($g['game_date']) && !empty($g['game_time'])) {
+            $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
+            if($game_ts && $current_time >= $game_ts) $is_game_time = true;
+        }
+        
+        $show_live = (strtolower($g['status']) === 'live' || ($is_game_time && strtolower($g['status']) === 'scheduled')) && !empty($g['live_link']) && $g['live_link'] !== 'N/A';
+        $show_highlights = strtolower($g['status']) === 'completed' && !empty($g['highlight_url']) && $g['highlight_url'] !== 'N/A';
+        
+        if($show_live): ?>
+          <a href="<?php echo sanitize($g['live_link']); ?>" target="_blank" class="btn-live"><i class="fas fa-play-circle"></i> Watch Live</a>
+        <?php elseif($show_highlights): ?>
+          <a href="<?php echo sanitize($g['highlight_url']); ?>" target="_blank" class="btn-highlights"><i class="fas fa-video"></i> Highlights</a>
+        <?php elseif(strtolower($g['status']) === 'scheduled' && !$is_game_time): ?>
+          <a href="https://ticqet.rw" target="_blank" class="btn-tickets"><i class="fas fa-ticket-alt"></i> Tickets</a>
+        <?php endif; ?>
       </div>
     </div>
     <?php endforeach; ?>

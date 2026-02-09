@@ -256,30 +256,30 @@
       <!-- Quick Links -->
       <div class="footer-column">
         <h4>Quick Links</h4>
-        <a href="games.php"><i class="fas fa-calendar"></i>Schedule</a>
-        <a href="standings.php"><i class="fas fa-trophy"></i>Standings</a>
-        <a href="teams.php"><i class="fas fa-users"></i>Teams</a>
-        <a href="players.php"><i class="fas fa-user"></i>Players</a>
-        <a href="news.php"><i class="fas fa-newspaper"></i>News</a>
+        <a href="games"><i class="fas fa-calendar"></i>Schedule</a>
+        <a href="standings"><i class="fas fa-trophy"></i>Standings</a>
+        <a href="teams"><i class="fas fa-users"></i>Teams</a>
+        <a href="players"><i class="fas fa-user"></i>Players</a>
+        <a href="news"><i class="fas fa-newspaper"></i>News</a>
       </div>
 
       <!-- Competitions -->
       <div class="footer-column">
         <h4>Competitions</h4>
-        <a href="../../../ferwaba-main/index.php">FERWABA Main</a>
-        <a href="../../gmc.php">GMC</a>
-        <a href="../../heroes.php">Heroes Cup</a>
-        <a href="playoffs.php">Playoffs</a>
-        <a href="national-team.php">National Teams</a>
+        <a href="../../../ferwaba-main/index">FERWABA Main</a>
+        <a href="../../gmc">GMC</a>
+        <a href="../../heroes">Heroes Cup</a>
+        <a href="playoffs">Playoffs</a>
+        <a href="national-team">National Teams</a>
       </div>
 
       <!-- Resources -->
       <div class="footer-column">
         <h4>Resources</h4>
         <a href="https://ticqet.rw/" target="_blank"><i class="fas fa-ticket-alt"></i>Buy Tickets</a>
-        <a href="shop.php"><i class="fas fa-shopping-bag"></i>Official Shop</a>
-        <a href="gallery.php"><i class="fas fa-images"></i>Gallery</a>
-        <a href="../../../ferwaba-main/contact.php"><i class="fas fa-envelope"></i>Contact Us</a>
+        <a href="shop"><i class="fas fa-shopping-bag"></i>Official Shop</a>
+        <a href="gallery"><i class="fas fa-images"></i>Gallery</a>
+        <a href="../../../ferwaba-main/contact"><i class="fas fa-envelope"></i>Contact Us</a>
       </div>
     </div>
 
@@ -312,9 +312,9 @@
     <div class="footer-bottom-inner">
       <p>&copy; <?php echo date('Y'); ?> FERWABA - Federation Rwandaise de Basketball. All rights reserved.</p>
       <div class="footer-legal-links">
-        <a href="../../../ferwaba-main/privacy.php">Privacy Policy</a>
-        <a href="../../../ferwaba-main/terms.php">Terms of Use</a>
-        <a href="../../../ferwaba-main/accessibility.php">Accessibility</a>
+        <a href="../../../ferwaba-main/privacy">Privacy Policy</a>
+        <a href="../../../ferwaba-main/terms">Terms of Use</a>
+        <a href="../../../ferwaba-main/accessibility">Accessibility</a>
       </div>
     </div>
   </div>

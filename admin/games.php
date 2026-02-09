@@ -25,7 +25,7 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
     <table class="admin-table">
       <thead>
         <tr>
-          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-calendar"></i> Date & Time</th>
           <th><i class="fas fa-handshake"></i> Match</th>
           <th><i class="fas fa-trophy"></i> Division</th>
           <th><i class="fas fa-venus-mars"></i> Gender</th>
@@ -37,48 +37,56 @@ $games = $mysqli->query("SELECT g.*, th.name as home_name, ta.name as away_name 
       </thead>
       <tbody>
         <?php while ($g = $games->fetch_assoc()): ?>
-        <tr>
-          <td><strong><?php echo date('M d, Y', strtotime($g['game_date'])); ?></strong></td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="color: var(--primary); font-weight: 600;"><?php echo sanitize($g['home_name']); ?></span>
-              <span style="color: var(--gray-400);">vs</span>
-              <span style="color: var(--primary); font-weight: 600;"><?php echo sanitize($g['away_name']); ?></span>
-            </div>
-          </td>
-          <td><?php echo sanitize($g['division']); ?></td>
-          <td>
-            <span class="status-badge" style="background: var(--gray-100); color: var(--gray-700);">
-              <i class="fas fa-<?php echo $g['gender'] === 'Female' ? 'venus' : 'mars'; ?>"></i>
-              <?php echo sanitize($g['gender']); ?>
-            </span>
-          </td>
-          <td>
-            <?php
-            $statusClass = match($g['status']) {
-              'Completed' => 'status-active',
-              'Live' => 'status-pending',
-              'Postponed' => 'status-inactive',
-              default => 'status-active'
-            };
-            ?>
-            <span class="status-badge <?php echo $statusClass; ?>">
-              <?php echo sanitize($g['status']); ?>
-            </span>
-          </td>
-          <td><strong><?php echo (int)$g['home_score']; ?> - <?php echo (int)$g['away_score']; ?></strong></td>
-          <td><?php echo sanitize($g['location']); ?></td>
-          <td>
-            <div class="action-links">
-              <a href="game-form.php?id=<?php echo (int)$g['id']; ?>" class="action-link edit">
-                <i class="fas fa-edit"></i> Edit
-              </a>
-              <a href="delete-game.php?id=<?php echo (int)$g['id']; ?>" class="action-link delete" onclick="return confirm('Delete game? This will recalculate standings.')">
-                <i class="fas fa-trash"></i> Delete
-              </a>
-            </div>
-          </td>
-        </tr>
+          <tr>
+            <td>
+              <strong><?php echo date('M d, Y', strtotime($g['game_date'])); ?></strong>
+              <?php if (!empty($g['game_time'])): ?>
+                <div style="font-size: 0.85em; color: #6b7280; margin-top: 4px;">
+                  <i class="far fa-clock"></i> <?php echo date('g:i A', strtotime($g['game_time'])); ?>
+                </div>
+              <?php endif; ?>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: var(--primary); font-weight: 600;"><?php echo sanitize($g['home_name']); ?></span>
+                <span style="color: var(--gray-400);">vs</span>
+                <span style="color: var(--primary); font-weight: 600;"><?php echo sanitize($g['away_name']); ?></span>
+              </div>
+            </td>
+            <td><?php echo sanitize($g['division']); ?></td>
+            <td>
+              <span class="status-badge" style="background: var(--gray-100); color: var(--gray-700);">
+                <i class="fas fa-<?php echo $g['gender'] === 'Female' ? 'venus' : 'mars'; ?>"></i>
+                <?php echo sanitize($g['gender']); ?>
+              </span>
+            </td>
+            <td>
+              <?php
+              $statusClass = match ($g['status']) {
+                'Completed' => 'status-active',
+                'Live' => 'status-pending',
+                'Postponed' => 'status-inactive',
+                default => 'status-active'
+              };
+              ?>
+              <span class="status-badge <?php echo $statusClass; ?>">
+                <?php echo sanitize($g['status']); ?>
+              </span>
+            </td>
+            <td><strong><?php echo (int) $g['home_score']; ?> - <?php echo (int) $g['away_score']; ?></strong></td>
+            <td><?php echo sanitize($g['location']); ?></td>
+            <td>
+              <div class="action-links">
+                <a href="game-form.php?id=<?php echo (int) $g['id']; ?>" class="action-link edit">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="delete-game.php?id=<?php echo (int) $g['id']; ?>" class="action-link delete"
+                  onclick="return confirm('Delete game? This will recalculate standings.')">
+                  <i class="fas fa-trash"></i> Delete
+                </a>
+              </div>
+            </td>
+          </tr>
         <?php endwhile; ?>
       </tbody>
     </table>
