@@ -1,0 +1,77 @@
+[10-Feb-2026 12:15:01 Europe/Berlin] Audit log failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'ferwaba_db.audit_logs' doesn't exist
+[10-Feb-2026 12:15:14 Europe/Berlin] Audit log failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'ferwaba_db.audit_logs' doesn't exist
+[10-Feb-2026 12:51:33 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\games.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\games.php on line 5
+[10-Feb-2026 12:51:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\news.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\news.php on line 5
+[10-Feb-2026 12:51:41 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\standings-list.php:160
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\standings-list.php on line 160
+[10-Feb-2026 12:51:44 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\playoffs.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\playoffs.php on line 5
+[10-Feb-2026 12:51:45 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\gallery.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\gallery.php on line 8
+[10-Feb-2026 12:51:46 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\shop.php:7
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\shop.php on line 7
+[10-Feb-2026 12:51:47 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\national-teams.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\national-teams.php on line 6
+[10-Feb-2026 12:51:53 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\stats-list.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\stats-list.php on line 5
+[10-Feb-2026 12:51:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\admins.php:30
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\admins.php on line 30
+[10-Feb-2026 12:53:55 Europe/Berlin] Delete Team Error: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`ferwaba_db`.`standings`, CONSTRAINT `standings_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`))
+[10-Feb-2026 12:54:05 Europe/Berlin] Delete Team Error: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`ferwaba_db`.`standings`, CONSTRAINT `standings_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`))
+[10-Feb-2026 12:54:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\games.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\games.php on line 5
+[10-Feb-2026 12:54:44 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\news.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\news.php on line 5
+[10-Feb-2026 12:55:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\standings-list.php:160
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\standings-list.php on line 160
+[10-Feb-2026 12:55:38 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\playoffs.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\playoffs.php on line 5
+[10-Feb-2026 12:55:46 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\gallery.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\gallery.php on line 8
+[10-Feb-2026 12:55:58 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\shop.php:7
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\shop.php on line 7
+[10-Feb-2026 12:56:09 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\national-teams.php:6
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\national-teams.php on line 6
+[10-Feb-2026 12:56:19 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\stats-list.php:5
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\stats-list.php on line 5
+[10-Feb-2026 12:56:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in C:\xampp\htdocs\ferwaba\admin\admins.php:30
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\ferwaba\admin\admins.php on line 30
+[10-Feb-2026 12:58:56 Europe/Berlin] Delete Team Error: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`ferwaba_db`.`standings`, CONSTRAINT `standings_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`))

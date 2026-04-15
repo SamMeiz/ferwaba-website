@@ -6,42 +6,46 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $current_password = trim($_POST['current_password'] ?? '');
-    $new_password = trim($_POST['new_password'] ?? '');
-    $confirm_password = trim($_POST['confirm_password'] ?? '');
+  $current_password = trim($_POST['current_password'] ?? '');
+  $new_password = trim($_POST['new_password'] ?? '');
+  $confirm_password = trim($_POST['confirm_password'] ?? '');
 
-    if (!$current_password || !$new_password || !$confirm_password) {
-        $error = 'All fields are required.';
-    } elseif ($new_password !== $confirm_password) {
-        $error = 'New password and confirm password do not match.';
-    } elseif (strlen($new_password) < 6) {
-        $error = 'New password must be at least 6 characters long.';
-    } else {
-        $admin_id = (int)$_SESSION['admin_id'];
-        $stmt = $mysqli->prepare("SELECT password FROM admins WHERE id=? LIMIT 1");
-        $stmt->bind_param('i', $admin_id);
-        $stmt->execute();
-        $res = $stmt->get_result();
+  if (!$current_password || !$new_password || !$confirm_password) {
+    $error = 'All fields are required.';
+  } elseif ($new_password !== $confirm_password) {
+    $error = 'New password and confirm password do not match.';
+  } elseif (strlen($new_password) < 6) {
+    $error = 'New password must be at least 6 characters long.';
+  } else {
+    try {
+      $admin_id = (int) $_SESSION['admin_id'];
+      $stmt = $db->prepare("SELECT password, full_name FROM admins WHERE id=? LIMIT 1");
+      $stmt->execute([$admin_id]);
+      $admin = $stmt->fetch();
 
-        if ($admin = $res->fetch_assoc()) {
-            if (hash_password($current_password) === $admin['password']) {
-                $hashed_new = hash_password($new_password);
-                $update_stmt = $mysqli->prepare("UPDATE admins SET password=? WHERE id=? LIMIT 1");
-                $update_stmt->bind_param('si', $hashed_new, $admin_id);
+      if ($admin) {
+        if (verify_password($current_password, $admin['password'])) {
+          $hashed_new = hash_password($new_password);
+          $update_stmt = $db->prepare("UPDATE admins SET password=? WHERE id=? LIMIT 1");
 
-                if ($update_stmt->execute()) {
-                    $success = 'Password changed successfully!';
-                    $current_password = $new_password = $confirm_password = '';
-                } else {
-                    $error = 'Failed to update password. Please try again.';
-                }
-            } else {
-                $error = 'Current password is incorrect.';
-            }
+          if ($update_stmt->execute([$hashed_new, $admin_id])) {
+            audit_log($db, 'Change Password', "Administrator changed their password: {$admin['full_name']} (ID: $admin_id)");
+            $success = 'Password changed successfully!';
+            $current_password = $new_password = $confirm_password = '';
+          } else {
+            $error = 'Failed to update password. Please try again.';
+          }
         } else {
-            $error = 'Admin account not found.';
+          $error = 'Current password is incorrect.';
         }
+      } else {
+        $error = 'Admin account not found.';
+      }
+    } catch (PDOException $e) {
+      error_log("Change Password Error: " . $e->getMessage());
+      $error = 'A database error occurred.';
     }
+  }
 }
 ?>
 
@@ -56,35 +60,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php if ($error): ?>
-<div class="message message-error">
-  <i class="fas fa-exclamation-circle"></i>
-  <?php echo sanitize($error); ?>
-</div>
+  <div class="message message-error">
+    <i class="fas fa-exclamation-circle"></i>
+    <?php echo sanitize($error); ?>
+  </div>
 <?php endif; ?>
 
 <?php if ($success): ?>
-<div class="message message-success">
-  <i class="fas fa-check-circle"></i>
-  <?php echo sanitize($success); ?>
-</div>
+  <div class="message message-success">
+    <i class="fas fa-check-circle"></i>
+    <?php echo sanitize($success); ?>
+  </div>
 <?php endif; ?>
 
 <div class="form-container" style="max-width: 500px;">
   <form method="post">
     <div class="form-group">
       <label for="current_password"><i class="fas fa-lock"></i> Current Password</label>
-      <input type="password" id="current_password" name="current_password" required autocomplete="current-password" placeholder="Enter current password">
+      <input type="password" id="current_password" name="current_password" required autocomplete="current-password"
+        placeholder="Enter current password">
     </div>
 
     <div class="form-group">
       <label for="new_password"><i class="fas fa-key"></i> New Password</label>
-      <input type="password" id="new_password" name="new_password" required autocomplete="new-password" minlength="6" placeholder="Enter new password">
+      <input type="password" id="new_password" name="new_password" required autocomplete="new-password" minlength="6"
+        placeholder="Enter new password">
       <span class="form-hint"><i class="fas fa-info-circle"></i> Minimum 6 characters</span>
     </div>
 
     <div class="form-group">
       <label for="confirm_password"><i class="fas fa-check-double"></i> Confirm New Password</label>
-      <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" minlength="6" placeholder="Confirm new password">
+      <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password"
+        minlength="6" placeholder="Confirm new password">
     </div>
 
     <div class="form-actions">

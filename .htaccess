@@ -33,9 +33,9 @@ DirectoryIndex index.php ferwaba-main/index.php
     RewriteCond %{REQUEST_FILENAME}\.php -f
     RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-    # 4. Redirect Root to ferwaba-main/
-    # If no file is specified, serve the main landing page
-    RewriteRule ^$ ferwaba-main/index.php [L]
+    # 4. Redirect Root to front controller
+    # If no file is specified, serve the main landing page via index.php
+    RewriteRule ^$ index.php [L]
 
 </IfModule>
 

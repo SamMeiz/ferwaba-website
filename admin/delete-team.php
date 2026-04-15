@@ -1,22 +1,42 @@
-<?php require_once __DIR__ . '/../includes/config.php';
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
 require_login();
 
 if (!isset($_GET['id']) || !ctype_digit($_GET['id'])) {
   die('Invalid request');
 }
-$id = (int)$_GET['id'];
+$id = (int) $_GET['id'];
 
-// Set players/coaches team_id to NULL before delete to satisfy FK
-$stmt = $mysqli->prepare("UPDATE players SET team_id=NULL WHERE team_id=?");
-$stmt->bind_param('i',$id);
-$stmt->execute();
-$stmt = $mysqli->prepare("UPDATE coaches SET team_id=NULL WHERE team_id=?");
-$stmt->bind_param('i',$id);
-$stmt->execute();
+try {
+  $stmt = $db->prepare("SELECT name FROM teams WHERE id = ?");
+  $stmt->execute([$id]);
+  $team = $stmt->fetch();
+  if ($team) {
+    $name = $team['name'];
 
-$stmt = $mysqli->prepare("DELETE FROM teams WHERE id=? LIMIT 1");
-$stmt->bind_param('i',$id);
-$stmt->execute();
+    $db->beginTransaction();
+
+    $db->prepare("UPDATE players SET team_id=NULL WHERE team_id=?")->execute([$id]);
+    $db->prepare("UPDATE coaches SET team_id=NULL WHERE team_id=?")->execute([$id]);
+    $db->prepare("UPDATE shop_items SET team_id=NULL WHERE team_id=?")->execute([$id]);
+
+    $db->prepare("DELETE FROM gallery WHERE team_id=?")->execute([$id]);
+    $db->prepare("DELETE FROM standings WHERE team_id=?")->execute([$id]);
+    $db->prepare("DELETE FROM games WHERE home_team_id=? OR away_team_id=?")->execute([$id, $id]);
+    $db->prepare("DELETE FROM playoffs WHERE home_team_id=? OR away_team_id=? OR winner_team_id=?")->execute([$id, $id, $id]);
+
+    $db->prepare("DELETE FROM teams WHERE id=? LIMIT 1")->execute([$id]);
+
+    audit_log($db, 'Delete Team', "Deleted team: $name (ID: $id)");
+    $db->commit();
+  }
+} catch (PDOException $e) {
+  if ($db->inTransaction()) {
+    $db->rollBack();
+  }
+  error_log("Delete Team Error: " . $e->getMessage());
+  die("An error occurred during deletion.");
+}
+
 redirect('teams.php');
-
-
+?>

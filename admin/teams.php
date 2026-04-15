@@ -5,7 +5,6 @@ require_once __DIR__ . '/includes/admin-header.php';
 // Filtering logic
 $where_clauses = [];
 $params = [];
-$types = "";
 
 $filter_division = $_GET['division'] ?? '';
 $filter_gender = $_GET['gender'] ?? '';
@@ -13,24 +12,26 @@ $filter_gender = $_GET['gender'] ?? '';
 if ($filter_division) {
   $where_clauses[] = "division = ?";
   $params[] = $filter_division;
-  $types .= "s";
 }
 if ($filter_gender) {
   $where_clauses[] = "gender = ?";
   $params[] = $filter_gender;
-  $types .= "s";
 }
 
 $where_sql = count($where_clauses) > 0 ? "WHERE " . implode(" AND ", $where_clauses) : "";
 
-$query = "SELECT id,name,gender,division,team_group,location,logo FROM teams $where_sql ORDER BY name ASC";
-if (count($params) > 0) {
-  $stmt = $mysqli->prepare($query);
-  $stmt->bind_param($types, ...$params);
-  $stmt->execute();
-  $res = $stmt->get_result();
-} else {
-  $res = $mysqli->query($query);
+$query = "SELECT id, name, gender, division, team_group, location, logo FROM teams $where_sql ORDER BY name ASC";
+$stmt = $db->prepare($query);
+$stmt->execute($params);
+$teams_list = $stmt->fetchAll();
+
+// Stats Summary
+try {
+  $total_teams = $db->query("SELECT COUNT(*) FROM teams")->fetchColumn();
+  $male_teams = $db->query("SELECT COUNT(*) FROM teams WHERE gender='Men'")->fetchColumn();
+  $female_teams = $db->query("SELECT COUNT(*) FROM teams WHERE gender='Women'")->fetchColumn();
+} catch (PDOException $e) {
+  $total_teams = $male_teams = $female_teams = 0;
 }
 ?>
 
@@ -118,11 +119,6 @@ if (count($params) > 0) {
 
 <!-- Stats Summary -->
 <div class="stats-summary">
-  <?php
-  $total_teams = $mysqli->query("SELECT COUNT(*) as count FROM teams")->fetch_assoc()['count'];
-  $male_teams = $mysqli->query("SELECT COUNT(*) as count FROM teams WHERE gender='Men'")->fetch_assoc()['count'];
-  $female_teams = $mysqli->query("SELECT COUNT(*) as count FROM teams WHERE gender='Women'")->fetch_assoc()['count'];
-  ?>
   <div class="stat-box">
     <div class="stat-box-icon"
       style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
@@ -185,12 +181,12 @@ if (count($params) > 0) {
       <?php echo ($filter_division || $filter_gender) ? 'Filtered Teams' : 'All Registered Teams'; ?></h3>
     <div style="display: flex; align-items: center; gap: 12px;">
       <span style="color: var(--gray-500); font-size: 14px; font-weight: 600;">
-        <i class="fas fa-database"></i> <?php echo $res->num_rows; ?> records
+        <i class="fas fa-database"></i> <?php echo count($teams_list); ?> records
       </span>
     </div>
   </div>
   <div class="table-wrapper">
-    <?php if ($res->num_rows > 0): ?>
+    <?php if (count($teams_list) > 0): ?>
       <table class="admin-table">
         <thead>
           <tr>
@@ -203,11 +199,12 @@ if (count($params) > 0) {
           </tr>
         </thead>
         <tbody>
-          <?php while ($t = $res->fetch_assoc()): ?>
+          <?php foreach ($teams_list as $t): ?>
             <tr>
               <td class="team-logo-cell">
                 <?php if ($t['logo']): ?>
-                  <img src="uploads/<?php echo sanitize($t['logo'] ?? ''); ?>" alt="<?php echo sanitize($t['name'] ?? ''); ?> logo"
+                  <img src="uploads/<?php echo sanitize($t['logo'] ?? ''); ?>"
+                    alt="<?php echo sanitize($t['name'] ?? ''); ?> logo"
                     style="width: 48px; height: 48px; object-fit: cover; border-radius: 10px; border: 2px solid var(--gray-300); box-shadow: var(--shadow-sm);">
                 <?php else: ?>
                   <div
@@ -252,7 +249,7 @@ if (count($params) > 0) {
                 </div>
               </td>
             </tr>
-          <?php endwhile; ?>
+          <?php endforeach; ?>
         </tbody>
       </table>
     <?php else: ?>

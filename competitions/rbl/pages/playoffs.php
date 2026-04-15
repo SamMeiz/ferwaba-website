@@ -395,11 +395,6 @@
     }
   }
 
-  50% {
-    opacity: 1;
-  }
-  }
-  }
 </style>
 
 <section class="section-title" style="margin-bottom: 12px;">

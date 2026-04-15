@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>

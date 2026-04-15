@@ -446,6 +446,7 @@
                 FROM standings s
                 JOIN teams t ON t.id = s.team_id
                 WHERE s.division=? AND s.gender='Men' $group_sql
+                  AND t.division = s.division AND t.gender = s.gender
                 ORDER BY s.points DESC, s.wins DESC, t.name ASC
             ";
               $stmt_men = $mysqli->prepare($sql_men);
@@ -480,9 +481,10 @@
                     <td>
                       <div class="team-cell">
                         <div class="rank-box rank-<?= $rank ?>"><?= $rank ?></div>
-                        <?php if($division_men !== 'Division 2'): ?>
-                        <img src="../../../admin/uploads/<?= $row['logo'] ? sanitize($row['logo']) : 'default-logo.png' ?>"
-                          class="team-logo-h" alt="">
+                        <?php if ($row['logo']): ?>
+                        <img src="../../../admin/uploads/<?= sanitize($row['logo']) ?>" class="team-logo-h" alt="">
+                        <?php elseif ($division_men !== 'Division 2'): ?>
+                        <img src="../../../admin/uploads/default-logo.png" class="team-logo-h" alt="">
                         <?php endif; ?>
                         <a href="team.php?id=<?= $row['team_id'] ?>" class="team-link"><?= sanitize($row['name']) ?></a>
                       </div>
@@ -556,6 +558,7 @@
                 FROM standings s
                 JOIN teams t ON t.id = s.team_id
                 WHERE s.division=? AND s.gender='Women' $group_sql
+                  AND t.division = s.division AND t.gender = s.gender
                 ORDER BY s.points DESC, s.wins DESC, t.name ASC
             ";
             $stmt_women = $mysqli->prepare($sql_women);
@@ -589,9 +592,10 @@
                    <td>
                     <div class="team-cell">
                       <div class="rank-box rank-<?= $rank ?>"><?= $rank ?></div>
-                      <?php if($division_women !== 'Division 2'): ?>
-                      <img src="../../../admin/uploads/<?= $row['logo'] ? sanitize($row['logo']) : 'default-logo.png' ?>"
-                        class="team-logo-h" alt="">
+                      <?php if ($row['logo']): ?>
+                      <img src="../../../admin/uploads/<?= sanitize($row['logo']) ?>" class="team-logo-h" alt="">
+                      <?php elseif ($division_women !== 'Division 2'): ?>
+                      <img src="../../../admin/uploads/default-logo.png" class="team-logo-h" alt="">
                       <?php endif; ?>
                       <a href="team.php?id=<?= $row['team_id'] ?>" class="team-link"><?= sanitize($row['name']) ?></a>
                     </div>

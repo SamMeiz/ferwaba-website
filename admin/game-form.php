@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 require_login();
 
 $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -18,63 +18,58 @@ $highlight_url = '';
 $live_link = '';
 $error = '';
 
-$teams = $mysqli->query("SELECT id,name,division,gender FROM teams ORDER BY name ASC");
+try {
+  $teams = $db->query("SELECT id, name, division, gender FROM teams ORDER BY name ASC")->fetchAll();
 
-if ($editing) {
-  $stmt = $mysqli->prepare("SELECT * FROM games WHERE id=? LIMIT 1");
-  $stmt->bind_param('i', $id);
-  $stmt->execute();
-  $res = $stmt->get_result();
-  if ($g = $res->fetch_assoc()) {
-    $home_team_id = (int) $g['home_team_id'];
-    $away_team_id = (int) $g['away_team_id'];
-    $game_date = $g['game_date'];
-    $game_time = $g['game_time'];
-    $location = $g['location'];
-    $home_score = (int) $g['home_score'];
-    $away_score = (int) $g['away_score'];
-    $division = $g['division'];
-    $gender = $g['gender'];
-    $status = $g['status'];
-    $highlight_url = $g['highlight_url'];
-    $live_link = $g['live_link'] ?? '';
-  } else {
-    die('Game not found');
-  }
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $home_team_id = isset($_POST['home_team_id']) && ctype_digit($_POST['home_team_id']) ? (int) $_POST['home_team_id'] : null;
-  $away_team_id = isset($_POST['away_team_id']) && ctype_digit($_POST['away_team_id']) ? (int) $_POST['away_team_id'] : null;
-  $game_date = $_POST['game_date'] ?? $game_date;
-  $game_time = !empty($_POST['game_time']) ? $_POST['game_time'] : null;
-  $location = trim($_POST['location'] ?? '');
-  $home_score = (int) ($_POST['home_score'] ?? 0);
-  $away_score = (int) ($_POST['away_score'] ?? 0);
-  $division = in_array(($_POST['division'] ?? ''), ['Division 1', 'Division 2']) ? $_POST['division'] : 'Division 1';
-  $gender = in_array(($_POST['gender'] ?? ''), ['Men', 'Women']) ? $_POST['gender'] : 'Men';
-  $status = in_array(($_POST['status'] ?? ''), ['Scheduled', 'Live', 'Completed', 'Postponed']) ? $_POST['status'] : 'Scheduled';
-  $highlight_url = trim($_POST['highlight_url'] ?? '');
-  $live_link = trim($_POST['live_link'] ?? '');
-
-  if (!$home_team_id || !$away_team_id || $home_team_id === $away_team_id) {
-    $error = 'Select distinct Home and Away teams.';
+  if ($editing) {
+    $stmt = $db->prepare("SELECT * FROM games WHERE id=? LIMIT 1");
+    $stmt->execute([$id]);
+    $g = $stmt->fetch();
+    if ($g) {
+      $home_team_id = (int) $g['home_team_id'];
+      $away_team_id = (int) $g['away_team_id'];
+      $game_date = $g['game_date'];
+      $game_time = $g['game_time'];
+      $location = $g['location'];
+      $home_score = (int) $g['home_score'];
+      $away_score = (int) $g['away_score'];
+      $division = $g['division'];
+      $gender = $g['gender'];
+      $status = $g['status'];
+      $highlight_url = $g['highlight_url'];
+      $live_link = $g['live_link'] ?? '';
+    } else {
+      die('Game not found');
+    }
   }
 
-  if (!$error) {
-    if ($editing) {
-      $stmt = $mysqli->prepare("
-                UPDATE games SET 
-                    home_team_id=?, away_team_id=?, game_date=?, game_time=?, location=?, 
-                    home_score=?, away_score=?, division=?, gender=?, status=?, highlight_url=?, live_link=? 
-                WHERE id=? LIMIT 1
-            ");
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $home_team_id = isset($_POST['home_team_id']) && ctype_digit($_POST['home_team_id']) ? (int) $_POST['home_team_id'] : null;
+    $away_team_id = isset($_POST['away_team_id']) && ctype_digit($_POST['away_team_id']) ? (int) $_POST['away_team_id'] : null;
+    $game_date = $_POST['game_date'] ?? $game_date;
+    $game_time = !empty($_POST['game_time']) ? $_POST['game_time'] : null;
+    $location = trim($_POST['location'] ?? '');
+    $home_score = (int) ($_POST['home_score'] ?? 0);
+    $away_score = (int) ($_POST['away_score'] ?? 0);
+    $division = in_array(($_POST['division'] ?? ''), ['Division 1', 'Division 2']) ? $_POST['division'] : 'Division 1';
+    $gender = in_array(($_POST['gender'] ?? ''), ['Men', 'Women']) ? $_POST['gender'] : 'Men';
+    $status = in_array(($_POST['status'] ?? ''), ['Scheduled', 'Live', 'Completed', 'Postponed']) ? $_POST['status'] : 'Scheduled';
+    $highlight_url = trim($_POST['highlight_url'] ?? '');
+    $live_link = trim($_POST['live_link'] ?? '');
 
-      if (!$stmt) {
-        $error = 'SQL Error: ' . $mysqli->error;
-      } else {
-        $stmt->bind_param(
-          'iisssiisssssi',
+    if (!$home_team_id || !$away_team_id || $home_team_id === $away_team_id) {
+      $error = 'Select distinct Home and Away teams.';
+    }
+
+    if (!$error) {
+      if ($editing) {
+        $stmt = $db->prepare("
+                    UPDATE games SET 
+                        home_team_id=?, away_team_id=?, game_date=?, game_time=?, location=?, 
+                        home_score=?, away_score=?, division=?, gender=?, status=?, highlight_url=?, live_link=? 
+                    WHERE id=? LIMIT 1
+                ");
+        $stmt->execute([
           $home_team_id,
           $away_team_id,
           $game_date,
@@ -88,27 +83,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $highlight_url,
           $live_link,
           $id
-        );
-        if ($stmt->execute()) {
-          recalc_standings_for_game_change($mysqli, $id);
-          redirect('games.php');
-        } else {
-          $error = 'Failed to save game: ' . $stmt->error;
-        }
-      }
-    } else {
-      $stmt = $mysqli->prepare("
-                INSERT INTO games(
-                    home_team_id, away_team_id, game_date, game_time, location, 
-                    home_score, away_score, division, gender, status, highlight_url, live_link
-                ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
-            ");
-
-      if (!$stmt) {
-        $error = 'SQL Error: ' . $mysqli->error;
+        ]);
+        audit_log($db, 'Edit Game', "Updated game ID: $id ($status)");
+        recalc_standings_for_game_change($db, $id);
       } else {
-        $stmt->bind_param(
-          'iisssiisssss',
+        $stmt = $db->prepare("
+                    INSERT INTO games(
+                        home_team_id, away_team_id, game_date, game_time, location, 
+                        home_score, away_score, division, gender, status, highlight_url, live_link
+                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                ");
+        $stmt->execute([
           $home_team_id,
           $away_team_id,
           $game_date,
@@ -121,17 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $status,
           $highlight_url,
           $live_link
-        );
-        if ($stmt->execute()) {
-          $newId = $stmt->insert_id;
-          recalc_standings_for_game_change($mysqli, $newId);
-          redirect('games.php');
-        } else {
-          $error = 'Failed to create game: ' . $stmt->error;
-        }
+        ]);
+        $newId = $db->lastInsertId();
+        audit_log($db, 'Add Game', "Created game ID: $newId ($status)");
+        recalc_standings_for_game_change($db, $newId);
       }
+      redirect('games.php');
     }
   }
+} catch (PDOException $e) {
+  error_log("Game Form Error: " . $e->getMessage());
+  $error = 'A database error occurred: ' . $e->getMessage();
 }
 ?>
 
@@ -158,20 +143,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label style="display:block;margin-bottom:4px;font-weight:600">Home Team</label>
               <select name="home_team_id" required
                 style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px">
-                <?php $teams->data_seek(0);
-                while ($t = $teams->fetch_assoc()): ?>
+                <?php foreach ($teams as $t): ?>
                   <option value="<?php echo (int) $t['id']; ?>" <?php echo ($home_team_id == (int) $t['id']) ? 'selected' : ''; ?>><?php echo sanitize($t['name']); ?> (<?php echo sanitize($t['gender']); ?>)</option>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
               </select>
             </div>
             <div>
               <label style="display:block;margin-bottom:4px;font-weight:600">Away Team</label>
               <select name="away_team_id" required
                 style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px">
-                <?php $teams->data_seek(0);
-                while ($t = $teams->fetch_assoc()): ?>
+                <?php foreach ($teams as $t): ?>
                   <option value="<?php echo (int) $t['id']; ?>" <?php echo ($away_team_id == (int) $t['id']) ? 'selected' : ''; ?>><?php echo sanitize($t['name']); ?> (<?php echo sanitize($t['gender']); ?>)</option>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
               </select>
             </div>
           </div>

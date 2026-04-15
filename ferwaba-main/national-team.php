@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 $category = $_GET['category'] ?? null;
 $teamParam = $_GET['team'] ?? null;
@@ -11,73 +11,38 @@ function escape($s)
 
 $error = null;
 
-// Ensure $mysqli is available
-if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
-    error_log('[national-team] Missing $mysqli in includes/config.php');
-    $error = 'Database error. Please try again later.';
-} else {
-    // load a specific team
-    if ($teamParam) {
-        $sql = "SELECT * FROM national_teams WHERE team_name = ? LIMIT 1";
-        $stmt = $mysqli->prepare($sql);
-        if ($stmt === false) {
-            error_log('[national-team] prepare() failed: ' . $mysqli->error);
-            $error = 'Database error. Please try again later.';
-        } else {
-            $stmt->bind_param('s', $teamParam);
-            if (!$stmt->execute()) {
-                error_log('[national-team] execute() failed: ' . $stmt->error);
-                $error = 'Database error. Please try again later.';
-            } else {
-                $team = $stmt->get_result()->fetch_assoc();
-            }
-            $stmt->close();
-        }
+// Database connection is available via $db (PDO)
+if ($teamParam) {
+    try {
+        $stmt = $db->prepare("SELECT * FROM national_teams WHERE team_name = ? LIMIT 1");
+        $stmt->execute([$teamParam]);
+        $team = $stmt->fetch();
 
-        if (empty($error) && !$team) {
+        if (!$team) {
             $error = 'No team found.';
-        }
-
-        if (empty($error) && $team) {
-            $stmtP = $mysqli->prepare("SELECT * FROM national_players WHERE team_id=? ORDER BY jersey_number ASC");
-            if ($stmtP === false) {
-                error_log('[national-team] prepare(players) failed: ' . $mysqli->error);
-                $players = new ArrayObject();
-            } else {
-                $stmtP->bind_param('i', $team['id']);
-                $stmtP->execute();
-                $players = $stmtP->get_result();
-                $stmtP->close();
-            }
-
-            $stmtC = $mysqli->prepare("SELECT * FROM national_coaches WHERE team_id=? ORDER BY FIELD(role,'Head Coach','Assistant Coach','Team Staff'), name ASC");
-            if ($stmtC === false) {
-                error_log('[national-team] prepare(coaches) failed: ' . $mysqli->error);
-                $coaches = new ArrayObject();
-            } else {
-                $stmtC->bind_param('i', $team['id']);
-                $stmtC->execute();
-                $coaches = $stmtC->get_result();
-                $stmtC->close();
-            }
-        }
-    }
-    // load teams for a category
-    elseif ($category) {
-        $stmtT = $mysqli->prepare("SELECT id,team_name,banner_image,home_city,category FROM national_teams WHERE category = ? ORDER BY team_name ASC");
-        if ($stmtT === false) {
-            error_log('[national-team] prepare(teams) failed: ' . $mysqli->error);
-            $error = 'Database error. Please try again later.';
         } else {
-            $stmtT->bind_param('s', $category);
-            if (!$stmtT->execute()) {
-                error_log('[national-team] execute(teams) failed: ' . $stmtT->error);
-                $error = 'Database error. Please try again later.';
-            } else {
-                $teams = $stmtT->get_result();
-            }
-            $stmtT->close();
+            // Fetch players
+            $stmtP = $db->prepare("SELECT * FROM national_players WHERE national_team_id=? ORDER BY jersey_number ASC");
+            $stmtP->execute([$team['id']]);
+            $players = $stmtP->fetchAll();
+
+            // Fetch coaches
+            $stmtC = $db->prepare("SELECT * FROM national_coaches WHERE national_team_id=? ORDER BY FIELD(role,'Head Coach','Assistant Coach','Team Staff'), full_name ASC");
+            $stmtC->execute([$team['id']]);
+            $coaches = $stmtC->fetchAll();
         }
+    } catch (PDOException $e) {
+        error_log('[national-team] Database error: ' . $e->getMessage());
+        $error = 'Database error. Please try again later.';
+    }
+} elseif ($category) {
+    try {
+        $stmtT = $db->prepare("SELECT id, team_name, logo as banner_image, category FROM national_teams WHERE category = ? ORDER BY team_name ASC");
+        $stmtT->execute([$category]);
+        $teams = $stmtT->fetchAll();
+    } catch (PDOException $e) {
+        error_log('[national-team] Category error: ' . $e->getMessage());
+        $error = 'Database error. Please try again later.';
     }
 }
 ?>
@@ -404,12 +369,13 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
             <?php endif; ?>
             <h1 style="margin:6px 0 12px"><?php echo escape($team['team_name']); ?></h1>
             <p class="small-meta">Category: <?php echo escape($team['category']); ?> &nbsp;•&nbsp; Home:
-                <?php echo escape($team['home_city'] ?? '—'); ?></p>
+                <?php echo escape($team['home_city'] ?? '—'); ?>
+            </p>
 
             <div style="display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px">
                 <div class="card">
                     <h3 style="margin:0 0 12px">Roster</h3>
-                    <?php if ($players->num_rows > 0): ?>
+                    <?php if (count($players) > 0): ?>
                         <div class="table-responsive">
                             <table class="roster-table">
                                 <thead>
@@ -422,7 +388,7 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php while ($p = $players->fetch_assoc()):
+                                    <?php foreach ($players as $p):
                                         $photo = !empty($p['photo']) ? 'admin/uploads/' . $p['photo'] : 'https://via.placeholder.com/80x80?text=Player';
                                         ?>
                                         <tr>
@@ -435,7 +401,7 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
                                             <td><?php echo escape($p['position']); ?></td>
                                             <td><?php echo escape($p['club']); ?></td>
                                         </tr>
-                                    <?php endwhile; ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -446,7 +412,7 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
 
                 <aside class="card">
                     <h3 style="margin:0 0 12px">Coaches & Staff</h3>
-                    <?php if ($coaches->num_rows > 0): ?>
+                    <?php if (count($coaches) > 0): ?>
                         <table class="roster-table">
                             <thead>
                                 <tr>
@@ -456,16 +422,16 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($c = $coaches->fetch_assoc()):
+                                <?php foreach ($coaches as $c):
                                     $cphoto = !empty($c['photo']) ? 'admin/uploads/' . $c['photo'] : 'https://via.placeholder.com/80x80?text=Coach';
                                     ?>
                                     <tr>
                                         <td><img src="<?php echo escape($cphoto); ?>" alt=""
                                                 style="width:56px;height:56px;object-fit:cover;border-radius:50%"></td>
-                                        <td><?php echo escape($c['name']); ?></td>
+                                        <td><?php echo escape($c['full_name']); ?></td>
                                         <td><?php echo escape($c['role']); ?></td>
                                     </tr>
-                                <?php endwhile; ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     <?php else: ?>
@@ -482,9 +448,9 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
                 <p class="small-meta">Click a team to view roster and staff.</p>
             </div>
 
-            <?php if ($teams->num_rows > 0): ?>
+            <?php if (count($teams) > 0): ?>
                 <div class="team-grid">
-                    <?php while ($t = $teams->fetch_assoc()):
+                    <?php foreach ($teams as $t):
                         $thumb = !empty($t['banner_image']) ? 'admin/uploads/' . $t['banner_image'] : '';
                         ?>
                         <div class="team-card">
@@ -500,7 +466,7 @@ if (!isset($mysqli) || !($mysqli instanceof mysqli)) {
                                         href="national-team?team=<?php echo urlencode($t['team_name']); ?>">View Team</a></div>
                             </div>
                         </div>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </div>
             <?php else: ?>
                 <p class="muted">No teams found for this category.</p>

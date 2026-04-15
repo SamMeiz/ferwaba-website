@@ -1,56 +1,64 @@
 <?php
-require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 require_login();
 
-$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int) $_GET['id'] : 0;
 $editing = $id > 0;
 
-// Fetch all teams
-$teams = $mysqli->query("SELECT id, name FROM teams ORDER BY name ASC");
+$error = '';
 
-// Fetch existing record if editing
-if ($editing) {
-  $stmt = $mysqli->prepare("SELECT * FROM standings WHERE id=?");
-  $stmt->bind_param('i', $id);
-  $stmt->execute();
-  $standing = $stmt->get_result()->fetch_assoc();
-} else {
-  $standing = [
-    'team_id' => '',
-    'division' => 'Division 1',
-    'gender' => 'Men',
-    'games_played' => 0,
-    'wins' => 0,
-    'losses' => 0,
-    'points' => 0
-  ];
-}
+try {
+  // Fetch all teams
+  $teams = $db->query("SELECT id, name FROM teams ORDER BY name ASC")->fetchAll();
 
-// Handle form submit
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $team_id = (int)($_POST['team_id'] ?? 0);
-  $division = $_POST['division'] ?? 'Division 1';
-  $gender = $_POST['gender'] ?? 'Men';
-  $team_group = $_POST['team_group'] ?? null;
-  $wins = (int)($_POST['wins'] ?? 0);
-  $losses = (int)($_POST['losses'] ?? 0);
-  $games_played = $wins + $losses;
-  $points = ($wins * 2) + ($losses * 1);
-
+  // Fetch existing record if editing
   if ($editing) {
-    $stmt = $mysqli->prepare("UPDATE standings SET team_id=?, division=?, gender=?, team_group=?, games_played=?, wins=?, losses=?, points=? WHERE id=?");
-    $stmt->bind_param('isssiiiii', $team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points, $id);
+    $stmt = $db->prepare("SELECT * FROM standings WHERE id=?");
+    $stmt->execute([$id]);
+    $standing = $stmt->fetch();
+    if (!$standing) {
+      redirect('standings-list.php');
+    }
   } else {
-    $stmt = $mysqli->prepare("INSERT INTO standings (team_id, division, gender, team_group, games_played, wins, losses, points) VALUES (?,?,?,?,?,?,?,?)");
-    $stmt->bind_param('isssiiii', $team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points);
+    $standing = [
+      'team_id' => '',
+      'division' => 'Division 1',
+      'gender' => 'Men',
+      'games_played' => 0,
+      'wins' => 0,
+      'losses' => 0,
+      'points' => 0,
+      'team_group' => ''
+    ];
   }
 
-  if ($stmt->execute()) {
-    header("Location: standings-list.php");
-    exit;
-  } else {
-    echo "<p style='color:red;'>Database error: " . $mysqli->error . "</p>";
+  // Handle form submit
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $team_id = (int) ($_POST['team_id'] ?? 0);
+    $division = $_POST['division'] ?? 'Division 1';
+    $gender = $_POST['gender'] ?? 'Men';
+    $team_group = !empty($_POST['team_group']) ? $_POST['team_group'] : null;
+    $wins = (int) ($_POST['wins'] ?? 0);
+    $losses = (int) ($_POST['losses'] ?? 0);
+    $games_played = $wins + $losses;
+    $points = ($wins * 2) + ($losses * 1);
+
+    if ($editing) {
+      $stmt = $db->prepare("UPDATE standings SET team_id=?, division=?, gender=?, team_group=?, games_played=?, wins=?, losses=?, points=? WHERE id=?");
+      $stmt->execute([$team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points, $id]);
+      audit_log($db, 'Edit Standings', "Updated standings for team ID: $team_id (ID: $id)");
+    } else {
+      $stmt = $db->prepare("INSERT INTO standings (team_id, division, gender, team_group, games_played, wins, losses, points) VALUES (?,?,?,?,?,?,?,?)");
+      $stmt->execute([$team_id, $division, $gender, $team_group, $games_played, $wins, $losses, $points]);
+      $newId = $db->lastInsertId();
+      audit_log($db, 'Add Standings', "Created standings for team ID: $team_id (ID: $newId)");
+    }
+
+    redirect('standings-list.php');
   }
+} catch (PDOException $e) {
+  error_log("Standings Form Error: " . $e->getMessage());
+  $error = 'A database error occurred.';
 }
 ?>
 
@@ -66,12 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <label>Team
     <select name="team_id" required>
       <option value="">Select Team</option>
-      <?php while ($t = $teams->fetch_assoc()): ?>
+      <?php foreach ($teams as $t): ?>
         <option value="<?php echo $t['id']; ?>" <?php if ($t['id'] == $standing['team_id'])
              echo 'selected'; ?>>
           <?php echo sanitize($t['name']); ?>
         </option>
-      <?php endwhile; ?>
+      <?php endforeach; ?>
     </select>
   </label>
 

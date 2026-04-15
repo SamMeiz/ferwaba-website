@@ -12,76 +12,76 @@ $division = 'Division 1';
 $team_group = '';
 $logo = '';
 $description = '';
-$founded_year = '';
-$head_coach = '';
+$error = '';
 
-if ($editing) {
-  $stmt = $mysqli->prepare("SELECT * FROM teams WHERE id = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  if ($team = $result->fetch_assoc()) {
-    $name = $team['name'];
-    $location = $team['location'];
-    $gender = $team['gender'];
-    $division = $team['division'];
-    $team_group = $team['team_group'] ?? '';
-    $logo = $team['logo'];
-    $description = $team['description'] ?? '';
-    // $founded_year = $team['founded_year'] ?? '';
-    // $head_coach = $team['head_coach'] ?? '';
-  } else {
-    // Redirect if team not found
-    echo "<script>window.location.href='teams';</script>";
-    exit;
-  }
-}
-
-// Handle Form Submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = $mysqli->real_escape_string($_POST['name']);
-  $location = $mysqli->real_escape_string($_POST['location']);
-  $gender = $mysqli->real_escape_string($_POST['gender']);
-  $division = $mysqli->real_escape_string($_POST['division']);
-  $team_group = $division === 'Division 2' ? $mysqli->real_escape_string($_POST['team_group']) : null;
-  $description = $mysqli->real_escape_string($_POST['description']);
-  // $founded_year = $mysqli->real_escape_string($_POST['founded_year']);
-  // $head_coach = $mysqli->real_escape_string($_POST['head_coach']);
-
-  // Handle File Upload
-  if (isset($_FILES['logo']) && $_FILES['logo']['error'] === 0) {
-    $target_dir = "uploads/";
-    if (!file_exists($target_dir)) {
-      mkdir($target_dir, 0777, true);
-    }
-
-    $file_extension = pathinfo($_FILES["logo"]["name"], PATHINFO_EXTENSION);
-    $new_filename = "team_" . time() . "." . $file_extension;
-    $target_file = $target_dir . $new_filename;
-
-    if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_file)) {
-      $logo = $new_filename;
-    }
-  }
-
+try {
   if ($editing) {
-    $stmt = $mysqli->prepare("UPDATE teams SET name=?, location=?, gender=?, division=?, team_group=?, logo=?, description=? WHERE id=?");
-    $stmt->bind_param("sssssssi", $name, $location, $gender, $division, $team_group, $logo, $description, $id);
-  } else {
-    $stmt = $mysqli->prepare("INSERT INTO teams (name, location, gender, division, team_group, logo, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssss", $name, $location, $gender, $division, $team_group, $logo, $description);
+    $stmt = $db->prepare("SELECT * FROM teams WHERE id = ?");
+    $stmt->execute([$id]);
+    if ($team = $stmt->fetch()) {
+      $name = $team['name'];
+      $location = $team['location'];
+      $gender = $team['gender'];
+      $division = $team['division'];
+      $team_group = $team['team_group'] ?? '';
+      $logo = $team['logo'];
+      $description = $team['description'] ?? '';
+    } else {
+      echo "<script>window.location.href='teams';</script>";
+      exit;
+    }
   }
 
-  if ($stmt->execute()) {
-    $teamId = $editing ? $id : $mysqli->insert_id;
-    ensure_standings_row($mysqli, $teamId, $division, $gender, $team_group);
+  // Handle Form Submission
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $location = trim($_POST['location'] ?? '');
+    $gender = $_POST['gender'] ?? 'Men';
+    $division = $_POST['division'] ?? 'Division 1';
+    $team_group = $division === 'Division 2' ? ($_POST['team_group'] ?? null) : null;
+    $description = trim($_POST['description'] ?? '');
 
-    // Show success message
-    echo "<div class='message message-success' style='position: fixed; top: 20px; right: 20px; z-index: 1000;'>Team saved successfully!</div>";
-    echo "<script>setTimeout(function(){ window.location.href = 'teams'; }, 1500);</script>";
-  } else {
-    $error = "Error: " . $stmt->error;
+    // Handle File Upload
+    if (isset($_FILES['logo']) && $_FILES['logo']['error'] === 0) {
+      $target_dir = "uploads/";
+      if (!file_exists($target_dir)) {
+        mkdir($target_dir, 0777, true);
+      }
+
+      $file_extension = pathinfo($_FILES["logo"]["name"], PATHINFO_EXTENSION);
+      $new_filename = "team_" . time() . "." . $file_extension;
+      $target_file = $target_dir . $new_filename;
+
+      if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_file)) {
+        $logo = $new_filename;
+      }
+    }
+
+    if ($editing) {
+      $stmt = $db->prepare("UPDATE teams SET name=?, location=?, gender=?, division=?, team_group=?, logo=?, description=? WHERE id=?");
+      $success = $stmt->execute([$name, $location, $gender, $division, $team_group, $logo, $description, $id]);
+      if ($success)
+        audit_log($db, 'Edit Team', "Updated team: $name (ID: $id)");
+    } else {
+      $stmt = $db->prepare("INSERT INTO teams (name, location, gender, division, team_group, logo, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $success = $stmt->execute([$name, $location, $gender, $division, $team_group, $logo, $description]);
+      if ($success) {
+        $id = $db->lastInsertId();
+        audit_log($db, 'Add Team', "Created team: $name (ID: $id)");
+      }
+    }
+
+    if ($success) {
+      ensure_standings_row($db, $id, $division, $gender, $team_group);
+      echo "<div class='message message-success' style='position: fixed; top: 20px; right: 20px; z-index: 1000;'>Team saved successfully!</div>";
+      echo "<script>setTimeout(function(){ window.location.href = 'teams'; }, 1500);</script>";
+    } else {
+      $error = "Failed to save team.";
+    }
   }
+} catch (PDOException $e) {
+  error_log("Team Form Error: " . $e->getMessage());
+  $error = "A database error occurred.";
 }
 ?>
 

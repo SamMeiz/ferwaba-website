@@ -1,9 +1,10 @@
 <?php
-require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
 require_login();
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 $admin_name = $_SESSION['admin_name'] ?? 'Admin';
 $admin_role = $_SESSION['admin_role'] ?? 'Admin';
+$mysqli = $mysqli ?? $GLOBALS['mysqli'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">

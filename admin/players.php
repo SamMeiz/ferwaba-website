@@ -2,7 +2,9 @@
 $page_title = 'Players Management';
 require_once __DIR__ . '/includes/admin-header.php';
 
-$players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,p.jersey_number,p.photo,t.name AS team_name FROM players p LEFT JOIN teams t ON t.id=p.team_id ORDER BY t.name ASC, p.jersey_number ASC");
+$players = $db->query("SELECT p.id, p.name, p.position, p.height, p.nationality, p.jersey_number, p.photo, t.name AS team_name 
+                      FROM players p LEFT JOIN teams t ON t.id=p.team_id 
+                      ORDER BY t.name ASC, p.jersey_number ASC")->fetchAll();
 ?>
 
 <div class="page-header">
@@ -19,7 +21,7 @@ $players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,
 <div class="admin-card">
   <div class="admin-card-header">
     <h3><i class="fas fa-users"></i> All Players</h3>
-    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $players->num_rows; ?> players</span>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo count($players); ?> players</span>
   </div>
   <div class="table-wrapper">
     <table class="admin-table">
@@ -35,34 +37,36 @@ $players = $mysqli->query("SELECT p.id,p.name,p.position,p.height,p.nationality,
         </tr>
       </thead>
       <tbody>
-        <?php while ($p = $players->fetch_assoc()): ?>
-        <tr>
-          <td>
-            <?php if ($p['photo']): ?>
-              <img src="uploads/<?php echo sanitize($p['photo']); ?>" alt="photo">
-            <?php else: ?>
-              <div style="width: 44px; height: 44px; background: var(--gray-200); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
-                <i class="fas fa-user"></i>
+        <?php foreach ($players as $p): ?>
+          <tr>
+            <td>
+              <?php if ($p['photo']): ?>
+                <img src="uploads/<?php echo sanitize($p['photo']); ?>" alt="photo">
+              <?php else: ?>
+                <div
+                  style="width: 44px; height: 44px; background: var(--gray-200); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                  <i class="fas fa-user"></i>
+                </div>
+              <?php endif; ?>
+            </td>
+            <td><strong style="color: var(--primary);"><?php echo (int) $p['jersey_number']; ?></strong></td>
+            <td><strong><?php echo sanitize($p['name']); ?></strong></td>
+            <td><?php echo sanitize($p['position']); ?></td>
+            <td><?php echo sanitize($p['team_name'] ?? '-'); ?></td>
+            <td><?php echo sanitize($p['nationality']); ?></td>
+            <td>
+              <div class="action-links">
+                <a href="player-form.php?id=<?php echo (int) $p['id']; ?>" class="action-link edit">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="delete-player.php?id=<?php echo (int) $p['id']; ?>" class="action-link delete"
+                  onclick="return confirm('Delete player?')">
+                  <i class="fas fa-trash"></i> Delete
+                </a>
               </div>
-            <?php endif; ?>
-          </td>
-          <td><strong style="color: var(--primary);"><?php echo (int)$p['jersey_number']; ?></strong></td>
-          <td><strong><?php echo sanitize($p['name']); ?></strong></td>
-          <td><?php echo sanitize($p['position']); ?></td>
-          <td><?php echo sanitize($p['team_name'] ?? '-'); ?></td>
-          <td><?php echo sanitize($p['nationality']); ?></td>
-          <td>
-            <div class="action-links">
-              <a href="player-form.php?id=<?php echo (int)$p['id']; ?>" class="action-link edit">
-                <i class="fas fa-edit"></i> Edit
-              </a>
-              <a href="delete-player.php?id=<?php echo (int)$p['id']; ?>" class="action-link delete" onclick="return confirm('Delete player?')">
-                <i class="fas fa-trash"></i> Delete
-              </a>
-            </div>
-          </td>
-        </tr>
-        <?php endwhile; ?>
+            </td>
+          </tr>
+        <?php endforeach; ?>
       </tbody>
     </table>
   </div>
