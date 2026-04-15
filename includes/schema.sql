@@ -200,6 +200,9 @@ CREATE TABLE IF NOT EXISTS national_gallery(
 -- =========================
 -- 🧍‍♂️ SEED SUPER ADMIN
 -- =========================
+-- SECURITY: Password below is bcrypt hash of 'Admin@Ferwaba2025!'
+-- IMPORTANT: Change this password immediately after first login!
+-- To generate a new hash: php -r "echo password_hash('NewPassword', PASSWORD_BCRYPT);"
 INSERT INTO admins(full_name,email,password,role,is_active)
-VALUES ('Super Admin','admin@ferwaba.rw', SHA1('admin123'), 'SuperAdmin', 1)
+VALUES ('Super Admin','admin@ferwaba.rw', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'SuperAdmin', 1)
 ON DUPLICATE KEY UPDATE email=email;

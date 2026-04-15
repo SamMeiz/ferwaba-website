@@ -14,6 +14,7 @@ $is_active = 1;
 $team_id = null;
 $gender = 'Unisex';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   if ($editing) {
@@ -35,6 +36,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $category = in_array($_POST['category'] ?? '', ['Jerseys', 'Kits', 'Gear']) ? $_POST['category'] : 'Jerseys';
@@ -50,28 +52,23 @@ try {
     $uploadFileName = $image;
 
     if (!$error && isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
-      if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-
-        if (!in_array($ext, $allowed)) {
-          $error = 'Invalid file type. Only JPG, PNG, GIF, WEBP allowed.';
-        } else {
-          $safe = 'shop_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-          $dir = __DIR__ . '/uploads/';
-
-          if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-          }
-
-          if (move_uploaded_file($_FILES['image']['tmp_name'], $dir . $safe)) {
-            $uploadFileName = $safe;
-          } else {
-            $error = 'Image upload failed. Check directory permissions.';
-          }
-        }
+      $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      $uploadError = validate_upload($_FILES['image'], $allowedExts, 5242880, $allowedMimes);
+      if ($uploadError) {
+        $error = $uploadError;
       } else {
-        $error = 'Upload error code: ' . $_FILES['image']['error'];
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $safe = generate_safe_filename('shop', $ext);
+        $dir = __DIR__ . '/uploads/';
+        if (!is_dir($dir)) {
+          mkdir($dir, 0755, true);
+        }
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $dir . $safe)) {
+          $uploadFileName = $safe;
+        } else {
+          $error = 'Image upload failed. Check directory permissions.';
+        }
       }
     }
 
@@ -255,6 +252,7 @@ try {
       <?php endif; ?>
 
       <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
         <div class="form-group">
           <label for="name">Name *</label>
           <input type="text" id="name" name="name" value="<?php echo sanitize($name); ?>" required class="form-control">

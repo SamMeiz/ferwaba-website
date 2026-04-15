@@ -5,11 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Ferwaba</title>
-    <meta name="description"
-        content="Learn about FERWABA, the Rwanda Basketball Federation, our mission, values, and programs growing basketball nationwide.">
-    <meta name="keywords"
-        content="FERWABA, Rwanda Basketball Federation, about FERWABA, Rwanda basketball, mission, values">
+    <title>Accessibility - Ferwaba</title>
+    <meta name="description" content="FERWABA accessibility statement and support information.">
+    <meta name="keywords" content="FERWABA accessibility, Rwanda Basketball Federation, inclusive access">
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +19,6 @@
 </head>
 
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
@@ -31,12 +28,11 @@
             </div>
             <div class="nav-menu" id="nav-menu">
                 <a href="index" class="nav-link">Home</a>
-                <a href="about" class="nav-link active">About</a>
+                <a href="about" class="nav-link">About</a>
                 <a href="contact" class="nav-link">Contact</a>
                 <a href="staff" class="nav-link">Staff</a>
                 <a href="national-team" class="nav-link highlight">National Team</a>
                 <a href="competitions" class="nav-link">Competitions</a>
-
             </div>
             <div class="nav-toggle" id="nav-toggle">
                 <span class="bar"></span>
@@ -46,65 +42,38 @@
         </div>
     </nav><br><br>
 
-    <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1>About Us</h1>
-            <p>The official governing body for basketball in Rwanda</p>
+            <h1>Accessibility</h1>
+            <p>Last updated: February 17, 2026</p>
         </div>
     </section>
 
-    <!-- About FERWABA -->
     <section class="our-story">
         <div class="container">
             <div class="story-content">
                 <div class="story-text">
-                    <h2>About FERWABA</h2>
-                    <p>The Rwanda Basketball Federation (FERWABA) was established in 1974 and is the national governing
-                        body for basketball in Rwanda. FERWABA organizes leagues, tournaments, and development programs
-                        for players, coaches, and referees, while managing the national teams for international
-                        competitions.</p>
-                    <p>Our mission is to develop basketball across Rwanda by promoting talent, fostering competitive
-                        excellence, and supporting clubs and communities involved in the sport.</p>
+                    <h2>Our Commitment</h2>
+                    <p>FERWABA is committed to making our website and programs accessible to all visitors, including
+                        people with disabilities. We strive to follow recognized accessibility standards and improve the
+                        user experience for everyone.</p>
+
+                    <h2>Accessibility Features</h2>
+                    <p>We aim to support keyboard navigation, clear typography, sufficient contrast, and descriptive
+                        content. We regularly review our pages to identify and address accessibility barriers.</p>
+
+                    <h2>Feedback and Support</h2>
+                    <p>If you experience difficulty accessing content or need assistance, contact us at info@ferwaba.rw
+                        and we will work with you to provide the information in an accessible format.</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Mission & Values -->
-    <section class="our-values">
-        <div class="container">
-            <h2>Our Mission & Values</h2>
-            <p><strong>Mission:</strong> To promote and develop basketball in Rwanda through organized competitions,
-                talent development, and community engagement.</p>
-            <ul class="mission-list">
-                <li>Integrity and professionalism in all operations</li>
-                <li>Excellence in basketball development and performance</li>
-                <li>Support and growth of basketball clubs and communities</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="about-cta">
-        <div class="container">
-            <h2>Get Involved</h2>
-            <p>Join FERWABA to support basketball in Rwanda, whether as a player, coach, official, or fan.</p>
-            <div class="cta-buttons">
-                <a href="contact" class="btn btn-primary">Contact Us</a>
-                <a href="competitions" class="btn btn-secondary">Explore Competitions</a>
             </div>
         </div>
     </section>
 </body>
 
-
-<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
-
-            <!-- Ferwaba Intro Section -->
             <div class="footer-section">
                 <h3>Ferwaba</h3>
                 <p>Rwanda Basketball Federation dedicated to promoting and developing basketball excellence across the
@@ -121,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Quick Links -->
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
@@ -133,19 +101,15 @@
                 </ul>
             </div>
 
-            <!-- Contact Info -->
             <div class="footer-section">
                 <h4>Contact Info</h4>
-                <!-- <div class="contact-info"> -->
                 <p><i class="fas fa-map-marker-alt"></i> KG 17 Ave, Kigali</p>
                 <p><i class="fas fa-phone"></i> (+250) 791586243</p>
                 <p><i class="fas fa-envelope"></i> info@ferwaba.rw</p>
             </div>
 
-            <!-- Google Maps -->
             <div class="footer-section">
                 <h4>Visit Us</h4>
-
                 <div class="map-wrapper" style="
                     display:flex;
                     justify-content:center;
@@ -168,10 +132,8 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <!-- Footer Bottom -->
         <div class="footer-bottom">
             <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
             <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
@@ -185,7 +147,6 @@
 
 <script src="assets/js/main.js"></script>
 <script>
-    // Mobile navigation toggle
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
 

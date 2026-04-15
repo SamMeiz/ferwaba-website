@@ -6,6 +6,7 @@ $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int) $_GET['id'] : 0;
 $editing = $id > 0;
 
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   // Fetch all teams
@@ -34,6 +35,7 @@ try {
 
   // Handle form submit
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $team_id = (int) ($_POST['team_id'] ?? 0);
     $division = $_POST['division'] ?? 'Division 1';
     $gender = $_POST['gender'] ?? 'Men';
@@ -71,6 +73,7 @@ try {
 </section>
 
 <form method="post" class="card grid col-2" style="padding:20px;gap:16px;max-width:800px;">
+  <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
   <label>Team
     <select name="team_id" required>
       <option value="">Select Team</option>

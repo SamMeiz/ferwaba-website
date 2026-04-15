@@ -5,9 +5,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <?php
+  $baseUrl = rtrim(base_url(), '/');
+  $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+  $canonicalUrl = $baseUrl . $currentPath;
+  $rblLogoUrl = $baseUrl . '/competitions/rbl/img/logo.png';
+  ?>
   <title>Rwanda Basketball League (RBL) | FERWABA Official</title>
   <meta name="description"
-    content="Official website of Rwanda Basketball League - The premier professional basketball competition in Rwanda, organized by FERWABA.">
+    content="Official Rwanda Basketball League (RBL) site with schedules, standings, teams, players, and league news.">
+  <meta name="keywords"
+    content="RBL, Rwanda Basketball League, FERWABA, Rwanda basketball, RBL standings, RBL schedule, RBL teams">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="<?php echo sanitize($canonicalUrl); ?>">
+
+  <meta property="og:title" content="Rwanda Basketball League (RBL) | FERWABA">
+  <meta property="og:description" content="Official Rwanda Basketball League site with schedules, standings, teams, and news.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?php echo sanitize($canonicalUrl); ?>">
+  <meta property="og:image" content="<?php echo sanitize($rblLogoUrl); ?>">
+  <meta property="og:site_name" content="Rwanda Basketball League">
+  <meta property="og:locale" content="en_RW">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rwanda Basketball League (RBL)">
+  <meta name="twitter:description" content="Official Rwanda Basketball League site with schedules, standings, teams, and news.">
+  <meta name="twitter:image" content="<?php echo sanitize($rblLogoUrl); ?>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsOrganization",
+    "name": "Rwanda Basketball League",
+    "alternateName": "RBL",
+    "url": "<?php echo sanitize($canonicalUrl); ?>",
+    "logo": "<?php echo sanitize($rblLogoUrl); ?>",
+    "parentOrganization": {
+      "@type": "SportsOrganization",
+      "name": "FERWABA",
+      "url": "<?php echo sanitize($baseUrl); ?>"
+    }
+  }
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

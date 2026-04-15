@@ -2,10 +2,23 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_login();
 
-if (!isset($_GET['id']) || !ctype_digit($_GET['id'])) {
-  die('Invalid request');
+// 1. ADD MISSING FUNCTION-LEVEL ACCESS CONTROL
+// Only superadmins should be allowed to delete a whole team and its associated playoffs, games, standings,, and players.
+require_superadmin();
+
+// 2. REQUIRE POST INSTEAD OF GET (to fix CSRF vulnerability)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(405);
+  die('Invalid request. Data deletion must be performed securely via POST.');
 }
-$id = (int) $_GET['id'];
+
+// 3. REQUIRE CSRF TOKEN
+require_csrf_token();
+
+if (!isset($_POST['id']) || !ctype_digit($_POST['id'])) {
+  die('Invalid request: Missing or malformed team ID');
+}
+$id = (int) $_POST['id'];
 
 try {
   $stmt = $db->prepare("SELECT name FROM teams WHERE id = ?");
@@ -38,5 +51,5 @@ try {
   die("An error occurred during deletion.");
 }
 
-redirect('teams.php');
+redirect('teams.php?msg=Team+deleted+successfully&type=success');
 ?>

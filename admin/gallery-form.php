@@ -5,11 +5,13 @@ require_login();
 $team_id = null;
 $caption = '';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
     $teams = $db->query("SELECT id, name FROM teams ORDER BY name ASC")->fetchAll();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        require_csrf_token();
         $team_id = isset($_POST['team_id']) && ctype_digit($_POST['team_id']) ? (int) $_POST['team_id'] : null;
         $caption = trim($_POST['caption'] ?? '');
 
@@ -19,16 +21,23 @@ try {
 
         $fileName = '';
         if (!$error && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $safeName = 'gallery_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
-            $destDir = __DIR__ . '/uploads/';
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0755, true);
-            }
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $destDir . $safeName)) {
-                $fileName = $safeName;
+            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $uploadError = validate_upload($_FILES['image'], $allowedExts, 5242880, $allowedMimes);
+            if ($uploadError) {
+                $error = $uploadError;
             } else {
-                $error = 'Failed to upload image.';
+                $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+                $safeName = generate_safe_filename('gallery', $ext);
+                $destDir = __DIR__ . '/uploads/';
+                if (!is_dir($destDir)) {
+                    mkdir($destDir, 0755, true);
+                }
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $destDir . $safeName)) {
+                    $fileName = $safeName;
+                } else {
+                    $error = 'Failed to upload image.';
+                }
             }
         } elseif (!$error) {
             $error = 'Upload error.';
@@ -118,6 +127,7 @@ try {
             <?php if ($error): ?>
                 <div style="color:#b91c1c;margin-bottom:12px"><?php echo sanitize($error); ?></div><?php endif; ?>
             <form method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
                 <div style="margin-bottom:12px">
                     <label>Team</label>
                     <select name="team_id">

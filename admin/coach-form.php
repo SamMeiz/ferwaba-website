@@ -10,6 +10,7 @@ $role = 'Head Coach';
 $nationality = '';
 $photo = '';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   $teams = $db->query("SELECT id, name FROM teams ORDER BY name ASC")->fetchAll();
@@ -30,6 +31,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $team_id = isset($_POST['team_id']) && ctype_digit($_POST['team_id']) ? (int) $_POST['team_id'] : null;
     $name = trim($_POST['name'] ?? '');
     $role = in_array(($_POST['role'] ?? ''), ['Head Coach', 'Assistant Coach', 'Team Staff']) ? $_POST['role'] : 'Head Coach';
@@ -41,9 +43,14 @@ try {
 
     $uploadFileName = $photo;
     if (!$error && isset($_FILES['photo']) && $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
-      if ($_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
-        $safeName = 'coach_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
+      $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      $uploadError = validate_upload($_FILES['photo'], $allowedExts, 5242880, $allowedMimes);
+      if ($uploadError) {
+        $error = $uploadError;
+      } else {
+        $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+        $safeName = generate_safe_filename('coach', $ext);
         $destDir = __DIR__ . '/uploads/';
         if (!is_dir($destDir)) {
           mkdir($destDir, 0755, true);
@@ -53,8 +60,6 @@ try {
         } else {
           $error = 'Failed to upload photo.';
         }
-      } else {
-        $error = 'Upload error.';
       }
     }
 
@@ -95,6 +100,7 @@ try {
         <?php if ($error): ?>
           <div style="color:#b91c1c;margin-bottom:8px"><?php echo sanitize($error); ?></div><?php endif; ?>
         <form method="post" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
           <div class="grid col-2" style="margin-bottom:8px">
             <div>
               <label>Team</label>

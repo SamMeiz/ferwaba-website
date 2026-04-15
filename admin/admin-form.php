@@ -11,6 +11,7 @@ $email = '';
 $role = 'SubAdmin';
 $is_active = 1;
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   if ($editing) {
@@ -28,6 +29,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $full_name = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $role = ($_POST['role'] ?? '') === 'SuperAdmin' ? 'SuperAdmin' : 'SubAdmin';
@@ -36,7 +38,15 @@ try {
 
     if (!$full_name || !$email || (!$editing && !$password)) {
       $error = 'Name, email, and password (for new admin) are required.';
-    } else {
+    } elseif ($password) {
+      // VULN-009 FIX: Enforce strong password policy
+      $pwError = validate_password_strength($password);
+      if ($pwError) {
+          $error = $pwError;
+      }
+    }
+
+    if (!$error) {
       if ($editing) {
         if ($id === (int) $_SESSION['admin_id'] && $role !== ($_SESSION['admin_role'] ?? '')) {
           $error = 'You cannot change your own role.';
@@ -87,6 +97,8 @@ try {
 
 <div class="form-container">
   <form method="post">
+    <!-- Generate a new token if we were just POSTed to rotate it (VULN-013 fix) -->
+    <input type="hidden" name="csrf_token" value="<?php echo sanitize(generate_csrf_token()); ?>">
     <div class="form-grid">
       <div class="form-group">
         <label for="full_name"><i class="fas fa-user"></i> Full Name</label>
@@ -104,7 +116,8 @@ try {
         <label for="password"><i class="fas fa-lock"></i> Password <?php if ($editing): ?><span class="form-hint">(leave
               blank to keep current)</span><?php endif; ?></label>
         <input type="password" id="password" name="password" <?php echo !$editing ? 'required' : ''; ?>
-          placeholder="Enter password">
+          minlength="12" placeholder="Enter password (min 12 chars)">
+        <span class="form-hint"><i class="fas fa-info-circle"></i> Min 12 chars &mdash; must include uppercase, lowercase, number &amp; special char</span>
       </div>
 
       <div class="form-group">

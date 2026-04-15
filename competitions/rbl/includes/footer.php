@@ -143,7 +143,6 @@
     max-height: 50px;
     max-width: 120px;
     object-fit: contain;
-    filter: brightness(0) invert(1);
   }
 
   .footer-bottom-bar {

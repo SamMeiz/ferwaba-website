@@ -1,4 +1,4 @@
-﻿<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
+<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -514,6 +514,11 @@
                 <!-- Footer Bottom -->
                 <div class="footer-bottom">
                     <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
+                    <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+                        <a href="privacy" style="color:rgba(255,255,255,0.8); text-decoration:none;">Privacy Policy</a>
+                        <a href="terms" style="color:rgba(255,255,255,0.8); text-decoration:none;">Terms of Use</a>
+                        <a href="accessibility" style="color:rgba(255,255,255,0.8); text-decoration:none;">Accessibility</a>
+                    </div>
                 </div>
             </div>
         </footer>

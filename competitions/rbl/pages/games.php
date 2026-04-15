@@ -586,36 +586,58 @@ function toggleCompleted(checkbox) {
           <span><?php echo sanitize($g['location']); ?></span>
         <?php endif; ?>
       </div>
+
+      <?php
+      $current_time = time();
+      $is_game_time = false;
+      if(!empty($g['game_date']) && !empty($g['game_time'])) {
+          $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
+          if($game_ts && $current_time >= $game_ts) $is_game_time = true;
+      }
+
+      $status_raw = trim((string)($g['status'] ?? ''));
+      $status_lower = strtolower($status_raw);
+      $live_link_value = trim((string)($g['live_link'] ?? ''));
+      $highlight_link_value = trim((string)($g['highlight_url'] ?? ''));
+      $has_live_link = $live_link_value !== '' && strtolower($live_link_value) !== 'n/a';
+      $has_highlight_link = $highlight_link_value !== '' && strtolower($highlight_link_value) !== 'n/a';
+
+      $is_completed_status = in_array($status_lower, ['completed', 'final', 'finished'], true);
+      $is_live_status = in_array($status_lower, ['live', 'ongoing', 'in progress', 'in_progress'], true);
+      if(!$is_completed_status && !$is_live_status && $has_live_link && $is_game_time) {
+          $is_live_status = true;
+      }
+
+      $status_class = 'status-scheduled';
+      $status_label = $status_raw !== '' ? strtoupper($status_raw) : 'SCHEDULED';
+      if($is_live_status) {
+          $status_class = 'status-live';
+          $status_label = 'LIVE';
+      } elseif($is_completed_status) {
+          $status_class = 'status-final';
+          $status_label = 'COMPLETED';
+      }
+
+      $show_live = $has_live_link && ($is_live_status || (!$is_completed_status && $is_game_time));
+      $show_highlights = $is_completed_status && $has_highlight_link;
+      $show_tickets = !$is_completed_status && !$show_live;
+      ?>
         
       <div class="game-status">
-        <?php 
-        $status_class = 'status-scheduled';
-        if(strtolower($g['status']) === 'live') $status_class = 'status-live';
-        if(strtolower($g['status']) === 'completed') $status_class = 'status-final';
-        ?>
         <span class="status-badge <?php echo $status_class; ?>">
-          <?php echo strtoupper(sanitize($g['status'])); ?>
+          <?php echo sanitize($status_label); ?>
         </span>
       </div>
 
       <div class="game-actions">
-        <?php 
-        $current_time = time();
-        $is_game_time = false;
-        if(!empty($g['game_date']) && !empty($g['game_time'])) {
-            $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
-            if($game_ts && $current_time >= $game_ts) $is_game_time = true;
-        }
-        
-        $show_live = (strtolower($g['status']) === 'live' || ($is_game_time && strtolower($g['status']) === 'scheduled')) && !empty($g['live_link']) && $g['live_link'] !== 'N/A';
-        $show_highlights = strtolower($g['status']) === 'completed' && !empty($g['highlight_url']) && $g['highlight_url'] !== 'N/A';
-        
-        if($show_live): ?>
-          <a href="<?php echo sanitize($g['live_link']); ?>" target="_blank" class="btn-live"><i class="fas fa-play-circle"></i> Watch Live</a>
-        <?php elseif($show_highlights): ?>
-          <a href="<?php echo sanitize($g['highlight_url']); ?>" target="_blank" class="btn-highlights"><i class="fas fa-video"></i> Highlights</a>
-        <?php elseif(strtolower($g['status']) === 'scheduled' && !$is_game_time): ?>
-          <a href="https://ticqet.rw" target="_blank" class="btn-tickets"><i class="fas fa-ticket-alt"></i> Tickets</a>
+        <?php if($show_live): ?>
+          <a href="<?php echo sanitize($live_link_value); ?>" target="_blank" class="btn-live"><i class="fas fa-play-circle"></i> Watch Now</a>
+        <?php endif; ?>
+        <?php if($show_highlights): ?>
+          <a href="<?php echo sanitize($highlight_link_value); ?>" target="_blank" class="btn-highlights"><i class="fas fa-video"></i> Highlights</a>
+        <?php endif; ?>
+        <?php if($show_tickets): ?>
+          <a href="https://ticqet.rw" target="_blank" class="btn-tickets"><i class="fas fa-ticket-alt"></i> Get Tickets</a>
         <?php endif; ?>
       </div>
     </div>

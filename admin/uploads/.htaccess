@@ -1,0 +1,20 @@
+# FERWABA – Uploads Directory Security
+# VULN-008 FIX: Prevent PHP script execution and directory listing in uploads folder
+
+Options -Indexes
+
+# Block execution of any server-side scripts
+<FilesMatch "\.(php|php3|php4|php5|php7|phtml|pl|py|jsp|asp|aspx|sh|cgi|htaccess)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Set content-type for common image types (prevents MIME sniffing attacks)
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

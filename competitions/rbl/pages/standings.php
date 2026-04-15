@@ -440,14 +440,24 @@
             </thead>
             <tbody>
               <?php
-              $group_sql = $current_group ? "AND s.team_group = ?" : "";
+              $group_sql = $current_group ? "AND t.team_group = ?" : "";
               $sql_men = "
-                SELECT s.*, t.name, t.logo, t.id AS team_id
-                FROM standings s
-                JOIN teams t ON t.id = s.team_id
-                WHERE s.division=? AND s.gender='Men' $group_sql
-                  AND t.division = s.division AND t.gender = s.gender
-                ORDER BY s.points DESC, s.wins DESC, t.name ASC
+                SELECT 
+                  t.id AS team_id,
+                  t.name,
+                  t.logo,
+                  t.team_group,
+                  COALESCE(s.games_played, 0) AS games_played,
+                  COALESCE(s.wins, 0) AS wins,
+                  COALESCE(s.losses, 0) AS losses,
+                  COALESCE(s.points, 0) AS points
+                FROM teams t
+                LEFT JOIN standings s 
+                  ON s.team_id = t.id 
+                  AND s.division = t.division 
+                  AND s.gender = t.gender
+                WHERE t.division=? AND t.gender='Men' $group_sql
+                ORDER BY COALESCE(s.points, 0) DESC, COALESCE(s.wins, 0) DESC, t.name ASC
             ";
               $stmt_men = $mysqli->prepare($sql_men);
               if ($current_group) {
@@ -552,14 +562,24 @@
           </thead>
           <tbody>
             <?php
-            $group_sql = $current_group ? "AND s.team_group = ?" : "";
+            $group_sql = $current_group ? "AND t.team_group = ?" : "";
             $sql_women = "
-                SELECT s.*, t.name, t.logo, t.id AS team_id
-                FROM standings s
-                JOIN teams t ON t.id = s.team_id
-                WHERE s.division=? AND s.gender='Women' $group_sql
-                  AND t.division = s.division AND t.gender = s.gender
-                ORDER BY s.points DESC, s.wins DESC, t.name ASC
+                SELECT 
+                  t.id AS team_id,
+                  t.name,
+                  t.logo,
+                  t.team_group,
+                  COALESCE(s.games_played, 0) AS games_played,
+                  COALESCE(s.wins, 0) AS wins,
+                  COALESCE(s.losses, 0) AS losses,
+                  COALESCE(s.points, 0) AS points
+                FROM teams t
+                LEFT JOIN standings s 
+                  ON s.team_id = t.id 
+                  AND s.division = t.division 
+                  AND s.gender = t.gender
+                WHERE t.division=? AND t.gender='Women' $group_sql
+                ORDER BY COALESCE(s.points, 0) DESC, COALESCE(s.wins, 0) DESC, t.name ASC
             ";
             $stmt_women = $mysqli->prepare($sql_women);
             if ($current_group) {

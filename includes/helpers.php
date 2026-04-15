@@ -73,14 +73,70 @@ function log_login_attempt(PDO $db, string $ip, bool $success): void
     }
 }
 
-function is_ip_rate_limited(PDO $db, string $ip, int $limit = 20, int $period = 300): bool
+function check_ip_rate_limit(PDO $db, string $ip): ?string
 {
-    $limit = max(1, (int) $limit);
-    $period = max(1, (int) $period);
-    $stmt = $db->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip_address=? AND is_successful=0 AND attempt_time > DATE_SUB(NOW(), INTERVAL $period SECOND)");
+    try {
+        $db->exec("CREATE TABLE IF NOT EXISTS ip_bans (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            ip_address VARCHAR(45) UNIQUE,
+            banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+    } catch (PDOException $e) {}
+
+    $stmt = $db->prepare("SELECT id FROM ip_bans WHERE ip_address=? LIMIT 1");
     $stmt->execute([$ip]);
-    $count = (int) $stmt->fetchColumn();
-    return $count >= $limit;
+    if ($stmt->fetch()) {
+        return 'Your IP has been permanently locked due to too many failed attempts. Please contact the administrator.';
+    }
+
+    $stmt = $db->prepare("SELECT attempt_time, is_successful FROM login_attempts WHERE ip_address=? ORDER BY attempt_time DESC LIMIT 10");
+    $stmt->execute([$ip]);
+    $attempts = $stmt->fetchAll();
+    
+    $consecutive_fails = 0;
+    $last_fail_time = null;
+    foreach ($attempts as $attempt) {
+        if ($attempt['is_successful'] == 1) {
+            break;
+        }
+        if ($consecutive_fails === 0) {
+            $last_fail_time = strtotime($attempt['attempt_time']);
+        }
+        $consecutive_fails++;
+    }
+
+    if ($consecutive_fails >= 6) {
+        try {
+            $ins = $db->prepare("INSERT IGNORE INTO ip_bans (ip_address) VALUES (?)");
+            $ins->execute([$ip]);
+            audit_log($db, 'IP Banned', "IP address $ip was auto-banned after 6 failed login attempts.");
+        } catch (PDOException $e) {}
+        return 'Your IP has been permanently locked due to too many failed attempts. Please contact the administrator.';
+    }
+
+    if ($consecutive_fails > 0 && $last_fail_time !== null) {
+        $delays = [
+            1 => 5,
+            2 => 15,
+            3 => 30,
+            4 => 60,
+            5 => 900
+        ];
+        
+        $required_delay = $delays[$consecutive_fails] ?? 900;
+        $time_passed = time() - $last_fail_time;
+        
+        if ($time_passed < $required_delay) {
+            $wait_left = $required_delay - $time_passed;
+            if ($wait_left > 60) {
+                $mins = ceil($wait_left / 60);
+                return "Too many failed attempts. Please wait $mins minutes before trying again.";
+            }
+            return "Too many failed attempts. Please wait $wait_left seconds before trying again.";
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -162,14 +218,84 @@ function generate_csrf_token(): string
 }
 
 /**
- * Verify CSRF token
+ * Verify CSRF token — FIXED VULN-013: token is regenerated after each verification
+ * to prevent replay attacks within the same session.
  */
 function verify_csrf_token(string $token): bool
 {
     if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
         return false;
     }
+    // Rotate token after successful verification
+    unset($_SESSION['csrf_token']);
     return true;
+}
+
+function require_csrf_token(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $token = $_POST['csrf_token'] ?? '';
+        if (!$token || !verify_csrf_token($token)) {
+            http_response_code(419);
+            die('Invalid or expired request. Please go back and try again.');
+        }
+    }
+}
+
+/**
+ * Validate password strength — FIXED VULN-009
+ * Enforces: 12+ chars, uppercase, lowercase, digit, special char.
+ * Also guards against bcrypt 72-char truncation DoS.
+ */
+function validate_password_strength(string $password): ?string
+{
+    if (strlen($password) > 1000) {
+        return 'Password is too long.';
+    }
+    if (strlen($password) < 12) {
+        return 'Password must be at least 12 characters long.';
+    }
+    if (!preg_match('/[A-Z]/', $password)) {
+        return 'Password must contain at least one uppercase letter.';
+    }
+    if (!preg_match('/[a-z]/', $password)) {
+        return 'Password must contain at least one lowercase letter.';
+    }
+    if (!preg_match('/[0-9]/', $password)) {
+        return 'Password must contain at least one number.';
+    }
+    if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+        return 'Password must contain at least one special character (e.g. !@#$%^&*).';
+    }
+    return null; // valid
+}
+
+function generate_safe_filename(string $prefix, string $extension): string
+{
+    return $prefix . '_' . time() . '_' . bin2hex(random_bytes(6)) . '.' . $extension;
+}
+
+function validate_upload(array $file, array $allowedExtensions, int $maxBytes, array $allowedMimeTypes): ?string
+{
+    if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+        return 'Upload error.';
+    }
+    if (!isset($file['size']) || $file['size'] > $maxBytes) {
+        return 'File is too large.';
+    }
+    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        return 'Invalid upload.';
+    }
+    $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+    if (!$ext || !in_array($ext, $allowedExtensions, true)) {
+        return 'Invalid file type.';
+    }
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+    if (!$mime || !in_array($mime, $allowedMimeTypes, true)) {
+        return 'Invalid file type.';
+    }
+    return null;
 }
 
 /**

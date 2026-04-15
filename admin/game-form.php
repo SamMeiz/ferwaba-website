@@ -17,6 +17,7 @@ $status = 'Scheduled';
 $highlight_url = '';
 $live_link = '';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   $teams = $db->query("SELECT id, name, division, gender FROM teams ORDER BY name ASC")->fetchAll();
@@ -44,6 +45,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $home_team_id = isset($_POST['home_team_id']) && ctype_digit($_POST['home_team_id']) ? (int) $_POST['home_team_id'] : null;
     $away_team_id = isset($_POST['away_team_id']) && ctype_digit($_POST['away_team_id']) ? (int) $_POST['away_team_id'] : null;
     $game_date = $_POST['game_date'] ?? $game_date;
@@ -138,6 +140,7 @@ try {
         <?php if ($error): ?>
           <div style="color:#b91c1c;margin-bottom:8px"><?php echo sanitize($error); ?></div><?php endif; ?>
         <form method="post" autocomplete="off">
+          <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
           <div class="grid col-2" style="margin-bottom:12px">
             <div>
               <label style="display:block;margin-bottom:4px;font-weight:600">Home Team</label>

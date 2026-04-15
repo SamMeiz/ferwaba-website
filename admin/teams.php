@@ -2,6 +2,9 @@
 $page_title = 'Teams Management';
 require_once __DIR__ . '/includes/admin-header.php';
 
+$csrf_token = generate_csrf_token();
+$msg_flash = $_GET['msg'] ?? '';
+
 // Filtering logic
 $where_clauses = [];
 $params = [];
@@ -116,6 +119,13 @@ try {
     <a href="team-form" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Team</a>
   </div>
 </div>
+
+<?php if ($msg_flash): ?>
+<div class="message <?php echo sanitize($_GET['type'] ?? 'message-success'); ?>" style="margin-bottom: 24px;">
+  <i class="fas fa-check-circle"></i>
+  <?php echo sanitize($msg_flash); ?>
+</div>
+<?php endif; ?>
 
 <!-- Stats Summary -->
 <div class="stats-summary">
@@ -241,11 +251,16 @@ try {
                   <a href="team-form?id=<?php echo (int) $t['id']; ?>" class="action-link edit" data-tooltip="Edit Team">
                     <i class="fas fa-edit"></i> Edit
                   </a>
-                  <a href="delete-team?id=<?php echo (int) $t['id']; ?>" class="action-link delete"
-                    onclick="return confirm('Are you sure you want to delete this team? This action cannot be undone and may affect associated players and coaches.')"
-                    data-tooltip="Delete Team">
-                    <i class="fas fa-trash"></i> Delete
-                  </a>
+                  <?php if (current_admin_role() === 'SuperAdmin'): ?>
+                    <form method="POST" action="delete-team" style="display:inline; margin: 0; padding: 0;"
+                      onsubmit="return confirm('Are you sure you want to delete this team? This action cannot be undone and may affect associated players and coaches.')">
+                      <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
+                      <input type="hidden" name="id" value="<?php echo (int) $t['id']; ?>">
+                      <button type="submit" class="action-link delete" style="border:none; cursor:pointer; background:none; font-family: inherit;" data-tooltip="Delete Team">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    </form>
+                  <?php endif; ?>
                 </div>
               </td>
             </tr>

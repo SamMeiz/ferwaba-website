@@ -1,6 +1,14 @@
 <?php
 // FERWABA Basketball League Management System v1.5
 // Global configuration, database connection, and common helpers
+//
+// VULN-005 FIX: config.php is DEPRECATED. Use bootstrap.php instead.
+// Guard: if bootstrap.php already loaded, skip to avoid re-declaring functions.
+if (defined('_FERWABA_BOOTSTRAP_LOADED')) {
+    return;
+}
+define('_FERWABA_CONFIG_LEGACY_INCLUDED', true);
+error_log('FERWABA WARNING: config.php included directly. Use bootstrap.php instead.');
 
 // Timezone
 date_default_timezone_set('Africa/Kigali');
@@ -76,10 +84,9 @@ function require_superadmin(): void
     }
 }
 
-// Very simple password hashing per requirement (MD5/SHA1). Prefer SHA1 here.
 function hash_password(string $plain): string
 {
-    return sha1($plain);
+    return password_hash($plain, PASSWORD_BCRYPT);
 }
 
 function youtube_embed(string $url): string

@@ -13,6 +13,7 @@ $team_group = '';
 $logo = '';
 $description = '';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   if ($editing) {
@@ -34,6 +35,7 @@ try {
 
   // Handle Form Submission
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $name = trim($_POST['name'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $gender = $_POST['gender'] ?? 'Men';
@@ -42,18 +44,25 @@ try {
     $description = trim($_POST['description'] ?? '');
 
     // Handle File Upload
-    if (isset($_FILES['logo']) && $_FILES['logo']['error'] === 0) {
-      $target_dir = "uploads/";
-      if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-      }
-
-      $file_extension = pathinfo($_FILES["logo"]["name"], PATHINFO_EXTENSION);
-      $new_filename = "team_" . time() . "." . $file_extension;
-      $target_file = $target_dir . $new_filename;
-
-      if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_file)) {
-        $logo = $new_filename;
+    if (isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
+      $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      $uploadError = validate_upload($_FILES['logo'], $allowedExts, 2097152, $allowedMimes);
+      if ($uploadError) {
+        $error = $uploadError;
+      } else {
+        $target_dir = "uploads/";
+        if (!file_exists($target_dir)) {
+          mkdir($target_dir, 0755, true);
+        }
+        $file_extension = strtolower(pathinfo($_FILES["logo"]["name"], PATHINFO_EXTENSION));
+        $new_filename = generate_safe_filename('team', $file_extension);
+        $target_file = $target_dir . $new_filename;
+        if (move_uploaded_file($_FILES["logo"]["tmp_name"], $target_file)) {
+          $logo = $new_filename;
+        } else {
+          $error = 'Failed to upload logo.';
+        }
       }
     }
 
@@ -112,6 +121,7 @@ try {
   <?php endif; ?>
 
   <form method="POST" enctype="multipart/form-data" action="">
+    <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
     <div class="form-grid">
       <!-- Name -->
       <div class="form-group required full-width">
@@ -169,7 +179,7 @@ try {
         <div class="file-upload-area" onclick="document.getElementById('logo').click()">
           <i class="fas fa-cloud-upload-alt"></i>
           <h4>Click to upload logo</h4>
-          <p>SVG, PNG, JPG or GIF (Max. 2MB)</p>
+          <p>PNG, JPG, GIF or WEBP (Max. 2MB)</p>
           <input type="file" id="logo" name="logo" accept="image/*" style="display: none;"
             onchange="updateFileName(this)">
           <p id="file-name" style="margin-top: 10px; font-weight: 600; color: var(--primary); display: none;"></p>

@@ -7,17 +7,18 @@ if (is_logged_in()) {
 }
 
 $error = '';
+$csrf_token = generate_csrf_token();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  require_csrf_token();
   $email = trim($_POST['email'] ?? '');
   $password = trim($_POST['password'] ?? '');
   $ip = client_ip();
 
-  if (is_ip_rate_limited($db, $ip, 20, 300)) {
-    $error = 'Too many login attempts from your IP. Please try again in 5 minutes.';
+  $rate_limit_error = check_ip_rate_limit($db, $ip);
+  if ($rate_limit_error) {
+    $error = $rate_limit_error;
     log_login_attempt($db, $ip, false);
     audit_log($db, 'Failed Login', 'Rate limited login attempt from: ' . $ip);
-  } elseif (!check_rate_limit('login_attempt', 5, 300)) {
-    $error = 'Too many login attempts. Please try again in 5 minutes.';
   } elseif ($email && $password) {
     $stmt = $db->prepare("SELECT id, full_name, password, role, is_active FROM admins WHERE email=? LIMIT 1");
     $stmt->execute([$email]);
@@ -97,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="post">
+          <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
           <div class="form-group">
             <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
             <input type="email" id="email" name="email" placeholder="admin@ferwaba.rw" required

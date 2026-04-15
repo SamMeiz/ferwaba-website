@@ -4,8 +4,10 @@ require_once __DIR__ . '/includes/admin-header.php';
 
 $error = '';
 $success = '';
+$csrf_token = generate_csrf_token();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  require_csrf_token();
   $current_password = trim($_POST['current_password'] ?? '');
   $new_password = trim($_POST['new_password'] ?? '');
   $confirm_password = trim($_POST['confirm_password'] ?? '');
@@ -14,36 +16,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $error = 'All fields are required.';
   } elseif ($new_password !== $confirm_password) {
     $error = 'New password and confirm password do not match.';
-  } elseif (strlen($new_password) < 6) {
-    $error = 'New password must be at least 6 characters long.';
   } else {
-    try {
-      $admin_id = (int) $_SESSION['admin_id'];
-      $stmt = $db->prepare("SELECT password, full_name FROM admins WHERE id=? LIMIT 1");
-      $stmt->execute([$admin_id]);
-      $admin = $stmt->fetch();
+    // VULN-009 FIX: strong password policy (was: strlen >= 6)
+    $pwError = validate_password_strength($new_password);
+    if ($pwError) {
+      $error = $pwError;
+    } else {
+      try {
+        $admin_id = (int) $_SESSION['admin_id'];
+        $stmt = $db->prepare("SELECT password, full_name FROM admins WHERE id=? LIMIT 1");
+        $stmt->execute([$admin_id]);
+        $admin = $stmt->fetch();
 
-      if ($admin) {
-        if (verify_password($current_password, $admin['password'])) {
-          $hashed_new = hash_password($new_password);
-          $update_stmt = $db->prepare("UPDATE admins SET password=? WHERE id=? LIMIT 1");
+        if ($admin) {
+          if (verify_password($current_password, $admin['password'])) {
+            $hashed_new = hash_password($new_password);
+            $update_stmt = $db->prepare("UPDATE admins SET password=? WHERE id=? LIMIT 1");
 
-          if ($update_stmt->execute([$hashed_new, $admin_id])) {
-            audit_log($db, 'Change Password', "Administrator changed their password: {$admin['full_name']} (ID: $admin_id)");
-            $success = 'Password changed successfully!';
-            $current_password = $new_password = $confirm_password = '';
+            if ($update_stmt->execute([$hashed_new, $admin_id])) {
+              audit_log($db, 'Change Password', "Administrator changed their password: {$admin['full_name']} (ID: $admin_id)");
+              $success = 'Password changed successfully!';
+              $current_password = $new_password = $confirm_password = '';
+            } else {
+              $error = 'Failed to update password. Please try again.';
+            }
           } else {
-            $error = 'Failed to update password. Please try again.';
+            $error = 'Current password is incorrect.';
           }
         } else {
-          $error = 'Current password is incorrect.';
+          $error = 'Admin account not found.';
         }
-      } else {
-        $error = 'Admin account not found.';
+      } catch (PDOException $e) {
+        error_log("Change Password Error: " . $e->getMessage());
+        $error = 'A database error occurred.';
       }
-    } catch (PDOException $e) {
-      error_log("Change Password Error: " . $e->getMessage());
-      $error = 'A database error occurred.';
     }
   }
 }
@@ -75,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="form-container" style="max-width: 500px;">
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?php echo sanitize(generate_csrf_token()); ?>">
     <div class="form-group">
       <label for="current_password"><i class="fas fa-lock"></i> Current Password</label>
       <input type="password" id="current_password" name="current_password" required autocomplete="current-password"
@@ -83,15 +90,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="form-group">
       <label for="new_password"><i class="fas fa-key"></i> New Password</label>
-      <input type="password" id="new_password" name="new_password" required autocomplete="new-password" minlength="6"
+      <input type="password" id="new_password" name="new_password" required autocomplete="new-password" minlength="12"
         placeholder="Enter new password">
-      <span class="form-hint"><i class="fas fa-info-circle"></i> Minimum 6 characters</span>
+      <span class="form-hint"><i class="fas fa-info-circle"></i> Min 12 chars &mdash; must include uppercase, lowercase, number &amp; special character</span>
     </div>
 
     <div class="form-group">
       <label for="confirm_password"><i class="fas fa-check-double"></i> Confirm New Password</label>
       <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password"
-        minlength="6" placeholder="Confirm new password">
+        minlength="12" placeholder="Confirm new password">
     </div>
 
     <div class="form-actions">

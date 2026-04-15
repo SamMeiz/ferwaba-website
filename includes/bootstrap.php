@@ -4,35 +4,50 @@
  * This file handles session management, configuration loading, 
  * database connection, and base security measures.
  */
+// Marker so config.php knows bootstrap already ran (VULN-005 guard)
+define('_FERWABA_BOOTSTRAP_LOADED', true);
 
 // 1. Session Management
-// Use secure session configuration
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_samesite', 'Lax');
+$isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+if ($isHttps) {
     ini_set('session.cookie_secure', 1);
 }
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $isHttps,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
+    session_unset();
+    session_destroy();
+    session_start();
+}
+$_SESSION['last_activity'] = time();
 
 // 2. Load Configuration (Outside public_html)
 $configFile = dirname(dirname(__DIR__)) . '/config.php';
 if (!file_exists($configFile)) {
-    // Fallback or relative to project root if structure differs
+    // Fallback: try relative to project root
     $configFile = __DIR__ . '/config.php';
 }
 
 if (file_exists($configFile)) {
     require_once $configFile;
 } else {
-    // Default fallback if config is missing
-    define('ENVIRONMENT', 'development');
-    define('DB_HOST', 'localhost');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('DB_NAME', 'ferwaba_db');
+    // FIXED VULN-010: was silently falling back to root/empty credentials.
+    // Now fails loudly so misconfiguration is never silent.
+    error_log('FERWABA FATAL: config.php not found. Application cannot start.');
+    die('Application configuration error. Please contact the system administrator.');
 }
 
 // 3. Centralized Error Handling
@@ -74,38 +89,27 @@ try {
     }
 }
 
-// 6. Security - DDoS / Rate Limiting (Simple File-Based Implementation)
-function check_rate_limit($key, $limit = 60, $period = 60)
-{
-    if (!isset($_SESSION['rate_limits'])) {
-        $_SESSION['rate_limits'] = [];
-    }
-
-    $now = time();
-    if (!isset($_SESSION['rate_limits'][$key])) {
-        $_SESSION['rate_limits'][$key] = ['count' => 1, 'start' => $now];
-        return true;
-    }
-
-    $data = &$_SESSION['rate_limits'][$key];
-    if ($now - $data['start'] > $period) {
-        $data = ['count' => 1, 'start' => $now];
-        return true;
-    }
-
-    if ($data['count'] >= $limit) {
-        return false;
-    }
-
-    $data['count']++;
-    return true;
-}
+// 6. Security — NOTE: VULN-006 FIX: Session-based rate limiter removed.
+// It was bypassable by sending requests without a session cookie (new session = fresh counter).
+// Login rate limiting is now handled exclusively by the database-backed
+// is_ip_rate_limited() in helpers.php (20 failed attempts per IP per 5 min).
 
 // 7. Security Headers
 header("X-Frame-Options: SAMEORIGIN");
-header("X-XSS-Protection: 1; mode=block");
+// NOTE: X-XSS-Protection removed (VULN-012 FIX) — deprecated, not supported in modern browsers,
+// and can cause XSS vulnerabilities in old IE/Edge. CSP header below provides superior protection.
 header("X-Content-Type-Options: nosniff");
 header("Referrer-Policy: strict-origin-when-cross-origin");
+$csp = "default-src 'self' https: data: blob:; img-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.google.com https://maps.googleapis.com https://www.youtube.com https://www.youtube-nocookie.com; frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https:; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
+header("Content-Security-Policy: " . $csp);
+header("Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()");
+header("Cross-Origin-Opener-Policy: same-origin");
+header("Cross-Origin-Resource-Policy: same-origin");
+header("X-Permitted-Cross-Domain-Policies: none");
+header("X-Download-Options: noopen");
+if ($isHttps) {
+    header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+}
 
 // Global available variables
 $db = $pdo;

@@ -6,6 +6,7 @@ $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int) $_GET['id'] : 0;
 $editing = $id > 0;
 
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   // Fetch players for dropdown
@@ -38,6 +39,7 @@ try {
 
   // Handle form submission
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $fields = [
       'player_id',
       'games_played',
@@ -120,6 +122,7 @@ try {
 <div class="card" style="max-width:900px;margin:auto;">
   <div class="card-body">
     <form method="post" class="grid col-2" style="gap:16px;">
+      <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
       <label>
         <span>Player</span>
         <select name="player_id" required>

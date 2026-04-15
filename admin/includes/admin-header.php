@@ -81,6 +81,9 @@ $mysqli = $mysqli ?? $GLOBALS['mysqli'] ?? null;
         <a href="shop" class="nav-link <?php echo $current_page === 'shop' ? 'active' : ''; ?>">
           <i class="fas fa-shopping-bag"></i> <span>Shop</span>
         </a>
+        <a href="partners" class="nav-link <?php echo $current_page === 'partners' || $current_page === 'partner-form' ? 'active' : ''; ?>">
+          <i class="fas fa-handshake"></i> <span>Partners</span>
+        </a>
 
         <div class="nav-divider"></div>
 

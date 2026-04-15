@@ -14,6 +14,7 @@ $away_score = 0;
 $winner_team_id = null;
 $status = 'Pending';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   $teams = $db->query("SELECT id, name FROM teams ORDER BY name ASC")->fetchAll();
@@ -38,6 +39,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $stage = in_array(($_POST['stage'] ?? ''), ['Quarterfinal', 'Semifinal', 'Final', '3rd Place']) ? $_POST['stage'] : 'Quarterfinal';
     $start_date = $_POST['start_date'] ?? $start_date;
     $end_date = $_POST['end_date'] ?? $end_date;
@@ -160,6 +162,7 @@ try {
       <?php if ($error): ?>
         <div style="color:#b91c1c;margin-bottom:12px"><?php echo sanitize($error); ?></div><?php endif; ?>
       <form method="post">
+        <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
         <div class="grid col-3" style="margin-bottom:12px;">
           <div>
             <label>Stage</label>

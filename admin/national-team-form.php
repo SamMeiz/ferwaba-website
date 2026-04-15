@@ -6,6 +6,7 @@ $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? (int) $_GET['id'] : null;
 $team = ['team_name' => '', 'category' => '', 'banner_image' => ''];
 $categories = ['Senior Men', 'Senior Women', 'U18 Men', 'U18 Women', 'U16 Men', 'U16 Women'];
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   if ($id) {
@@ -18,18 +19,30 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $team_name = trim($_POST['team_name'] ?? '');
     $category = $_POST['category'] ?? '';
     $banner_image = $team['banner_image'];
 
     // Handle upload
-    if (!empty($_FILES['banner_image']['name']) && $_FILES['banner_image']['error'] === UPLOAD_ERR_OK) {
-      $filename = time() . '_' . bin2hex(random_bytes(4)) . '_' . basename($_FILES['banner_image']['name']);
-      $target = __DIR__ . '/uploads/' . $filename;
-      if (!is_dir(__DIR__ . '/uploads/'))
-        mkdir(__DIR__ . '/uploads/', 0755, true);
-      if (move_uploaded_file($_FILES['banner_image']['tmp_name'], $target)) {
-        $banner_image = $filename;
+    if (isset($_FILES['banner_image']) && $_FILES['banner_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+      $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      $uploadError = validate_upload($_FILES['banner_image'], $allowedExts, 5242880, $allowedMimes);
+      if ($uploadError) {
+        $error = $uploadError;
+      } else {
+        $ext = strtolower(pathinfo($_FILES['banner_image']['name'], PATHINFO_EXTENSION));
+        $filename = generate_safe_filename('national_team', $ext);
+        $target = __DIR__ . '/uploads/' . $filename;
+        if (!is_dir(__DIR__ . '/uploads/')) {
+          mkdir(__DIR__ . '/uploads/', 0755, true);
+        }
+        if (move_uploaded_file($_FILES['banner_image']['tmp_name'], $target)) {
+          $banner_image = $filename;
+        } else {
+          $error = 'Failed to upload banner image.';
+        }
       }
     }
 
@@ -63,6 +76,7 @@ try {
 </section>
 
 <form method="post" enctype="multipart/form-data" class="card" style="max-width:600px;">
+  <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
   <label>Team Name</label>
   <input type="text" name="team_name" required value="<?php echo sanitize($team['team_name']); ?>">
 

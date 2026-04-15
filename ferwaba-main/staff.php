@@ -1,4 +1,4 @@
-﻿<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
+<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,31 +61,31 @@
             <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
                 <div
                     style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
-                    <img src="assets/images/staff1.jpg" alt="John Doe"
+                    <img src="assets/images/President.jpeg" alt="John Doe"
                         style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">John Doe</h3>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Desire MUGWIZA</h3>
                 <p style="color:#0077cc; font-weight:600; margin-top:5px;">President</p>
             </div>
 
             <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
                 <div
                     style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
-                    <img src="assets/images/staff2.jpg" alt="Jane Smith"
+                    <img src="assets/images/FVP.jpeg" alt="Jane Smith"
                         style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Jane Smith</h3>
-                <p style="color:#0077cc; font-weight:600; margin-top:5px;">Secretary General</p>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Jose Edouard MUNYANGAJU</h3>
+                <p style="color:#0077cc; font-weight:600; margin-top:5px;"> Vice president</p>
             </div>
 
             <div class="staff-card" style="flex:1 1 200px; max-width:220px; text-align:center;">
                 <div
                     style="width:150px; height:150px; margin:0 auto; overflow:hidden; border-radius:50%; border:3px solid #0077cc;">
-                    <img src="assets/images/staff3.jpg" alt="Michael Johnson"
+                    <img src="assets/images/executive director.jpeg" alt="Michael Johnson"
                         style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Michael Johnson</h3>
-                <p style="color:#0077cc; font-weight:600; margin-top:5px;">Head Coach</p>
+                <h3 style="margin-top:15px; font-size:20px; color:#1a1a1a;">Regis Francois GAHURANYI</h3>
+                <p style="color:#0077cc; font-weight:600; margin-top:5px;">Executive Director</p>
             </div>
 
             <!-- Add more staff cards here -->
@@ -167,6 +167,11 @@
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
+                <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+                    <a href="privacy" style="color:rgba(255,255,255,0.8); text-decoration:none;">Privacy Policy</a>
+                    <a href="terms" style="color:rgba(255,255,255,0.8); text-decoration:none;">Terms of Use</a>
+                    <a href="accessibility" style="color:rgba(255,255,255,0.8); text-decoration:none;">Accessibility</a>
+                </div>
             </div>
         </div>
     </footer>

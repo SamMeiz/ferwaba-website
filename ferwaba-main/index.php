@@ -5,27 +5,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ferwaba - Rwanda Basketball Federation</title>
+    <?php
+    $baseUrl = rtrim(base_url(), '/');
+    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    $canonicalUrl = $baseUrl . $currentPath;
+    $logoUrl = $baseUrl . '/ferwaba-main/assets/images/logo.png';
+    ?>
+    <title>FERWABA | Rwanda Basketball Federation | RBL, GMC & Legacy Cup</title>
     <meta name="description"
-        content="Ferwaba is the official basketball federation in Rwanda, organizing premier competitions including RBL, GMC, and Legacy Cup.">
+        content="FERWABA is the official Rwanda Basketball Federation, organizing the Rwanda Basketball League (RBL), Genocide Memorial Cup, and Legacy Cup.">
     <meta name="keywords"
-        content="Ferwaba, Rwanda basketball, RBL, Genocide Memorial Cup, Legacy Cup, basketball federation">
+        content="FERWABA, Rwanda Basketball Federation, RBL, Rwanda Basketball League, GMC, Genocide Memorial Cup, Legacy Cup, Rwanda basketball">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="<?php echo sanitize($canonicalUrl); ?>">
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Ferwaba - Rwanda Basketball Federation">
-    <meta property="og:description" content="Official basketball federation organizing premier competitions in Rwanda.">
+    <meta property="og:title" content="FERWABA | Rwanda Basketball Federation">
+    <meta property="og:description" content="Official Rwanda Basketball Federation organizing RBL, GMC, and Legacy Cup.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ferwaba.rw">
-    <meta property="og:image" content="https://ferwaba.rw/assets/images/og-image.jpg">
+    <meta property="og:url" content="<?php echo sanitize($canonicalUrl); ?>">
+    <meta property="og:image" content="<?php echo sanitize($logoUrl); ?>">
+    <meta property="og:site_name" content="FERWABA">
+    <meta property="og:locale" content="en_RW">
 
-    <!-- Structured Data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FERWABA | Rwanda Basketball Federation">
+    <meta name="twitter:description" content="Official Rwanda Basketball Federation organizing RBL, GMC, and Legacy Cup.">
+    <meta name="twitter:image" content="<?php echo sanitize($logoUrl); ?>">
+
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "SportsOrganization",
-        "name": "Ferwaba",
+        "name": "FERWABA",
         "description": "Rwanda Basketball Federation",
-        "url": "https://ferwaba.rw",
+        "url": "<?php echo sanitize($canonicalUrl); ?>",
+        "logo": "<?php echo sanitize($logoUrl); ?>",
+        "sameAs": [
+            "https://www.facebook.com/ferwaba",
+            "https://www.instagram.com/ferwaba",
+            "https://www.twitter.com/ferwaba",
+            "https://www.youtube.com/@ferwaba"
+        ],
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "KG 17 Ave, Kigali",
@@ -515,6 +535,11 @@
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
+                <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+                    <a href="privacy" style="color:rgba(255,255,255,0.8); text-decoration:none;">Privacy Policy</a>
+                    <a href="terms" style="color:rgba(255,255,255,0.8); text-decoration:none;">Terms of Use</a>
+                    <a href="accessibility" style="color:rgba(255,255,255,0.8); text-decoration:none;">Accessibility</a>
+                </div>
             </div>
         </div>
     </footer>

@@ -14,17 +14,21 @@ if (!$team_id) {
     exit;
 }
 
-// Fetch team info
-$team_result = $mysqli->query("SELECT team_name FROM national_teams WHERE id=$team_id");
-if (!$team_result || $team_result->num_rows === 0) {
+// Fetch team info — FIXED: use PDO prepared statement (was raw MySQLi query: VULN-001)
+$team_stmt = $db->prepare("SELECT team_name FROM national_teams WHERE id=? LIMIT 1");
+$team_stmt->execute([$team_id]);
+$team = $team_stmt->fetch();
+if (!$team) {
     header('Location: national-teams.php');
     exit;
 }
-$team = $team_result->fetch_assoc();
 
 // Handle form submission for adding a new player
 $success_message = '';
+$error = '';
+$csrf_token = generate_csrf_token();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $name = trim($_POST['name']);
     $position = trim($_POST['position']);
     $club = trim($_POST['club']);
@@ -32,32 +36,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $photo = null;
 
     // Handle file upload
-    if (!empty($_FILES['photo']['name'])) {
-        $filename = time() . '_' . basename($_FILES['photo']['name']);
-        $target = __DIR__ . '/uploads/' . $filename;
-        if (move_uploaded_file($_FILES['photo']['tmp_name'], $target)) {
-            $photo = $filename;
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $uploadError = validate_upload($_FILES['photo'], $allowedExts, 5242880, $allowedMimes);
+        if ($uploadError) {
+            $error = $uploadError;
+        } else {
+            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            $filename = generate_safe_filename('national_player', $ext);
+            $target = __DIR__ . '/uploads/' . $filename;
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $target)) {
+                $photo = $filename;
+            }
         }
     }
 
-    $stmt = $mysqli->prepare("INSERT INTO national_players (team_id, name, position, jersey_number, club, photo) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('isisss', $team_id, $name, $position, $jersey_number, $club, $photo);
-    if ($stmt->execute()) {
-        $success_message = 'Player added successfully!';
+    if (!$error) {
+        // FIXED: PDO prepared statement
+        $ins = $db->prepare("INSERT INTO national_players (national_team_id, name, position, jersey_number, club, photo) VALUES (?, ?, ?, ?, ?, ?)");
+        if ($ins->execute([$team_id, $name, $position, $jersey_number, $club, $photo])) {
+            $success_message = 'Player added successfully!';
+        } else {
+            $error = 'Failed to add player.';
+        }
     }
 }
 
-// Fetch all players for this team
-$players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, club, photo, created_at 
-                           FROM national_players 
-                           WHERE team_id=$team_id 
-                           ORDER BY jersey_number ASC");
+// Fetch all players for this team — FIXED: PDO prepared statement (was VULN-001)
+$players_stmt = $db->prepare("SELECT id, team_id, name, position, jersey_number, club, photo, created_at 
+                              FROM national_players 
+                              WHERE team_id=? 
+                              ORDER BY jersey_number ASC");
+$players_stmt->execute([$team_id]);
+$players_rows = $players_stmt->fetchAll();
 ?>
 
 <?php if ($success_message): ?>
     <div class="message message-success">
         <i class="fas fa-check-circle"></i>
         <?php echo $success_message; ?>
+    </div>
+<?php endif; ?>
+<?php if ($error): ?>
+    <div class="message message-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <?php echo sanitize($error); ?>
     </div>
 <?php endif; ?>
 
@@ -77,6 +101,7 @@ $players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, cl
         <i class="fas fa-user-plus"></i> Add New Player
     </h3>
     <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
         <div class="form-grid">
             <div class="form-group">
                 <label for="name"><i class="fas fa-user"></i> Player Name</label>
@@ -128,7 +153,7 @@ $players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, cl
     <div class="admin-card-header">
         <h3><i class="fas fa-users"></i> Team Roster</h3>
         <span style="color: var(--gray-500); font-size: 14px;">
-            <?php echo $players->num_rows; ?> player<?php echo $players->num_rows !== 1 ? 's' : ''; ?>
+            <?php $player_count = count($players_rows); echo $player_count; ?> player<?php echo $player_count !== 1 ? 's' : ''; ?>
         </span>
     </div>
     <div class="table-wrapper">
@@ -144,8 +169,8 @@ $players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, cl
                 </tr>
             </thead>
             <tbody>
-                <?php if ($players && $players->num_rows > 0): ?>
-                    <?php while ($row = $players->fetch_assoc()): ?>
+                <?php if (!empty($players_rows)): ?>
+                    <?php foreach ($players_rows as $row): ?>
                         <tr>
                             <td>
                                 <?php if ($row['photo']): ?>
@@ -169,10 +194,10 @@ $players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, cl
                             <td><?php echo sanitize($row['club']); ?></td>
                             <td>
                                 <div class="action-links">
-                                    <a href="edit-national-player.php?id=<?php echo $row['id']; ?>" class="action-link edit">
+                                    <a href="edit-national-player.php?id=<?php echo (int)$row['id']; ?>" class="action-link edit">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <a href="delete-national-player.php?id=<?php echo $row['id']; ?>&team_id=<?php echo $team_id; ?>"
+                                    <a href="delete-national-player.php?id=<?php echo (int)$row['id']; ?>&team_id=<?php echo $team_id; ?>"
                                         class="action-link delete"
                                         onclick="return confirm('Are you sure you want to delete this player?')">
                                         <i class="fas fa-trash"></i> Delete
@@ -180,7 +205,7 @@ $players = $mysqli->query("SELECT id, team_id, name, position, jersey_number, cl
                                 </div>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
                         <td colspan="6">

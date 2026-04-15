@@ -17,8 +17,11 @@ if (!$article) {
   redirect('news.php');
 }
 
-// Fetch 3 latest news for sidebar (excluding current)
-$related = $mysqli->query("SELECT id, title, image, created_at FROM news WHERE id != $id ORDER BY created_at DESC LIMIT 3");
+// Fetch 3 latest news for sidebar (excluding current) — FIXED: prepared statement (was VULN-002)
+$rel_stmt = $mysqli->prepare("SELECT id, title, image, created_at FROM news WHERE id != ? ORDER BY created_at DESC LIMIT 3");
+$rel_stmt->bind_param('i', $id);
+$rel_stmt->execute();
+$related = $rel_stmt->get_result();
 ?>
 
 <style>

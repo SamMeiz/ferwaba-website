@@ -171,7 +171,7 @@
     box-shadow: 0 8px 20px rgba(26, 54, 93, 0.3);
   }
 
-  /* Games Table */
+  /* Games Table Component */
   .games-card {
     background: #fff;
     border-radius: 20px;
@@ -179,9 +179,16 @@
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   }
 
+  .games-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .games-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 800px;
   }
 
   .games-table th {
@@ -247,6 +254,13 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
+  .action-buttons {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   @keyframes pulse-home {
     0% {
       transform: scale(1);
@@ -266,6 +280,14 @@
 
   .upcoming-highlight td {
     background: rgba(34, 197, 94, 0.08) !important;
+  }
+
+  .opacity-low {
+    opacity: 0.45;
+    transition: opacity 0.3s ease;
+  }
+  .opacity-low:hover {
+    opacity: 0.8;
   }
 
   /* Standings Grid */
@@ -430,7 +452,7 @@
     </div>
 
     <div class="news-scroll-wrapper"
-      style="display: flex; gap: 24px; overflow-x: auto; padding-bottom: 24px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+      style="display: flex; gap: 24px; overflow-x: auto; padding: 40px 24px; margin: -20px -24px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; align-items: center;">
 
       <?php
       // Fetch latest 6 news items dynamically
@@ -522,28 +544,103 @@
 </section>
 
 <style>
+  .news-scroll-wrapper {
+    /* Hides scrollbar for cleaner look during auto-scroll while retaining functionality */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
   .news-scroll-wrapper::-webkit-scrollbar {
-    height: 6px;
+    display: none; /* Chrome, Safari and Opera */
+  }
+  
+  .news-card {
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    transform-origin: center center;
+    opacity: 0.55;
+    transform: scale(0.85) !important;
+    filter: grayscale(30%);
+    cursor: pointer;
   }
 
-  .news-scroll-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
+  /* The Spotlight Class */
+  .news-card.spotlight {
+    opacity: 1;
+    transform: scale(1.08) !important;
+    filter: grayscale(0%);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.6) !important;
+    border: 2px solid #fbbf24 !important;
+    z-index: 10;
   }
 
-  .news-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(251, 191, 36, 0.5);
-    border-radius: 3px;
+  .news-card.spotlight img {
+    transform: scale(1.05); /* Slight internal image zoom for the active card */
   }
 
   .news-card:hover {
-    transform: translateY(-5px);
+    opacity: 0.9;
+    transform: scale(0.95) !important;
+    filter: grayscale(0%);
   }
-
-  .news-card:hover img {
-    transform: scale(1.05);
+  
+  .news-card.spotlight:hover {
+    opacity: 1;
+    transform: scale(1.1) !important;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Spotlight Carousel Rotation
+    const wrapper = document.querySelector('.news-scroll-wrapper');
+    const cards = document.querySelectorAll('.news-card');
+    
+    if (cards.length > 0) {
+      let currentIndex = 0;
+      let intervalId = null;
+
+      function updateSpotlight(index) {
+        cards.forEach(c => c.classList.remove('spotlight'));
+        cards[index].classList.add('spotlight');
+        
+        // Calculate offset to physically scroll the wrapper so the spotlight card is beautifully centered
+        const wrapperCenter = wrapper.clientWidth / 2;
+        const cardCenter = cards[index].offsetLeft + (cards[index].offsetWidth / 2) - wrapper.offsetLeft;
+        
+        wrapper.scrollTo({
+          left: cardCenter - wrapperCenter,
+          behavior: 'smooth'
+        });
+      }
+
+      function nextSpotlight() {
+        currentIndex = (currentIndex + 1) % cards.length;
+        updateSpotlight(currentIndex);
+      }
+
+      function startRotation() {
+        intervalId = setInterval(nextSpotlight, 5000);
+      }
+      
+      // Initialize immediately
+      updateSpotlight(0);
+      // Give a small delay so page renders correctly before automatic rotation begins
+      setTimeout(startRotation, 1000);
+
+      // Pause rotation automatically if the user hovers over the cards
+      cards.forEach((card, idx) => {
+        card.addEventListener('mouseenter', () => {
+          clearInterval(intervalId);
+          currentIndex = idx;
+          updateSpotlight(currentIndex);
+        });
+        card.addEventListener('mouseleave', () => {
+          clearInterval(intervalId);
+          startRotation();
+        });
+      });
+    }
+  });
+</script>
 
 
 <!-- Upcoming Games Section -->
@@ -554,69 +651,79 @@
   </div>
 
   <div class="games-card">
-    <table class="games-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Match</th>
-          <th>Division</th>
-          <th>Gender</th>
-          <th>Venue</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php
-        $today = date('Y-m-d');
-        $three_days = date('Y-m-d', strtotime('+3 days'));
+    <div class="games-table-wrapper">
+      <table class="games-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Match</th>
+            <th>Division</th>
+            <th>Gender</th>
+            <th>Venue</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $today = date('Y-m-d');
+          $three_days = date('Y-m-d', strtotime('+3 days'));
 
-        $q = "SELECT g.*, th.name AS home_name, ta.name AS away_name 
-        FROM games g
-        JOIN teams th ON th.id = g.home_team_id
-        JOIN teams ta ON ta.id = g.away_team_id
-        WHERE g.status IN ('Scheduled', 'Live') 
-        ORDER BY g.game_date ASC, g.id ASC 
-        LIMIT 5";
+          $q = "SELECT g.*, th.name AS home_name, ta.name AS away_name 
+          FROM games g
+          JOIN teams th ON th.id = g.home_team_id
+          JOIN teams ta ON ta.id = g.away_team_id
+          WHERE g.status IN ('Scheduled', 'Live') 
+          ORDER BY g.game_date ASC, g.id ASC 
+          LIMIT 5";
 
-        if ($r = $mysqli->query($q)) {
-          while ($g = $r->fetch_assoc()):
-            $row_class = '';
-            if ($g['game_date'] >= $today && $g['game_date'] <= $three_days) {
-              $row_class = 'upcoming-highlight';
-            }
-            ?>
-            <tr class="<?php echo $row_class; ?>">
-              <td><?php echo date('M d, Y', strtotime($g['game_date'])); ?></td>
-              <td><?php echo (!empty($g['game_time'])) ? date('g:i A', strtotime($g['game_time'])) : 'TBD'; ?></td>
-              <td class="match-cell"><?php echo sanitize($g['home_name'] . ' vs ' . $g['away_name']); ?></td>
-              <td><?php echo sanitize($g['division']); ?></td>
-              <td><?php echo sanitize($g['gender']); ?></td>
-              <td><?php echo sanitize($g['location']); ?></td>
-              <td>
-                <?php
-                $current_time = time();
-                $is_game_time = false;
-                if (!empty($g['game_date']) && !empty($g['game_time'])) {
-                  $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
-                  if ($game_ts && $current_time >= $game_ts)
-                    $is_game_time = true;
-                }
+          if ($r = $mysqli->query($q)) {
+            while ($g = $r->fetch_assoc()):
+              $row_class = '';
+              // If the game is today, style it with low opacity 
+              if ($g['game_date'] === $today) {
+                $row_class = 'opacity-low';
+              } elseif ($g['game_date'] > $today && $g['game_date'] <= $three_days) {
+                $row_class = 'upcoming-highlight';
+              }
+              ?>
+              <tr class="<?php echo $row_class; ?>">
+                <td style="white-space:nowrap;"><?php echo date('M d, Y', strtotime($g['game_date'])); ?> <?php if ($g['game_date'] === $today) echo '<span style="color:#ef4444; font-weight:bold; font-size:10px; margin-left:4px;">(TODAY)</span>'; ?></td>
+                <td style="white-space:nowrap;"><?php echo (!empty($g['game_time'])) ? date('g:i A', strtotime($g['game_time'])) : 'TBD'; ?></td>
+                <td class="match-cell" style="white-space:nowrap;"><?php echo sanitize($g['home_name'] . ' vs ' . $g['away_name']); ?></td>
+                <td style="white-space:nowrap;"><?php echo sanitize($g['division']); ?></td>
+                <td style="white-space:nowrap;"><?php echo sanitize($g['gender']); ?></td>
+                <td style="white-space:nowrap;"><?php echo sanitize($g['location']); ?></td>
+                <td style="white-space:nowrap;">
+                  <?php
+                  $current_time = time();
+                  $is_game_time = false;
+                  if (!empty($g['game_date']) && !empty($g['game_time'])) {
+                    $game_ts = strtotime($g['game_date'] . ' ' . $g['game_time']);
+                    if ($game_ts && $current_time >= $game_ts)
+                      $is_game_time = true;
+                  }
 
-                $show_live = (strtolower($g['status']) === 'live' || ($is_game_time && strtolower($g['status']) === 'scheduled')) && !empty($g['live_link']) && $g['live_link'] !== 'N/A';
-
-                if ($show_live): ?>
-                  <a href="<?php echo sanitize($g['live_link']); ?>" target="_blank" class="btn-live-home"><i
-                      class="fas fa-play-circle"></i> Live</a>
-                <?php else: ?>
-                  <a href="https://ticqet.rw" target="_blank" class="btn-ticket"><i class="fas fa-ticket-alt"></i> Tickets</a>
-                <?php endif; ?>
-              </td>
-            </tr>
-          <?php endwhile;
-        } ?>
-      </tbody>
-    </table>
+                  $status_lower = strtolower($g['status']);
+                  $show_live = ($status_lower === 'live' || ($is_game_time && $status_lower === 'scheduled')) && !empty($g['live_link']) && $g['live_link'] !== 'N/A';
+                  $show_tickets = $status_lower === 'live' || ($status_lower === 'scheduled' && !$is_game_time);
+                  ?>
+                  <span class="action-buttons">
+                    <?php if ($show_live): ?>
+                      <a href="<?php echo sanitize($g['live_link']); ?>" target="_blank" class="btn-live-home"><i
+                          class="fas fa-play-circle"></i> Watch Now</a>
+                    <?php endif; ?>
+                    <?php if ($show_tickets): ?>
+                      <a href="https://ticqet.rw" target="_blank" class="btn-ticket"><i class="fas fa-ticket-alt"></i> Get Tickets</a>
+                    <?php endif; ?>
+                  </span>
+                </td>
+              </tr>
+            <?php endwhile;
+          } ?>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 

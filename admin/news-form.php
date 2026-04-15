@@ -8,6 +8,7 @@ $editing = $id > 0;
 $title = $content = $category = $image = $video_url = '';
 $category = 'Latest';
 $error = '';
+$csrf_token = generate_csrf_token();
 
 try {
   if ($editing) {
@@ -26,6 +27,7 @@ try {
   }
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_csrf_token();
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
     $category = in_array($_POST['category'] ?? '', ['Latest', 'Transfers', 'Injuries', 'Squad Updates']) ? $_POST['category'] : 'Latest';
@@ -35,21 +37,25 @@ try {
       $error = 'Title and content are required.';
     }
 
-    $uploadFileName = $image; // keep existing if no new upload
+    $uploadFileName = $image;
     if (!$error && isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
-      if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $safeName = 'news_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
+      $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      $uploadError = validate_upload($_FILES['image'], $allowedExts, 5242880, $allowedMimes);
+      if ($uploadError) {
+        $error = $uploadError;
+      } else {
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $safeName = generate_safe_filename('news', $ext);
         $uploadDir = __DIR__ . '/uploads/';
-        if (!is_dir($uploadDir))
+        if (!is_dir($uploadDir)) {
           mkdir($uploadDir, 0755, true);
+        }
         if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $safeName)) {
           $uploadFileName = $safeName;
         } else {
           $error = 'Failed to upload image.';
         }
-      } else {
-        $error = 'Upload error.';
       }
     }
 
@@ -90,6 +96,7 @@ try {
         <?php if ($error): ?>
           <div style="color:#b91c1c;margin-bottom:8px"><?php echo sanitize($error); ?></div><?php endif; ?>
         <form method="post" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
           <div style="margin-bottom:8px">
             <label>Title</label>
             <input type="text" name="title" value="<?php echo sanitize($title); ?>" required

@@ -1,4 +1,48 @@
-﻿<?php require_once __DIR__ . '/../includes/bootstrap.php'; ?>
+<?php
+require_once __DIR__ . '/../includes/bootstrap.php';
+
+// VULN-007 FIX: Contact form now uses server-side processing instead of mailto: action
+$contact_error = '';
+$contact_success = '';
+$contact_name = $contact_email = $contact_subject = $contact_message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $contact_name    = trim($_POST['name'] ?? '');
+    $contact_email   = trim($_POST['email'] ?? '');
+    $contact_subject = trim($_POST['subject'] ?? '');
+    $contact_message = trim($_POST['message'] ?? '');
+
+    // Honeypot check (bot trap)
+    if (!empty($_POST['_hp'])) {
+        // Silent exit for bots — pretend success
+        $contact_success = true;
+    } elseif (!$contact_name || !$contact_email || !$contact_subject || !$contact_message) {
+        $contact_error = 'Please fill in all required fields.';
+    } elseif (!filter_var($contact_email, FILTER_VALIDATE_EMAIL)) {
+        $contact_error = 'Please enter a valid email address.';
+    } elseif (strlen($contact_message) > 5000) {
+        $contact_error = 'Message is too long (max 5000 characters).';
+    } else {
+        // Log contact inquiry to DB (if table exists) and DELIVER email to info@ferwaba.rw
+        $to = "info@ferwaba.rw";
+        $headers = "From: $contact_email\r\nReply-To: $contact_email\r\nX-Mailer: PHP/" . phpversion();
+        $mail_subject = "FERWABA Contact Inquiry: " . $contact_subject;
+        $mail_body = "Name: $contact_name\nEmail: $contact_email\n\nMessage:\n$contact_message";
+        
+        try {
+            $stmt = $db->prepare("INSERT INTO contact_messages (name, email, subject, message, ip_address) VALUES (?, ?, ?, ?, ?)");
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+            $stmt->execute([$contact_name, $contact_email, $contact_subject, $contact_message, $ip]);
+        } catch (PDOException $e) {
+            error_log("Contact form DB save error (table might not exist): " . $e->getMessage());
+        }
+        
+        // Always send the email
+        mail($to, $mail_subject, $mail_body, $headers);
+        $contact_success = true;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,8 +51,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Ferwaba</title>
     <meta name="description"
-        content="Get in touch with Inkingi Art Space. Visit our gallery, inquire about artworks, or learn about our programs and events.">
-    <meta name="keywords" content="contact, art gallery, visit, inquiries, Inkingi Art Space, location, hours">
+        content="Contact FERWABA, the Rwanda Basketball Federation, for partnerships, competitions, teams, and official inquiries.">
+    <meta name="keywords"
+        content="FERWABA contact, Rwanda Basketball Federation contact, Rwanda basketball, partnerships, competitions, inquiries">
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +80,6 @@
                 <a href="staff" class="nav-link">Staff</a>
                 <a href="national-team" class="nav-link highlight">National Team</a>
                 <a href="competitions" class="nav-link">Competitions</a>
-
             </div>
             <div class="nav-toggle" id="nav-toggle">
                 <span class="bar"></span>
@@ -76,35 +120,46 @@
                 </div>
             </div>
 
-            <!-- Contact Form -->
+            <!-- Contact Form — VULN-007 FIX: now server-side PHP, no mailto: action -->
             <div class="contact-form-container"
                 style="flex: 1; min-width: 300px; padding: 30px; background-color: #f9f9f9; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
-                <h2 style="text-align:center; font-size: 28px; margin-bottom: 25px; color: #1a1a1a;">Send Us a Message
-                </h2>
-                <form class="contact-form" action="mailto:info@ferwaba.rw" method="POST" enctype="text/plain">
+                <h2 style="text-align:center; font-size: 28px; margin-bottom: 25px; color: #1a1a1a;">Send Us a Message</h2>
+
+                <?php if (!empty($contact_success)): ?>
+                    <div style="background:#d4edda; color:#155724; padding:15px; border-radius:8px; margin-bottom:20px; text-align:center;">
+                        <i class="fas fa-check-circle"></i> Thank you! Your message has been received. We'll get back to you soon.
+                    </div>
+                <?php elseif ($contact_error): ?>
+                    <div style="background:#f8d7da; color:#721c24; padding:15px; border-radius:8px; margin-bottom:20px;">
+                        <i class="fas fa-exclamation-circle"></i> <?php echo sanitize($contact_error); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (empty($contact_success)): ?>
+                <form id="contact-form" method="POST" action="">
+                    <!-- Honeypot field — hidden from real users, bots fill it in -->
+                    <input type="text" name="_hp" style="display:none;" tabindex="-1" autocomplete="off">
+
                     <div class="form-group" style="display:flex; align-items:center; margin-bottom: 15px;">
-                        <label for="name" style="flex:0 0 120px; margin-right:10px; font-weight:600;">Full Name
-                            *</label>
-                        <input type="text" id="name" name="name" required
+                        <label for="name" style="flex:0 0 120px; margin-right:10px; font-weight:600;">Full Name *</label>
+                        <input type="text" id="name" name="name" required value="<?php echo sanitize($contact_name); ?>"
                             style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px;">
                     </div>
                     <div class="form-group" style="display:flex; align-items:center; margin-bottom: 15px;">
                         <label for="email" style="flex:0 0 120px; margin-right:10px; font-weight:600;">Email *</label>
-                        <input type="email" id="email" name="email" required
+                        <input type="email" id="email" name="email" required value="<?php echo sanitize($contact_email); ?>"
                             style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px;">
                     </div>
                     <div class="form-group" style="display:flex; align-items:center; margin-bottom: 15px;">
-                        <label for="subject" style="flex:0 0 120px; margin-right:10px; font-weight:600;">Subject
-                            *</label>
-                        <input type="text" id="subject" name="subject" required
+                        <label for="subject" style="flex:0 0 120px; margin-right:10px; font-weight:600;">Subject *</label>
+                        <input type="text" id="subject" name="subject" required value="<?php echo sanitize($contact_subject); ?>"
                             style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px;">
                     </div>
                     <div class="form-group" style="display:flex; align-items:flex-start; margin-bottom: 20px;">
                         <label for="message"
-                            style="flex:0 0 120px; margin-right:10px; font-weight:600; padding-top:10px;">Message
-                            *</label>
+                            style="flex:0 0 120px; margin-right:10px; font-weight:600; padding-top:10px;">Message *</label>
                         <textarea id="message" name="message" rows="6" required
-                            style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px; resize: vertical;"></textarea>
+                            style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:16px; resize: vertical;"><?php echo sanitize($contact_message); ?></textarea>
                     </div>
                     <div class="form-actions" style="text-align:center;">
                         <button type="submit"
@@ -113,6 +168,7 @@
                         </button>
                     </div>
                 </form>
+                <?php endif; ?>
             </div>
 
 
@@ -211,71 +267,17 @@
         <!-- Footer Bottom -->
         <div class="footer-bottom">
             <p>&copy; 2025 Ferwaba - Rwanda Basketball Federation. All rights reserved.</p>
+            <div style="margin-top:8px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+                <a href="privacy" style="color:rgba(255,255,255,0.8); text-decoration:none;">Privacy Policy</a>
+                <a href="terms" style="color:rgba(255,255,255,0.8); text-decoration:none;">Terms of Use</a>
+                <a href="accessibility" style="color:rgba(255,255,255,0.8); text-decoration:none;">Accessibility</a>
+            </div>
         </div>
     </div>
 </footer>
 
 <script src="assets/js/main.js"></script>
 <script>
-    // Contact form functionality
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('contact-form');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // Get form data
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            // Basic validation
-            if (!data.name || !data.email || !data.subject || !data.message) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(data.email)) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-
-            // In a real application, this would send the data to the server
-            alert('Thank you for your message! We will get back to you soon.');
-            form.reset();
-        });
-
-        // FAQ accordion functionality
-        const faqItems = document.querySelectorAll('.faq-item');
-
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            const answer = item.querySelector('.faq-answer');
-            const icon = question.querySelector('i');
-
-            question.addEventListener('click', function () {
-                const isOpen = answer.style.display === 'block';
-
-                // Close all other FAQ items
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item) {
-                        otherItem.querySelector('.faq-answer').style.display = 'none';
-                        otherItem.querySelector('.faq-question i').style.transform = 'rotate(0deg)';
-                    }
-                });
-
-                // Toggle current item
-                if (isOpen) {
-                    answer.style.display = 'none';
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    answer.style.display = 'block';
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            });
-        });
-    });
     // Mobile navigation toggle
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');

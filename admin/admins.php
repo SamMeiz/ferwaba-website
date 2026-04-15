@@ -3,31 +3,21 @@ $page_title = 'Admins Management';
 require_once __DIR__ . '/includes/admin-header.php';
 require_superadmin();
 
-// Handle activation toggle
-if (isset($_GET['toggle']) && ctype_digit($_GET['toggle'])) {
-    $id = (int)$_GET['toggle'];
-    if ($id === (int)($_SESSION['admin_id'])) {
-        die('Cannot deactivate self');
+// FIXED VULN-003 & VULN-011: toggle now requires POST + CSRF, uses PDO prepared statement
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle'])) {
+    require_csrf_token();
+    $tid = (int) ($_POST['toggle'] ?? 0);
+    if ($tid && $tid !== (int) $_SESSION['admin_id']) {
+        $upd = $db->prepare("UPDATE admins SET is_active = IF(is_active=1,0,1) WHERE id=? LIMIT 1");
+        $upd->execute([$tid]);
+        audit_log($db, 'Toggle Admin', "Toggled active status for admin ID: $tid");
     }
-    $mysqli->query("UPDATE admins SET is_active = IF(is_active=1,0,1) WHERE id=$id");
     header("Location: admins.php");
     exit();
 }
 
-// Handle delete (prevent self)
-if (isset($_GET['delete']) && ctype_digit($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
-    if ($id === (int)($_SESSION['admin_id'])) {
-        die('Cannot delete yourself');
-    }
-    $stmt = $mysqli->prepare("DELETE FROM admins WHERE id=? LIMIT 1");
-    $stmt->bind_param('i', $id);
-    $stmt->execute();
-    header("Location: admins.php");
-    exit();
-}
-
-$admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admins ORDER BY id DESC");
+$admins = $db->query("SELECT id, full_name, email, role, is_active FROM admins ORDER BY id DESC")->fetchAll();
+$csrf_token = generate_csrf_token();
 ?>
 
 <div class="page-header">
@@ -44,7 +34,7 @@ $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admi
 <div class="admin-card">
   <div class="admin-card-header">
     <h3><i class="fas fa-users-cog"></i> All Administrators</h3>
-    <span style="color: var(--gray-500); font-size: 14px;"><?php echo $admins->num_rows; ?> admins</span>
+    <span style="color: var(--gray-500); font-size: 14px;"><?php echo count($admins); ?> admins</span>
   </div>
   <div class="table-wrapper">
     <table class="admin-table">
@@ -58,7 +48,7 @@ $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admi
         </tr>
       </thead>
       <tbody>
-        <?php while ($a = $admins->fetch_assoc()): ?>
+        <?php foreach ($admins as $a): ?>
         <tr>
           <td>
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -82,18 +72,25 @@ $admins = $mysqli->query("SELECT id, full_name, email, role, is_active FROM admi
                 <i class="fas fa-edit"></i> Edit
               </a>
               <?php if ((int)$a['id'] !== (int)$_SESSION['admin_id']): ?>
-              <a href="admins.php?toggle=<?php echo (int)$a['id']; ?>" class="action-link <?php echo $a['is_active'] ? 'delete' : 'view'; ?>">
-                <i class="fas fa-toggle-<?php echo $a['is_active'] ? 'off' : 'on'; ?>"></i>
-                <?php echo $a['is_active'] ? 'Deactivate' : 'Activate'; ?>
-              </a>
-              <a href="delete-admin.php?id=<?php echo (int)$a['id']; ?>" class="action-link delete" onclick="return confirm('Are you sure you want to delete this admin?')">
+              <!-- FIXED VULN-003: was a plain GET link — now a POST form with CSRF token -->
+              <form method="post" style="display:inline;" onsubmit="return confirm('Toggle this admin\'s active status?')">
+                <input type="hidden" name="csrf_token" value="<?php echo sanitize($csrf_token); ?>">
+                <input type="hidden" name="toggle" value="<?php echo (int)$a['id']; ?>">
+                <button type="submit" class="action-link <?php echo $a['is_active'] ? 'delete' : 'view'; ?>"
+                  style="background:none;border:none;cursor:pointer;padding:0;font:inherit;text-decoration:none;">
+                  <i class="fas fa-toggle-<?php echo $a['is_active'] ? 'off' : 'on'; ?>"></i>
+                  <?php echo $a['is_active'] ? 'Deactivate' : 'Activate'; ?>
+                </button>
+              </form>
+              <a href="delete-admin.php?id=<?php echo (int)$a['id']; ?>" class="action-link delete"
+                onclick="return confirm('Are you sure you want to delete this admin?')">
                 <i class="fas fa-trash"></i> Delete
               </a>
               <?php endif; ?>
             </div>
           </td>
         </tr>
-        <?php endwhile; ?>
+        <?php endforeach; ?>
       </tbody>
     </table>
   </div>
